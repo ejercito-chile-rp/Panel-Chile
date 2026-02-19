@@ -108,20 +108,18 @@
             const x = d.data();
             const rangoNombre = x.rango || "Recluta";
             
-            // Lógica para que el nombre de la imagen coincida con tus archivos en GitHub
-            let imgNom = rangoNombre.toLowerCase()
-                        .replace(/ /g, "_")
-                        .replace("í", "i")
-                        .replace("suboficial_mayor", "subof_mayor")
-                        .replace("°", ""); // Quitamos el símbolo para evitar errores de URL
-            
-            // Caso especial para los que mantuviste con símbolo en GitHub
-            if(rangoNombre.includes("°")) {
-                imgNom = rangoNombre.replace(/ /g, "_");
-            } else {
-                imgNom = imgNom + ".png";
-            }
+            // --- DENTRO DE cargarLista() ---
+let imgNom = rangoNombre.toLowerCase().replace(/ /g, "_").replace("í", "i");
 
+// REGLA ESPECIAL PARA CABOS:
+if (rangoNombre.includes("Cabo 1")) {
+    imgNom = "cabo_1.png";
+} else if (rangoNombre.includes("Cabo 2")) {
+    imgNom = "cabo_2.png";
+} else {
+    // Para el resto de rangos, quitamos el ° y añadimos .png
+    imgNom = imgNom.replace("°", "") + ".png";
+}
             h += `<div class="tarjeta ${x.division}">
                 <img src="img/${imgNom}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/614/614131.png'">
                 <div>

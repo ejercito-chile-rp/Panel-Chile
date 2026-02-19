@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Militar Chile - Comando Central</title>
     <style>
-        :root { --neon-green: #39ff14; --dark-bg: #0b0f0b; --army-red: #ff3b3b; }
+        :root { 
+            --neon-green: #39ff14; 
+            --dark-bg: #0b0f0b; 
+            --army-red: #ff3b3b; 
+            --fach-white: #ffffff;
+            --armada-blue: #1e90ff;
+        }
         body {
             background: var(--dark-bg); color: var(--neon-green); font-family: 'Consolas', monospace;
             margin: 0; padding: 20px; text-align: center;
@@ -23,14 +29,30 @@
         }
         button { cursor: pointer; transition: 0.3s; font-weight: bold; }
         button:hover { background: var(--neon-green); color: black; }
-        .tarjeta {
-            border: 1px solid #333; padding: 10px; margin: 10px 0;
-            display: flex; align-items: center; justify-content: space-between;
-            background: #151515; text-align: left;
-        }
+
+        /* --- COLORES POR DIVISIÓN --- */
+        .tarjeta { border: 1px solid #333; padding: 10px; margin: 10px 0; display: flex; align-items: center; justify-content: space-between; background: #151515; text-align: left; }
+        
+        /* Ejercito (Verde por defecto) */
+        .Ejercito { border-left: 5px solid var(--neon-green); color: var(--neon-green); }
+        
+        /* FACH (Blanco) */
+        .FACH { border-left: 5px solid var(--fach-white); color: var(--fach-white); }
+        .FACH b, .FACH small { color: var(--fach-white); }
+        
+        /* BOE (Rojo) */
+        .BOE { border-left: 5px solid var(--army-red); color: var(--army-red); }
+        .BOE b, .BOE small { color: var(--army-red); }
+        
+        /* Armada (Azul) */
+        .Armada { border-left: 5px solid var(--armada-blue); color: var(--armada-blue); }
+        .Armada b, .Armada small { color: var(--armada-blue); }
+
+        /* Panel Admin */
         .admin-box { border-color: var(--army-red) !important; display: none; }
-        .admin-title { color: var(--army-red); text-transform: uppercase; }
-        #panel, #listaPanel, #historialPanel { display: none; }
+        .admin-title { color: var(--army-red); text-transform: uppercase; border-bottom: 1px solid var(--army-red); padding-bottom: 5px; }
+        
+        #panel, #listaPanel { display: none; }
     </style>
 </head>
 <body>
@@ -56,18 +78,18 @@
     </div>
 
     <div class="box admin-box" id="adminPanel">
-        <h3 class="admin-title">Panel de Oficiales</h3>
-        <input id="targetEmail" placeholder="Correo del Soldado">
+        <h3 class="admin-title">Panel de Control de Oficiales</h3>
+        <input id="targetEmail" placeholder="Correo del Subalterno">
         <select id="newRankAdmin"></select>
         <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="cambiarRango()" style="width:45%">ACTUALIZAR RANGO</button>
-            <button onclick="sancionar()" style="width:45%; border-color:red; color:red;">SANCIONAR</button>
+            <button onclick="actualizarRango()" style="width:45%; border-color: var(--army-red); color: var(--army-red);">CAMBIAR RANGO</button>
+            <button onclick="sancionar()" style="width:45%; border-color: #ffa500; color: #ffa500;">SANCIONAR</button>
         </div>
     </div>
 
     <div class="box" id="listaPanel">
         <h3>REGISTRO DE TROPAS</h3>
-        <div id="lista">Cargando...</div>
+        <div id="lista">Cargando base de datos...</div>
     </div>
 
 <script type="module">
@@ -94,16 +116,17 @@
         "Teniente Coronel":11, "Coronel":12, "General de Brigada":13, "General de División":14, "General en Jefe":15
     };
 
-    // Llenar select de rangos
+    // Llenar select de rangos para el admin
     const sel = document.getElementById("newRankAdmin");
     Object.keys(RANGOS).forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
     window.register = async function() {
         const email = val("email"), pass = val("password"), div = val("division");
+        if(!email || !pass) return alert("Completa los datos");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "usuarios", email), { email, rango: "Cabo 2°", division: div, estado: "Activo" });
-            alert("Soldado registrado.");
+            alert("Soldado registrado exitosamente.");
         } catch (e) { alert("Error: " + e.message); }
     };
 
@@ -111,11 +134,11 @@
         const email = val("email"), pass = val("password");
         try {
             await signInWithEmailAndPassword(auth, email, pass);
-            mostrarDatos(email);
-        } catch (e) { alert("Acceso denegado."); }
+            mostrarInterfaz(email);
+        } catch (e) { alert("Credenciales incorrectas."); }
     };
 
-    async function mostrarDatos(email) {
+    async function mostrarInterfaz(email) {
         const snap = await getDoc(doc(db, "usuarios", email));
         if (snap.exists()) {
             const data = snap.data();
@@ -123,12 +146,14 @@
             document.getElementById("panel").style.display = "block";
             document.getElementById("listaPanel").style.display = "block";
 
-            document.getElementById("welcome").innerText = "SISTEMA ACTIVO: " + data.email;
+            document.getElementById("welcome").innerText = "USUARIO: " + data.email;
             document.getElementById("rank").innerText = data.rango;
             document.getElementById("div").innerText = data.division || "Sin División";
 
-            // MOSTRAR PANEL SI ES CAPITÁN (9) O SUPERIOR
-            if (RANGOS[data.rango] >= 9) {
+            // MOSTRAR PANEL SI ES CAPITÁN O SUPERIOR (Nivel 9+)
+            // Usamos toLowerCase() solo para comparar si el texto coincide, pero el objeto RANGOS manda.
+            const rangoActual = data.rango;
+            if (RANGOS[rangoActual] >= 9) {
                 document.getElementById("adminPanel").style.display = "block";
             }
             cargarLista();
@@ -136,37 +161,46 @@
     }
 
     async function cargarLista() {
-        const qs = await getDocs(collection(db, "usuarios"));
-        let h = "";
-        qs.forEach(d => {
-            const x = d.data();
-            // Corregimos el error de toLowerCase() con un valor por defecto
-            const divisionSegura = x.division ? x.division : "Ejercito";
-            h += `<div class="tarjeta">
-                <div><b>${x.email}</b><br><small>${x.rango} [${divisionSegura}]</small></div>
-                <div>${x.estado || 'Activo'}</div>
-            </div>`;
-        });
-        document.getElementById("lista").innerHTML = h;
+        try {
+            const qs = await getDocs(collection(db, "usuarios"));
+            let h = "";
+            qs.forEach(d => {
+                const x = d.data();
+                const divClass = x.division || "Ejercito";
+                const emailDisplay = x.email || "Usuario Desconocido";
+                const rangoDisplay = x.rango || "Recluta";
+
+                h += `<div class="tarjeta ${divClass}">
+                    <div><b>${emailDisplay}</b><br><small>${rangoDisplay} [${divClass}]</small></div>
+                    <div>${x.estado || 'Activo'}</div>
+                </div>`;
+            });
+            document.getElementById("lista").innerHTML = h;
+        } catch (e) {
+            console.error("Error cargando lista:", e);
+            document.getElementById("lista").innerHTML = "Error al cargar datos.";
+        }
     }
 
-    window.cambiarRango = async function() {
+    window.actualizarRango = async function() {
         const target = val("targetEmail");
         const nuevo = document.getElementById("newRankAdmin").value;
+        if(!target) return alert("Ingresa el correo del soldado");
         try {
             await updateDoc(doc(db, "usuarios", target), { rango: nuevo });
             alert("Rango actualizado a " + nuevo);
             cargarLista();
-        } catch (e) { alert("Error al actualizar."); }
+        } catch (e) { alert("No se pudo actualizar. Revisa el correo."); }
     };
 
     window.sancionar = async function() {
         const target = val("targetEmail");
+        if(!target) return alert("Ingresa el correo");
         try {
             await updateDoc(doc(db, "usuarios", target), { estado: "Sancionado" });
-            alert("Soldado Sancionado.");
+            alert("Sanción aplicada.");
             cargarLista();
-        } catch (e) { alert("Error."); }
+        } catch (e) { alert("Error al sancionar."); }
     };
 
     window.logout = () => { signOut(auth).then(() => location.reload()); };

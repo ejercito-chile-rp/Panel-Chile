@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Militar Chile - Comando Central </title>
+    <title>Comando Central - Chile</title>
     <style>
         :root { 
             --neon-green: #39ff14; --dark-bg: #0b0f0b; --army-red: #ff3b3b; 
@@ -17,37 +17,38 @@
         }
         .box {
             background: rgba(17, 17, 17, 0.95); border: 1px solid var(--neon-green);
-            width: 100%; max-width: 600px; margin: 20px auto; padding: 20px;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+            width: 100%; max-width: 650px; margin: 20px auto; padding: 25px;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.1); border-radius: 5px;
         }
         input, select, button {
-            margin: 8px 0; padding: 10px; background: #000; color: var(--neon-green);
+            margin: 10px 0; padding: 12px; background: #000; color: var(--neon-green);
             border: 1px solid var(--neon-green); width: 90%; font-family: inherit;
         }
-        button { cursor: pointer; transition: 0.3s; font-weight: bold; }
+        button { cursor: pointer; transition: 0.3s; font-weight: bold; text-transform: uppercase; }
         button:hover { background: var(--neon-green); color: black; }
 
-        .tarjeta { border: 1px solid #333; padding: 10px; margin: 10px 0; display: flex; align-items: center; justify-content: space-between; background: #151515; text-align: left; border-left: 5px solid gray; }
-        .Ejercito { border-left-color: var(--neon-green); color: var(--neon-green); }
-        .FACH { border-left-color: var(--fach-white); color: var(--fach-white); }
-        .BOE { border-left-color: var(--army-red); color: var(--army-red); }
-        .Armada { border-left-color: var(--armada-blue); color: var(--armada-blue); }
-
-        .admin-box { border-color: var(--army-red) !important; display: none; margin-top: 20px; }
-        .admin-title { color: var(--army-red); text-transform: uppercase; border-bottom: 1px solid var(--army-red); margin-bottom: 15px; }
+        .tarjeta { 
+            border: 1px solid #333; padding: 15px; margin: 12px 0; 
+            display: flex; align-items: center; background: rgba(20, 20, 20, 0.8); 
+            text-align: left; border-left: 6px solid gray;
+        }
+        .insignia-img { width: 50px; height: 50px; margin-right: 15px; object-fit: contain; }
         
+        .Ejercito { border-left-color: var(--neon-green); }
+        .FACH { border-left-color: var(--fach-white); }
+        .BOE { border-left-color: var(--army-red); }
+        .Armada { border-left-color: var(--armada-blue); }
+
+        .admin-box { border: 2px solid var(--army-red) !important; display: none; }
         #panel, #listaPanel { display: none; }
-        .label-admin { color: var(--army-red); font-size: 0.8em; display: block; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="box" id="loginBox">
         <h2>SISTEMA MILITAR CHILE</h2>
-        <div id="regFields">
-            <input id="regNombre" type="text" placeholder="Nombre Completo del Soldado">
-        </div>
-        <input id="email" type="email" placeholder="Correo Electrónico">
+        <input id="regNombre" type="text" placeholder="Tu Nombre o Clave">
+        <input id="email" type="email" placeholder="Correo">
         <input id="password" type="password" placeholder="Contraseña">
         <select id="division">
             <option value="Ejercito">Ejército</option>
@@ -55,36 +56,31 @@
             <option value="Armada">Armada</option>
             <option value="BOE">BOE</option>
         </select>
-        <button onclick="register()">REGISTRAR NUEVO SOLDADO</button>
-        <hr style="border-color: #333; margin: 20px 0;">
-        <button onclick="login()">INGRESAR AL SISTEMA</button>
+        <button id="btnReg">Registrar</button>
+        <button id="btnLogin">Entrar</button>
     </div>
 
     <div class="box" id="panel">
         <h3 id="welcome"></h3>
         <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
-        <button onclick="logout()">CERRAR SESIÓN</button>
+        <button id="btnLogout">Cerrar Sesión</button>
     </div>
 
     <div class="box admin-box" id="adminPanel">
-        <h3 class="admin-title">ALTO MANDO: CONTROL DE PERSONAL</h3>
-        <input id="targetEmail" placeholder="Correo del Soldado (Para identificarlo)">
-        <span class="label-admin">Asignar nuevo grado:</span>
+        <h3 style="color:red">ALTO MANDO</h3>
+        <input id="targetEmail" placeholder="Correo del soldado">
         <select id="newRankAdmin"></select>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="actualizarRango()" style="width:45%; border-color: var(--army-red); color: var(--army-red);">APLICAR ASCENSO/BAJA</button>
-            <button onclick="sancionar()" style="width:45%; border-color: orange; color: orange;">SANCIONAR</button>
-        </div>
+        <button id="btnAscender" style="color:red">Aplicar Rango</button>
     </div>
 
     <div class="box" id="listaPanel">
-        <h3>REGISTRO ESTRATÉGICO DE TROPAS</h3>
-        <div id="lista">Sincronizando con satélite...</div>
+        <h3>REGISTRO DE TROPAS</h3>
+        <div id="lista">Cargando datos...</div>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -100,144 +96,80 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const RANGOS = {
-        "Recluta": 0,
-        "Cabo 2°": 1,
-        "Cabo 1°": 2,
-        "Sargento 2°": 3,
-        "Sargento 1°": 4,
-        "Suboficial": 5, 
-        "Suboficial Mayor": 6,
-        "Subteniente": 7,
-        "Teniente": 8,
-        "Capitán": 9,
-        "Capitan": 9,
-        "Mayor": 10, 
-        "Teniente Coronel": 11,
-        "Coronel": 12,
-        "General de Brigada": 13,
-        "General de División": 14,
-        "General en Jefe": 15
-    };
-
+    const RANGOS = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Coronel"];
     const sel = document.getElementById("newRankAdmin");
-    Object.keys(RANGOS).forEach(r => { 
-        if(r !== "Capitan") {
-            let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); 
-        }
-    });
+    RANGOS.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
-    window.register = async function() {
-        const email = val("email"), pass = val("password"), div = val("division"), nombre = val("regNombre");
-        if(!nombre) return alert("¡Debes ingresar un nombre para el soldado!");
-        
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "usuarios", email), { 
-                email, 
-                nombre: nombre,
-                rango: "Recluta", 
-                division: div, 
-                estado: "Activo" 
-            });
-            alert("Soldado " + nombre + " registrado correctamente.");
-        } catch (e) { alert("Error: " + e.message); }
-    };
-
-    window.login = async function() {
-        const email = val("email"), pass = val("password");
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            mostrarInterfaz(email);
-        } catch (e) { alert("Acceso denegado. Revisa tus credenciales."); }
-    };
-
-    async function mostrarInterfaz(email) {
-        const snap = await getDoc(doc(db, "usuarios", email));
-        if (snap.exists()) {
-            const data = snap.data();
-            document.getElementById("loginBox").style.display = "none";
-            document.getElementById("panel").style.display = "block";
-            document.getElementById("listaPanel").style.display = "block";
-
-            // Mostrar NOMBRE en lugar de CORREO
-            document.getElementById("welcome").innerText = "BIENVENIDO: " + (data.nombre || data.email);
-            document.getElementById("rank").innerText = data.rango;
-            document.getElementById("div").innerText = data.division || "Ejercito";
-
-            const nivel = RANGOS[data.rango] || 0;
-            if (nivel >= 9) {
-                document.getElementById("adminPanel").style.display = "block";
-            }
-            cargarLista();
-        }
-    }
-
-    async function cargarLista() {
+    // --- FUNCIONES ---
     async function cargarLista() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
-        
         qs.forEach(d => {
             const x = d.data();
-            const div = x.division || "Ejercito";
-            const rangoReal = x.rango || "Recluta";
-
-            // LÓGICA DE NOMBRES PARA TUS FOTOS:
-            // Esto ajusta el nombre para que coincida con tus archivos en GitHub
-            let archivo = rangoReal.toLowerCase()
-                .replace(/ /g, "_")         // Cambia espacios por guion bajo
-                .replace("í", "i")          // Quita tilde a Capitán -> capitan
-                .replace("ó", "o")          // Por si acaso
-                .replace("suboficial_mayor", "subof_mayor") // Coincide con tu foto 'subof mayor.png'
-                .replace("general_de_brigada", "general_brigada")
-                .replace("general_de_division", "general_division")
-                .replace("general_en_jefe", "general_en_jefe");
-
-            // Si el nombre tiene puntos o grados (ej: Cabo 1°), lo dejamos igual
-            if(rangoReal.includes("°")) {
-                archivo = rangoReal.replace(/ /g, "_");
-            } else {
-                archivo = archivo + ".png";
-            }
-
-            h += `<div class="tarjeta ${div}">
-                <img src="img/${archivo}" 
-                     class="insignia-img" 
-                     style="width:50px; height:50px; margin-right:15px; object-fit:contain;"
-                     onerror="this.src='img/${archivo.toLowerCase()}'; this.onerror=function(){this.style.display='none'};">
-                
-                <div class="info-soldado">
-                    <b style="color:white;">${x.nombre || 'Soldado Anónimo'}</b><br>
-                    <small style="opacity:0.8;">${rangoReal} [${div}]</small>
+            // Limpiamos el nombre para la imagen
+            let imgNom = (x.rango || "Recluta").toLowerCase().replace(/ /g, "_").replace("í", "i") + ".png";
+            
+            h += `<div class="tarjeta ${x.division}">
+                <img src="img/${imgNom}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/614/614131.png'">
+                <div>
+                    <b>${x.nombre || 'Soldado Anónimo'}</b><br>
+                    <small>${x.rango} [${x.division}]</small>
                 </div>
-                <div style="font-weight:bold; font-size: 12px; color: #39ff14;">${x.estado || 'Activo'}</div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
     }
 
-    window.actualizarRango = async function() {
-        const target = val("targetEmail"), nuevo = sel.value;
-        if(!target) return alert("Ingresa el correo del soldado para localizarlo");
+    // --- EVENTOS (Esto arregla el error de "not defined") ---
+    document.getElementById("btnReg").onclick = async () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        const nom = document.getElementById("regNombre").value;
+        const div = document.getElementById("division").value;
         try {
-            await updateDoc(doc(db, "usuarios", target), { rango: nuevo });
-            alert("Rango actualizado con éxito.");
-            cargarLista();
-        } catch (e) { alert("Error: No se encontró el correo en la base de datos."); }
+            await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div });
+            alert("Registrado!");
+        } catch(e) { alert(e.message); }
     };
 
-    window.sancionar = async function() {
-        const target = val("targetEmail");
+    document.getElementById("btnLogin").onclick = async () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
         try {
-            await updateDoc(doc(db, "usuarios", target), { estado: "Sancionado" });
-            alert("Sanción aplicada al soldado.");
-            cargarLista();
-        } catch (e) { alert("Error al procesar sanción."); }
+            await signInWithEmailAndPassword(auth, email, pass);
+        } catch(e) { alert("Error al entrar"); }
     };
 
-    window.logout = () => { signOut(auth).then(() => location.reload()); };
-    function val(id) { return document.getElementById(id).value; }
+    document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
+
+    document.getElementById("btnAscender").onclick = async () => {
+        const email = document.getElementById("targetEmail").value;
+        const nuevo = document.getElementById("newRankAdmin").value;
+        try {
+            await updateDoc(doc(db, "usuarios", email), { rango: nuevo });
+            alert("Ascendido!");
+            cargarLista();
+        } catch(e) { alert("No se encontró el correo"); }
+    };
+
+    // --- ESTADO DE LA SESIÓN ---
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const snap = await getDoc(doc(db, "usuarios", user.email));
+            if (snap.exists()) {
+                const d = snap.data();
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("panel").style.display = "block";
+                document.getElementById("listaPanel").style.display = "block";
+                document.getElementById("welcome").innerText = "OFICIAL: " + d.nombre;
+                document.getElementById("rank").innerText = d.rango;
+                document.getElementById("div").innerText = d.division;
+                if(d.rango === "Coronel" || d.rango === "Capitán") document.getElementById("adminPanel").style.display = "block";
+                cargarLista();
+            }
+        }
+    });
 </script>
 </body>
 </html>

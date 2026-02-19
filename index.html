@@ -56,8 +56,8 @@
             <option value="Armada">Armada</option>
             <option value="BOE">BOE</option>
         </select>
-        <button id="btnReg">Registrar Soldado</button>
-        <button id="btnLogin">Ingresar al Sistema</button>
+        <button id="btnReg">Registrar</button>
+        <button id="btnLogin">Entrar</button>
     </div>
 
     <div class="box" id="panel">
@@ -67,15 +67,15 @@
     </div>
 
     <div class="box admin-box" id="adminPanel">
-        <h3 style="color:red">ALTO MANDO: GESTIÓN</h3>
+        <h3 style="color:red">ALTO MANDO</h3>
         <input id="targetEmail" placeholder="Correo del soldado">
         <select id="newRankAdmin"></select>
-        <button id="btnAscender" style="color:red; border-color:red;">Actualizar Rango</button>
+        <button id="btnAscender" style="color:red">Aplicar Rango</button>
     </div>
 
     <div class="box" id="listaPanel">
         <h3>REGISTRO ESTRATÉGICO DE TROPAS</h3>
-        <div id="lista">Cargando base de datos...</div>
+        <div id="lista">Cargando datos...</div>
     </div>
 
 <script type="module">
@@ -96,54 +96,58 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Coronel"];
-    const selAdmin = document.getElementById("newRankAdmin");
-    RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; selAdmin.appendChild(o); });
+    const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Coronel", "General en Jefe"];
+    const sel = document.getElementById("newRankAdmin");
+    RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
-    // --- FUNCIÓN PARA MOSTRAR LA LISTA CON INSIGNIAS ---
+    // --- FUNCIÓN DE CARGA ---
     async function cargarLista() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
+        
+        // MAPA DE INSIGNIAS (Esto soluciona lo del Cabo 2°)
+        const mapaInsignias = {
+            "Cabo 2°": "cabo_2.png",
+            "Cabo 1°": "cabo_1.png",
+            "Sargento 2°": "sargento_2.png",
+            "Sargento 1°": "sargento_1.png",
+            "General en Jefe": "general_en_jefe.png",
+            "General de Brigada": "general_brigada.png",
+            "General de División": "general_division.png",
+            "Suboficial Mayor": "subof_mayor.png"
+        };
+
         qs.forEach(d => {
             const x = d.data();
-            const rangoNombre = x.rango || "Recluta";
+            const rangoReal = x.rango || "Recluta";
             
-            // --- DENTRO DE cargarLista() ---
-let imgNom = rangoNombre.toLowerCase().replace(/ /g, "_").replace("í", "i");
+            // Busca en el mapa, si no está, lo limpia automáticamente
+            let archivoFinal = mapaInsignias[rangoReal] || rangoReal.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
 
-// REGLA ESPECIAL PARA CABOS:
-if (rangoNombre.includes("Cabo 1")) {
-    imgNom = "cabo_1.png";
-} else if (rangoNombre.includes("Cabo 2")) {
-    imgNom = "cabo_2.png";
-} else {
-    // Para el resto de rangos, quitamos el ° y añadimos .png
-    imgNom = imgNom.replace("°", "") + ".png";
-}
             h += `<div class="tarjeta ${x.division}">
-                <img src="img/${imgNom}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/614/614131.png'">
+                <img src="img/${archivoFinal}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
                 <div>
                     <b style="color:white;">${x.nombre || 'Soldado Anónimo'}</b><br>
-                    <small>${rangoNombre} [${x.division}]</small>
+                    <small>${rangoReal} [${x.division}]</small>
                 </div>
-                <div style="margin-left:auto; font-size:12px; color:var(--neon-green);">Activo</div>
+                <div style="margin-left:auto; font-size:11px; color:var(--neon-green);">ACTIVO</div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
     }
 
-    // --- CONEXIÓN DE BOTONES (Soluciona el error 'not defined') ---
+    // --- BOTONES ---
     document.getElementById("btnReg").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
         const nom = document.getElementById("regNombre").value;
         const div = document.getElementById("division").value;
-        if(!nom || !email || !pass) return alert("Completa todos los campos");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div });
-            alert("Soldado registrado exitosamente.");
-        } catch(e) { alert("Error: " + e.message); }
+            alert("¡Soldado Registrado!");
+            cargarLista();
+        } catch(e) { alert(e.message); }
     };
 
     document.getElementById("btnLogin").onclick = async () => {
@@ -151,7 +155,7 @@ if (rangoNombre.includes("Cabo 1")) {
         const pass = document.getElementById("password").value;
         try {
             await signInWithEmailAndPassword(auth, email, pass);
-        } catch(e) { alert("Credenciales incorrectas"); }
+        } catch(e) { alert("Error al entrar"); }
     };
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
@@ -161,12 +165,11 @@ if (rangoNombre.includes("Cabo 1")) {
         const nuevo = document.getElementById("newRankAdmin").value;
         try {
             await updateDoc(doc(db, "usuarios", email), { rango: nuevo });
-            alert("Rango actualizado para " + email);
+            alert("¡Rango actualizado!");
             cargarLista();
-        } catch(e) { alert("No se encontró el soldado"); }
+        } catch(e) { alert("Error"); }
     };
 
-    // --- CONTROL DE SESIÓN ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "usuarios", user.email));
@@ -175,11 +178,10 @@ if (rangoNombre.includes("Cabo 1")) {
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("panel").style.display = "block";
                 document.getElementById("listaPanel").style.display = "block";
-                document.getElementById("welcome").innerText = "CONECTADO: " + (d.nombre || user.email);
+                document.getElementById("welcome").innerText = "OFICIAL: " + d.nombre;
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
-                // Mostrar panel admin solo si es Coronel o Capitán
-                if(d.rango === "Coronel" || d.rango === "Capitán" || d.rango === "Capitan") {
+                if(d.rango === "Coronel" || d.rango === "Capitán" || d.rango === "General en Jefe") {
                     document.getElementById("adminPanel").style.display = "block";
                 }
                 cargarLista();

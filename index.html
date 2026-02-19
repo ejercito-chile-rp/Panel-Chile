@@ -122,6 +122,7 @@
             <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
             <div id="expImgContainer"></div>
             <p id="expRangoDiv"></p>
+            <p id="expAntiguedad" style="color:#aaa; font-style:italic; font-size:0.9em;"></p>
             <hr>
             <h4>CONDECORACIONES:</h4>
             <div id="expMedallas"></div>
@@ -167,9 +168,21 @@
             const x = snap.data();
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
+            
+            // Cálculo de antigüedad
+            if(x.fechaIngreso) {
+                const fIngreso = new Date(x.fechaIngreso);
+                const hoy = new Date();
+                const diffTime = Math.abs(hoy - fIngreso);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diffDays - 1} DÍAS`;
+            } else {
+                document.getElementById("expAntiguedad").innerText = "ANTIGÜEDAD NO REGISTRADA";
+            }
+
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
-            document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones aún.";
+            document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
             document.getElementById("modalExpediente").style.display = "block";
         }
     };
@@ -224,7 +237,8 @@
         if(!nom || !email || !pass) return alert("Faltan datos");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [] });
+            const hoy = new Date().toISOString();
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy });
             alert("Soldado registrado."); cargarDatos();
         } catch(e) { alert(e.message); }
     };

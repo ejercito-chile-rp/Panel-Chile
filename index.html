@@ -46,20 +46,19 @@
 <body>
 
     <div class="box" id="loginBox">
-        <h2>SISTEMA MILITAR CHILE</h2>
-        <input id="regNombre" type="text" placeholder="Tu Nombre o Clave">
-        <input id="email" type="email" placeholder="Correo">
-        <input id="password" type="password" placeholder="Contraseña">
-        <select id="division">
-            <option value="Ejercito">Ejército</option>
-            <option value="FACH">FACH</option>
-            <option value="Armada">Armada</option>
-            <option value="BOE">BOE</option>
-        </select>
-        <button id="btnReg">Registrar</button>
-        <button id="btnLogin">Entrar</button>
-    </div>
-
+    <h2>SISTEMA MILITAR CHILE</h2>
+    <input id="regNombre" type="text" placeholder="Tu Nombre o Clave">
+    <input id="email" type="email" placeholder="Correo">
+    <input id="password" type="password" placeholder="Contraseña">
+    <select id="division">
+        <option value="Ejercito">Ejército</option>
+        <option value="FACH">FACH</option>
+        <option value="Armada">Armada</option>
+        <option value="BOE">BOE</option>
+    </select>
+    <button id="btnReg">Registrar</button>
+    <button id="btnLogin">Entrar</button>
+</div>
     <div class="box" id="panel">
         <h3 id="welcome"></h3>
         <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
@@ -120,26 +119,35 @@
         document.getElementById("lista").innerHTML = h;
     }
 
-    // --- EVENTOS (Esto arregla el error de "not defined") ---
-    document.getElementById("btnReg").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        const nom = document.getElementById("regNombre").value;
-        const div = document.getElementById("division").value;
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div });
-            alert("Registrado!");
-        } catch(e) { alert(e.message); }
-    };
+   
+    document.getElementById("btnReg").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    const nom = document.getElementById("regNombre").value;
+    const div = document.getElementById("division").value;
+    try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "usuarios", email), { 
+            email, 
+            nombre: nom, 
+            rango: "Recluta", 
+            division: div,
+            estado: "Activo" 
+        });
+        alert("¡Soldado Registrado!");
+    } catch(e) { alert("Error al registrar: " + e.message); }
+});
 
-    document.getElementById("btnLogin").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-        } catch(e) { alert("Error al entrar"); }
-    };
+document.getElementById("btnLogin").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        // No hace falta alert, el onAuthStateChanged se encarga del resto
+    } catch(e) { 
+        alert("Error: Revisa tu correo o contraseña"); 
+    }
+});
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
 

@@ -101,9 +101,23 @@
     const db = getFirestore(app);
 
     const RANGOS = {
-        "Recluta":0, "Cabo 2°":1, "Cabo 1°":2, "Sargento 2°":3, "Sargento 1°":4, "Suboficial":5, 
-        "Suboficial Mayor":6, "Subteniente":7, "Teniente":8, "Capitán":9, "Capitan":9, "Mayor":10, 
-        "Teniente Coronel":11, "Coronel":12, "General de Brigada":13, "General de División":14, "General en Jefe":15
+        "Recluta": 0,
+        "Cabo 2°": 1,
+        "Cabo 1°": 2,
+        "Sargento 2°": 3,
+        "Sargento 1°": 4,
+        "Suboficial": 5, 
+        "Suboficial Mayor": 6,
+        "Subteniente": 7,
+        "Teniente": 8,
+        "Capitán": 9,
+        "Capitan": 9,
+        "Mayor": 10, 
+        "Teniente Coronel": 11,
+        "Coronel": 12,
+        "General de Brigada": 13,
+        "General de División": 14,
+        "General en Jefe": 15
     };
 
     const sel = document.getElementById("newRankAdmin");
@@ -160,27 +174,44 @@
     }
 
     async function cargarLista() {
+    async function cargarLista() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
+        
         qs.forEach(d => {
             const x = d.data();
             const div = x.division || "Ejercito";
-            const rangoNombre = x.rango || "Recluta";
-            
-            // Esto prepara el nombre del archivo (ej: "Cabo_1°.png")
-            const archivo = rangoNombre.replace(/ /g, "_") + ".png";
-            
+            const rangoReal = x.rango || "Recluta";
+
+            // LÓGICA DE NOMBRES PARA TUS FOTOS:
+            // Esto ajusta el nombre para que coincida con tus archivos en GitHub
+            let archivo = rangoReal.toLowerCase()
+                .replace(/ /g, "_")         // Cambia espacios por guion bajo
+                .replace("í", "i")          // Quita tilde a Capitán -> capitan
+                .replace("ó", "o")          // Por si acaso
+                .replace("suboficial_mayor", "subof_mayor") // Coincide con tu foto 'subof mayor.png'
+                .replace("general_de_brigada", "general_brigada")
+                .replace("general_de_division", "general_division")
+                .replace("general_en_jefe", "general_en_jefe");
+
+            // Si el nombre tiene puntos o grados (ej: Cabo 1°), lo dejamos igual
+            if(rangoReal.includes("°")) {
+                archivo = rangoReal.replace(/ /g, "_");
+            } else {
+                archivo = archivo + ".png";
+            }
+
             h += `<div class="tarjeta ${div}">
                 <img src="img/${archivo}" 
                      class="insignia-img" 
-                     style="width:45px; height:45px; margin-right:15px; object-fit:contain;"
-                     onerror="this.onerror=null; this.src='Img/${archivo}'; this.setAttribute('onerror', 'this.src=\'https://cdn-icons-png.flaticon.com/512/614/614131.png\'')">
+                     style="width:50px; height:50px; margin-right:15px; object-fit:contain;"
+                     onerror="this.src='img/${archivo.toLowerCase()}'; this.onerror=function(){this.style.display='none'};">
                 
                 <div class="info-soldado">
-                    <b>${x.nombre || 'Soldado Anónimo'}</b><br>
-                    <small>${rangoNombre} [${div}]</small>
+                    <b style="color:white;">${x.nombre || 'Soldado Anónimo'}</b><br>
+                    <small style="opacity:0.8;">${rangoReal} [${div}]</small>
                 </div>
-                <div style="font-weight:bold; font-size: 12px;">${x.estado || 'Activo'}</div>
+                <div style="font-weight:bold; font-size: 12px; color: #39ff14;">${x.estado || 'Activo'}</div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;

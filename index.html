@@ -7,7 +7,7 @@
     <style>
         :root { 
             --neon-green: #39ff14; --dark-bg: #0b0f0b; --army-red: #ff3b3b; 
-            --fach-white: #ffffff; --armada-blue: #1e90ff;
+            --fach-white: #ffffff; --armada-blue: #1e90ff; --gold: #ffd700;
         }
         body {
             background: var(--dark-bg); color: var(--neon-green); font-family: 'Consolas', monospace;
@@ -26,18 +26,35 @@
         }
         button { cursor: pointer; transition: 0.3s; font-weight: bold; text-transform: uppercase; }
         button:hover { background: var(--neon-green); color: black; }
+        
         .tarjeta { 
             border: 1px solid #333; padding: 15px; margin: 12px 0; 
             display: flex; align-items: center; background: rgba(20, 20, 20, 0.8); 
-            text-align: left; border-left: 6px solid gray;
+            text-align: left; border-left: 6px solid gray; cursor: pointer; transition: 0.2s;
         }
+        .tarjeta:hover { filter: brightness(1.3); transform: scale(1.01); }
         .insignia-img { width: 50px; height: 50px; margin-right: 15px; object-fit: contain; }
+        
         .Ejercito { border-left-color: var(--neon-green); }
         .FACH { border-left-color: var(--fach-white); }
         .BOE { border-left-color: var(--army-red); }
         .Armada { border-left-color: var(--armada-blue); }
+
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
         #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
+        
+        /* Modal del Expediente */
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            background: #050505; border: 2px solid var(--neon-green);
+            margin: 5% auto; padding: 30px; width: 80%; max-width: 500px;
+            box-shadow: 0 0 30px var(--neon-green); text-align: center;
+        }
+        .medal-icon { font-size: 30px; margin: 5px; display: inline-block; filter: drop-shadow(0 0 5px var(--gold)); }
+
         #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
@@ -45,6 +62,7 @@
     </style>
 </head>
 <body>
+
     <div class="box" id="loginBox">
         <h2>SISTEMA MILITAR CHILE</h2>
         <input id="regNombre" type="text" placeholder="Tu Nombre o Clave">
@@ -67,8 +85,8 @@
     </div>
 
     <div class="box" id="logPanel">
-        <h3>HISTORIAL DE MANDO (ÚLTIMO REPORTE)</h3>
-        <div id="logContent">Sincronizando con el satélite...</div>
+        <h3>HISTORIAL DE MANDO</h3>
+        <div id="logContent">Sincronizando...</div>
     </div>
 
     <div class="box" id="statsPanel">
@@ -82,6 +100,15 @@
         <select id="newRankAdmin"></select>
         <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR RANGO</button>
         <button id="btnBaja" style="background: #400; color: white; border: 1px solid red;">DAR DE BAJA (ELIMINAR)</button>
+        <hr style="border:0.5px solid #333; margin:15px 0;">
+        <input id="targetMedalla" placeholder="Correo para condecorar">
+        <select id="selectMedalla">
+            <option value="🎖️">Medalla al Valor</option>
+            <option value="🛡️">Escudo de Lealtad</option>
+            <option value="⭐">Estrella de Puntería</option>
+            <option value="🔥">Infante de Élite</option>
+        </select>
+        <button id="btnMedalla" style="border-color: var(--gold); color: var(--gold);">CONDECORAR SOLDADO</button>
     </div>
 
     <div class="box" id="listaPanel">
@@ -90,10 +117,23 @@
         <div id="lista">Cargando base de datos...</div>
     </div>
 
+    <div id="modalExpediente" class="modal">
+        <div class="modal-content">
+            <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
+            <div id="expImgContainer"></div>
+            <p id="expRangoDiv"></p>
+            <hr>
+            <h4>CONDECORACIONES:</h4>
+            <div id="expMedallas"></div>
+            <br>
+            <button onclick="cerrarModal()">CERRAR EXPEDIENTE</button>
+        </div>
+    </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
@@ -116,10 +156,25 @@
         let input = document.getElementById('searchBar').value.toLowerCase();
         let tarjetas = document.getElementsByClassName('tarjeta');
         for (let i = 0; i < tarjetas.length; i++) {
-            let nombre = tarjetas[i].getElementsByTagName("b")[0].innerText.toLowerCase();
+            let nombre = tarjetas[i].getAttribute('data-nombre').toLowerCase();
             tarjetas[i].style.display = nombre.includes(input) ? "flex" : "none";
         }
     };
+
+    window.verExpediente = async (email) => {
+        const snap = await getDoc(doc(db, "usuarios", email));
+        if (snap.exists()) {
+            const x = snap.data();
+            document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
+            document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
+            let meds = "";
+            if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
+            document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones aún.";
+            document.getElementById("modalExpediente").style.display = "block";
+        }
+    };
+
+    window.cerrarModal = () => document.getElementById("modalExpediente").style.display = "none";
 
     async function cargarLogs() {
         const snap = await getDoc(doc(db, "config", "logs"));
@@ -129,8 +184,7 @@
     async function registrarAccion(mensaje) {
         const ahora = new Date();
         const fechaHora = ahora.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
-        const mensajeFinal = `[${fechaHora}] ${mensaje}`;
-        await setDoc(doc(db, "config", "logs"), { ultimaAccion: mensajeFinal });
+        await setDoc(doc(db, "config", "logs"), { ultimaAccion: `[${fechaHora}] ${mensaje}` });
         cargarLogs();
     }
 
@@ -146,10 +200,10 @@
             counts[x.division] = (counts[x.division] || 0) + 1;
             counts.Total++;
             let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
-            h += `<div class="tarjeta ${x.division}">
+            h += `<div class="tarjeta ${x.division}" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')">
                 <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
                 <div><b style="color:white;">${x.nombre || 'Anónimo'}</b><br><small>${r} [${x.division}]</small></div>
-                <div style="margin-left:auto; font-size:11px; color:var(--neon-green);">ACTIVO</div>
+                <div style="margin-left:auto;">${x.medallas ? x.medallas[0] || '' : ''} <small style="color:var(--neon-green);">ACTIVO</small></div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
@@ -170,7 +224,7 @@
         if(!nom || !email || !pass) return alert("Faltan datos");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div });
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [] });
             alert("Soldado registrado."); cargarDatos();
         } catch(e) { alert(e.message); }
     };
@@ -190,6 +244,17 @@
             await updateDoc(doc(db, "usuarios", email), { rango: nuevo }); 
             registrarAccion(`${nombreUsuarioActual} cambió el rango de ${email} a ${nuevo}`);
             alert("Rango actualizado."); cargarDatos(); 
+        } catch(e) { alert("Error"); }
+    };
+
+    document.getElementById("btnMedalla").onclick = async () => {
+        const email = document.getElementById("targetMedalla").value;
+        const med = document.getElementById("selectMedalla").value;
+        if(!email) return alert("Ingresa el correo");
+        try {
+            await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
+            registrarAccion(`${nombreUsuarioActual} otorgó una condecoración ${med} a ${email}`);
+            alert("Medalla otorgada!"); cargarDatos();
         } catch(e) { alert("Error"); }
     };
 

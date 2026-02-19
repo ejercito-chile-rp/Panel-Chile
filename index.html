@@ -41,7 +41,7 @@
         #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
-        #logContent { font-size: 0.85em; color: #aaa; font-style: italic; }
+        #logContent { font-size: 0.85em; color: #39ff14; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -67,8 +67,8 @@
     </div>
 
     <div class="box" id="logPanel">
-        <h3>HISTORIAL DE MANDO</h3>
-        <div id="logContent">Esperando reporte...</div>
+        <h3>HISTORIAL DE MANDO (ÚLTIMO REPORTE)</h3>
+        <div id="logContent">Sincronizando con el satélite...</div>
     </div>
 
     <div class="box" id="statsPanel">
@@ -127,7 +127,10 @@
     }
 
     async function registrarAccion(mensaje) {
-        await setDoc(doc(db, "config", "logs"), { ultimaAccion: mensaje });
+        const ahora = new Date();
+        const fechaHora = ahora.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
+        const mensajeFinal = `[${fechaHora}] ${mensaje}`;
+        await setDoc(doc(db, "config", "logs"), { ultimaAccion: mensajeFinal });
         cargarLogs();
     }
 

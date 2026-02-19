@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Militar Chile - Sistema Central</title>
+    <style>
+        :root {
+            --neon-green: #39ff14;
+            --dark-bg: #0b0f0b;
+            --army-red: #ff3b3b;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--neon-green);
+            font-family: 'Consolas', monospace;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+        }
+
+        .box {
+            background: rgba(17, 17, 17, 0.95);
+            border: 1px solid var(--neon-green);
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        input, select, button {
+            margin: 8px 0;
+            padding: 10px;
+            background: #000;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            width: 90%;
+            font-family: inherit;
+        }
+
+        button { cursor: pointer; transition: 0.3s; font-weight: bold; }
+        button:hover { background: var(--neon-green); color: black; }
+
+        .tarjeta {
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #151515;
+            text-align: left;
+        }
+
+        .Ejercito { border-left: 5px solid #4B5320; }
+        .FACH { border-left: 5px solid #ffffff; }
+        .Armada { border-left: 5px solid #1e90ff; }
+        .BOE { border-left: 5px solid #ff3b3b; }
+
+        .insignia { width: 45px; height: 45px; object-fit: contain; margin-right: 15px; }
+
+        .orden-item {
+            font-size: 0.85em;
+            border-bottom: 1px solid #222;
+            padding: 5px 0;
+            text-align: left;
+        }
+
+        #panel, #listaPanel, #adminPanel, #historialPanel { display: none; }
+        .red-border { border-color: var(--army-red) !important; color: var(--army-red) !important; }
+    </style>
+</head>
+<body>
+
+    <div class="box" id="loginBox">
+        <h2>CENTRO DE MANDO CHILE</h2>
+        <input id="email" type="email" placeholder="Correo Electrónico">
+        <input id="password" type="password" placeholder="Clave de Acceso">
+        <select id="division">
+            <option value="Ejercito">Ejército de Chile</option>
+            <option value="FACH">FACH</option>
+            <option value="Armada">Armada de Chile</option>
+            <option value="BOE">BOE (Fuerzas Especiales)</option>
+        </select>
+        <button onclick="register()">REGISTRAR NUEVO SOLDADO</button>
+        <button onclick="login()">INGRESAR AL SISTEMA</button>
+        <p id="msg"></p>
+    </div>
+
+    <div class="box" id="panel">
+        <h3 id="welcome"></h3>
+        <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
+        <p>ESTADO: <span id="estado"></span></p>
+        <button onclick="logout()">CERRAR SESIÓN</button>
+    </div>
+
+    <div class="box red-border" id="adminPanel">
+        <h3>ALTO MANDO: GESTIÓN DE PERSONAL</h3>
+        <input id="targetEmail" placeholder="Correo del Subalterno">
+        <select id="newRankAdmin"></select>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="ejecutarAccion('Ascenso')" style="width:45%">ASCENDER</button>
+            <button onclick="ejecutarAccion('Sancion')" class="red-border" style="width:45%">SANCIONAR</button>
+        </div>
+    </div>
+
+    <div class="box" id="listaPanel">
+        <h3>REGISTRO DE TROPAS</h3>
+        <div id="lista">Cargando...</div>
+    </div>
+
+    <div class="box" id="historialPanel">
+        <h3>LIBRO DE ÓRDENES (HISTORIAL)</h3>
+        <div id="historialLista" style="max-height: 200px; overflow-y: auto;"></div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
+        authDomain: "panel-chile.firebaseapp.com",
+        projectId: "panel-chile",
+        storageBucket: "panel-chile.firebasestorage.app",
+        messagingSenderId: "124864601883",
+        appId: "1:124864601883:web:839163be2060253f68bdbe"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const RANGOS = {
+        "Cabo 2°":1, "Cabo 1°":2, "Sargento 2°":3, "Sargento 1°":4, "Suboficial":5, 
+        "Suboficial Mayor":6, "Subteniente":7, "Teniente":8, "Capitán":9, "Mayor":10, 
+        "Teniente Coronel":11, "Coronel":12, "General de Brigada":13, "General de División":14, "General en Jefe":15
+    };
+
+    const INSIGNIAS = {
+        "Cabo 2°":"cabo2.png", "Cabo 1°":"cabo1.png", "Sargento 2°":"sarg2.png", "Sargento 1°":"sarg1.png",
+        "Suboficial":"subof.png", "Suboficial Mayor":"subofmayor.png", "Subteniente":"subteniente.png",
+        "Teniente":"teniente.png", "Capitán":"capitan.png", "Mayor":"mayor.png", "Teniente Coronel":"tcol.png",
+        "Coronel":"coronel.png", "General de Brigada":"gbrigada.png", "General de División":"gdivision.png", "General en Jefe":"gjefe.png"
+    };
+
+    // Llenar select de rangos
+    const selAdmin = document.getElementById("newRankAdmin");
+    Object.keys(RANGOS).forEach(r => {
+        let o = document.createElement("option"); o.value = r; o.textContent = r;
+        selAdmin.appendChild(o);
+    });
+
+    window.register = async function() {
+        const email = val("email"), pass = val("password"), div = val("division");
+        try {
+            await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "usuarios", email), { email, rango: "Cabo 2°", division: div, estado: "Activo" });
+            alert("Soldado Registrado.");
+        } catch (e) { alert("Error: " + e.message); }
+    };
+
+    window.login = async function() {
+        const email = val("email"), pass = val("password");
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            const snap = await getDoc(doc(db, "usuarios", email));
+            const data = snap.data();
+
+            document.getElementById("loginBox").style.display = "none";
+            document.getElementById("panel").style.display = "block";
+            document.getElementById("listaPanel").style.display = "block";
+            document.getElementById("historialPanel").style.display = "block";
+
+            document.getElementById("welcome").innerText = "SISTEMA ACTIVO: " + email;
+            document.getElementById("rank").innerText = data.rango;
+            document.getElementById("div").innerText = data.division;
+            document.getElementById("estado").innerText = data.estado;
+
+            if (RANGOS[data.rango] >= 9) document.getElementById("adminPanel").style.display = "block";
+
+            cargarLista();
+            cargarHistorial();
+        } catch (e) { alert("Acceso denegado."); }
+    };
+
+    async function cargarLista() {
+        const qs = await getDocs(collection(db, "usuarios"));
+        let h = "";
+        qs.forEach(d => {
+            const x = d.data();
+            const img = `img/rangos/${x.division.toLowerCase()}/${INSIGNIAS[x.rango]}`;
+            h += `<div class="tarjeta ${x.division}">
+                <div style="display:flex; align-items:center;">
+                    <img src="${img}" class="insignia" onerror="this.src='https://via.placeholder.com/40?text=M'">
+                    <div><b>${x.email}</b><br><small>${x.rango} - ${x.division}</small></div>
+                </div>
+                <div>${x.estado}</div>
+            </div>`;
+        });
+        document.getElementById("lista").innerHTML = h;
+    }
+
+    window.ejecutarAccion = async function(tipo) {
+        const target = val("targetEmail");
+        const nuevoRango = document.getElementById("newRankAdmin").value;
+        const oficial = auth.currentUser.email;
+
+        if(!target) return alert("Ingrese correo");
+
+        try {
+            if(tipo === 'Ascenso') {
+                await updateDoc(doc(db, "usuarios", target), { rango: nuevoRango });
+            } else {
+                await updateDoc(doc(db, "usuarios", target), { estado: "Sancionado" });
+            }
+
+            // GUARDAR EN HISTORIAL
+            await addDoc(collection(db, "historial"), {
+                oficial: oficial,
+                accion: tipo === 'Ascenso' ? `Ascendió a ${nuevoRango}` : "Sancionó al usuario",
+                objetivo: target,
+                fecha: new Date().toLocaleString()
+            });
+
+            alert("Orden ejecutada y registrada.");
+            cargarLista();
+            cargarHistorial();
+        } catch (e) { alert("Error en operación."); }
+    };
+
+    async function cargarHistorial() {
+        const q = query(collection(db, "historial"), orderBy("fecha", "desc"), limit(10));
+        const qs = await getDocs(q);
+        let h = "";
+        qs.forEach(d => {
+            const o = d.data();
+            h += `<div class="orden-item">
+                [${o.fecha}] <b>${o.oficial.split('@')[0]}</b>: ${o.accion} a <b>${o.objetivo.split('@')[0]}</b>
+            </div>`;
+        });
+        document.getElementById("historialLista").innerHTML = h || "Sin órdenes recientes.";
+    }
+
+    window.logout = () => { signOut(auth); location.reload(); };
+    function val(id) { return document.getElementById(id).value; }
+</script>
+</body>
+</html>

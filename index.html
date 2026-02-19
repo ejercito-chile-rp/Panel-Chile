@@ -41,9 +41,9 @@
         .Armada { border-left-color: var(--armada-blue); }
 
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
-        /* El logPanel ahora inicia oculto por defecto */
         #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
         
+        /* MODAL Y BARRA DE PROGRESO */
         .modal {
             display: none; position: fixed; z-index: 100; left: 0; top: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -53,7 +53,18 @@
             margin: 5% auto; padding: 30px; width: 80%; max-width: 500px;
             box-shadow: 0 0 30px var(--neon-green); text-align: center;
         }
+        .progress-container {
+            width: 100%; background-color: #222; border: 1px solid var(--neon-green);
+            height: 20px; margin: 15px 0; border-radius: 10px; overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, #1e5210, var(--neon-green));
+            width: 0%; transition: width 1s ease-in-out;
+        }
         .medal-icon { font-size: 30px; margin: 5px; display: inline-block; filter: drop-shadow(0 0 5px var(--gold)); }
+        .hitos-container { display: flex; justify-content: space-around; margin-top: 10px; }
+        .hito { opacity: 0.2; filter: grayscale(1); font-size: 0.8em; }
+        .hito.active { opacity: 1; filter: grayscale(0); color: var(--gold); font-weight: bold; }
 
         #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
@@ -123,8 +134,22 @@
         <div class="modal-content">
             <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
             <p id="expRangoDiv"></p>
-            <p id="expAntiguedad" style="color:#aaa; font-style:italic; font-size:0.9em;"></p>
-            <p id="expUltimaCon" style="color:var(--armada-blue); font-size:0.8em; margin-top: -10px;"></p>
+            
+            <div style="background: #111; padding: 15px; border-radius: 5px; border: 1px solid #333;">
+                <span id="expAntiguedad" style="color:#fff; font-weight: bold;"></span>
+                <div class="progress-container">
+                    <div id="expBarra" class="progress-bar"></div>
+                </div>
+                <small id="expFaltante" style="color:#888;"></small>
+                
+                <div class="hitos-container">
+                    <div id="hito1" class="hito">🥉 15 Días</div>
+                    <div id="hito2" class="hito">🥈 30 Días</div>
+                    <div id="hito3" class="hito">🥇 60 Días</div>
+                </div>
+            </div>
+
+            <p id="expUltimaCon" style="color:var(--armada-blue); font-size:0.8em; margin-top: 15px;"></p>
             <hr>
             <h4>CONDECORACIONES:</h4>
             <div id="expMedallas"></div>
@@ -177,14 +202,26 @@
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
             
+            // CÁLCULO DE DÍAS Y BARRA
             let diasBase = 0;
             if(x.fechaIngreso) {
                 const fIngreso = new Date(x.fechaIngreso);
                 const hoy = new Date();
                 diasBase = Math.floor(Math.abs(hoy - fIngreso) / (1000 * 60 * 60 * 24));
             }
-            const diasManuales = parseInt(x.antiguedadManual || 0);
-            document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + diasManuales} DÍAS`;
+            const totalDias = diasBase + parseInt(x.antiguedadManual || 0);
+            const meta = 30; // Meta para llenar la barra
+            const porcentaje = Math.min((totalDias / meta) * 100, 100);
+            
+            document.getElementById("expAntiguedad").innerText = `${totalDias} DÍAS EN SERVICIO`;
+            document.getElementById("expBarra").style.width = porcentaje + "%";
+            document.getElementById("expFaltante").innerText = totalDias >= meta ? "META DE SERVICIO ALCANZADA" : `FALTAN ${meta - totalDias} DÍAS PARA EL SIGUIENTE HITO`;
+            
+            // ACTIVAR HITOS VISUALES
+            document.getElementById("hito1").className = totalDias >= 15 ? "hito active" : "hito";
+            document.getElementById("hito2").className = totalDias >= 30 ? "hito active" : "hito";
+            document.getElementById("hito3").className = totalDias >= 60 ? "hito active" : "hito";
+
             document.getElementById("expUltimaCon").innerText = `ÚLTIMA CONEXIÓN: ${formatearFecha(x.ultimaConexion)}`;
 
             let meds = "";
@@ -317,8 +354,6 @@
                 await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
 
                 document.getElementById("loginBox").style.display = "none";
-                
-                // Estos paneles se muestran para TODOS los logueados
                 ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
                 
                 document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual;
@@ -326,10 +361,8 @@
                 document.getElementById("div").innerText = d.division;
                 
                 const r = d.rango.toLowerCase().trim();
-                // Definición de jerarquía para acceso a Mando
                 const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
                 
-                // Si el rango está en la jerarquía, mostramos Gestión y el Historial
                 if (jerarquia.includes(r)) {
                     document.getElementById("adminPanel").style.display = "block";
                     document.getElementById("logPanel").style.display = "block";

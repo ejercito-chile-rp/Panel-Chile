@@ -165,18 +165,20 @@
         qs.forEach(d => {
             const x = d.data();
             const div = x.division || "Ejercito";
+            const rangoNombre = x.rango || "Recluta";
             
-            // Esto limpia el nombre: cambia espacios por "_" 
-            // y asegura que busque en la carpeta "img"
-            const nombreArchivo = x.rango.replace(/ /g, "_"); 
+            // Esto prepara el nombre del archivo (ej: "Cabo_1°.png")
+            const archivo = rangoNombre.replace(/ /g, "_") + ".png";
             
             h += `<div class="tarjeta ${div}">
-                <img src="img/${nombreArchivo}.png" class="insignia-img" 
-                     style="width:40px; margin-right:15px;"
-                     onerror="this.src='https://cdn-icons-png.flaticon.com/512/614/614131.png'">
+                <img src="img/${archivo}" 
+                     class="insignia-img" 
+                     style="width:45px; height:45px; margin-right:15px; object-fit:contain;"
+                     onerror="this.onerror=null; this.src='Img/${archivo}'; this.setAttribute('onerror', 'this.src=\'https://cdn-icons-png.flaticon.com/512/614/614131.png\'')">
+                
                 <div class="info-soldado">
                     <b>${x.nombre || 'Soldado Anónimo'}</b><br>
-                    <small>${x.rango} [${div}]</small>
+                    <small>${rangoNombre} [${div}]</small>
                 </div>
                 <div style="font-weight:bold; font-size: 12px;">${x.estado || 'Activo'}</div>
             </div>`;

@@ -58,6 +58,7 @@
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
         #logContent { font-size: 0.85em; color: #39ff14; font-weight: bold; }
+        .last-con { font-size: 0.75em; color: #888; display: block; }
     </style>
 </head>
 <body>
@@ -78,14 +79,14 @@
     </div>
 
     <div class="box" id="panel">
-        <h3 id="welcome">CARGANDO IDENTIDAD...</h3>
+        <h3 id="welcome">IDENTIFICANDO...</h3>
         <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
         <button id="btnLogout">CERRAR SESIÓN</button>
     </div>
 
     <div class="box" id="logPanel">
-        <h3>HISTORIAL DE MANDO (ÚLTIMO REPORTE)</h3>
-        <div id="logContent">Sincronizando con el servidor...</div>
+        <h3>HISTORIAL DE MANDO</h3>
+        <div id="logContent">Sincronizando...</div>
     </div>
 
     <div class="box" id="statsPanel">
@@ -122,6 +123,7 @@
             <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
             <p id="expRangoDiv"></p>
             <p id="expAntiguedad" style="color:#aaa; font-style:italic; font-size:0.9em;"></p>
+            <p id="expUltimaCon" style="color:var(--armada-blue); font-size:0.8em; margin-top: -10px;"></p>
             <hr>
             <h4>CONDECORACIONES:</h4>
             <div id="expMedallas"></div>
@@ -152,6 +154,12 @@
     const sel = document.getElementById("newRankAdmin");
     RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
+    function formatearFecha(isoString) {
+        if(!isoString) return "Nunca";
+        const fecha = new Date(isoString);
+        return fecha.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
+    }
+
     window.filtrarSoldados = function() {
         let input = document.getElementById('searchBar').value.toLowerCase();
         let tarjetas = document.getElementsByClassName('tarjeta');
@@ -167,6 +175,7 @@
             const x = snap.data();
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
+            
             let diasBase = 0;
             if(x.fechaIngreso) {
                 const fIngreso = new Date(x.fechaIngreso);
@@ -175,6 +184,8 @@
             }
             const diasManuales = parseInt(x.antiguedadManual || 0);
             document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + diasManuales} DÍAS`;
+            document.getElementById("expUltimaCon").innerText = `ÚLTIMA CONEXIÓN: ${formatearFecha(x.ultimaConexion)}`;
+
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
             document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
@@ -184,16 +195,16 @@
 
     window.cerrarModal = () => document.getElementById("modalExpediente").style.display = "none";
 
-    async function cargarLogs() {
-        const snap = await getDoc(doc(db, "config", "logs"));
-        if(snap.exists()) document.getElementById("logContent").innerText = snap.data().ultimaAccion;
-    }
-
     async function registrarAccion(mensaje) {
         const ahora = new Date();
         const fechaHora = ahora.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
         await setDoc(doc(db, "config", "logs"), { ultimaAccion: `[${fechaHora}] ${mensaje}` });
         cargarLogs();
+    }
+
+    async function cargarLogs() {
+        const snap = await getDoc(doc(db, "config", "logs"));
+        if(snap.exists()) document.getElementById("logContent").innerText = snap.data().ultimaAccion;
     }
 
     async function cargarDatos() {
@@ -208,10 +219,21 @@
             counts[x.division] = (counts[x.division] || 0) + 1;
             counts.Total++;
             let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
+            
+            // Texto de última conexión para la tarjeta
+            const fCon = x.ultimaConexion ? formatearFecha(x.ultimaConexion).split(",")[0] : "---";
+
             h += `<div class="tarjeta ${x.division}" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')">
                 <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
-                <div><b style="color:white;">${x.nombre || 'Anónimo'}</b><br><small>${r} [${x.division}]</small></div>
-                <div style="margin-left:auto;">${x.medallas ? x.medallas[0] || '' : ''} <small style="color:var(--neon-green);">ACTIVO</small></div>
+                <div>
+                    <b style="color:white;">${x.nombre || 'Anónimo'}</b><br>
+                    <small>${r} [${x.division}]</small><br>
+                    <span class="last-con">Visto: ${fCon}</span>
+                </div>
+                <div style="margin-left:auto; text-align:right;">
+                    ${x.medallas ? x.medallas[0] || '' : ''} 
+                    <br><small style="color:var(--neon-green);">ACTIVO</small>
+                </div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
@@ -222,7 +244,7 @@
         cargarLogs();
     }
 
-    let nombreUsuarioActual = "Oficial Desconocido";
+    let nombreUsuarioActual = "";
 
     document.getElementById("btnReg").onclick = async () => {
         const email = document.getElementById("email").value;
@@ -233,7 +255,7 @@
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             const hoy = new Date().toISOString();
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy, antiguedadManual: 0 });
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy, antiguedadManual: 0, ultimaConexion: hoy });
             alert("Soldado registrado."); cargarDatos();
         } catch(e) { alert(e.message); }
     };
@@ -241,7 +263,7 @@
     document.getElementById("btnLogin").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Credenciales incorrectas"); }
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Error"); }
     };
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
@@ -254,9 +276,9 @@
             const tSnap = await getDoc(doc(db, "usuarios", email));
             const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
             await updateDoc(doc(db, "usuarios", email), { rango: nuevo, antiguedadManual: parseInt(diasExtra) }); 
-            registrarAccion(`${nombreUsuarioActual} actualizó el perfil de ${nombreT} (Rango: ${nuevo}, Días Extra: ${diasExtra})`);
-            alert("Cambios aplicados."); cargarDatos(); 
-        } catch(e) { alert("No se encontró el soldado."); }
+            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${nombreT} (Rango: ${nuevo}, Días Extra: ${diasExtra})`);
+            alert("Datos actualizados."); cargarDatos(); 
+        } catch(e) { alert("Error"); }
     };
 
     document.getElementById("btnMedalla").onclick = async () => {
@@ -269,7 +291,7 @@
             await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
             registrarAccion(`${nombreUsuarioActual} condecoró con ${med} a ${nombreT}`);
             alert("Medalla otorgada!"); cargarDatos();
-        } catch(e) { alert("Error al condecorar."); }
+        } catch(e) { alert(e.message); }
     };
 
     document.getElementById("btnBaja").onclick = async () => {
@@ -278,28 +300,35 @@
         try {
             const tSnap = await getDoc(doc(db, "usuarios", email));
             const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
-            if(confirm(`¿Confirmar baja definitiva del soldado ${nombreT}?`)) {
+            if(confirm(`¿Dar de baja a ${nombreT}?`)) {
                 await deleteDoc(doc(db, "usuarios", email)); 
-                registrarAccion(`${nombreUsuarioActual} dio de baja al soldado ${nombreT}`);
+                registrarAccion(`${nombreUsuarioActual} dio de baja a ${nombreT}`);
                 alert("Soldado eliminado."); cargarDatos(); 
             }
-        } catch(e) { alert("Error al eliminar."); }
+        } catch(e) { alert("Error"); }
     };
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const snap = await getDoc(doc(db, "usuarios", user.email));
+            const userRef = doc(db, "usuarios", user.email);
+            const snap = await getDoc(userRef);
             if (snap.exists()) {
                 const d = snap.data();
                 nombreUsuarioActual = d.nombre || user.email;
+                
+                // Actualizar su propia última conexión al entrar
+                await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
+
                 document.getElementById("loginBox").style.display = "none";
                 ["panel", "listaPanel", "statsPanel", "logPanel"].forEach(id => document.getElementById(id).style.display = "block");
                 document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual;
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
+                
                 const r = d.rango.toLowerCase().trim();
                 const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
                 if (jerarquia.includes(r)) document.getElementById("adminPanel").style.display = "block";
+                
                 cargarDatos();
             }
         }

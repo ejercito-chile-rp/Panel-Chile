@@ -37,10 +37,11 @@
         .BOE { border-left-color: var(--army-red); }
         .Armada { border-left-color: var(--armada-blue); }
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
-        #panel, #listaPanel, #statsPanel { display: none; }
+        #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
         #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
+        #logContent { font-size: 0.85em; color: #aaa; font-style: italic; }
     </style>
 </head>
 <body>
@@ -63,6 +64,11 @@
         <h3 id="welcome"></h3>
         <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
         <button id="btnLogout">CERRAR SESIÓN</button>
+    </div>
+
+    <div class="box" id="logPanel">
+        <h3>HISTORIAL DE MANDO</h3>
+        <div id="logContent">Esperando reporte...</div>
     </div>
 
     <div class="box" id="statsPanel">
@@ -115,6 +121,16 @@
         }
     };
 
+    async function cargarLogs() {
+        const snap = await getDoc(doc(db, "config", "logs"));
+        if(snap.exists()) document.getElementById("logContent").innerText = snap.data().ultimaAccion;
+    }
+
+    async function registrarAccion(mensaje) {
+        await setDoc(doc(db, "config", "logs"), { ultimaAccion: mensaje });
+        cargarLogs();
+    }
+
     async function cargarDatos() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
@@ -138,7 +154,10 @@
             <div class="stat-item">EJÉRCITO: ${counts.Ejercito}</div><div class="stat-item">FACH: ${counts.FACH}</div>
             <div class="stat-item">ARMADA: ${counts.Armada}</div><div class="stat-item">BOE: ${counts.BOE}</div>
             <div class="stat-item" style="grid-column: span 2; border-color: var(--neon-green)">FUERZA TOTAL: ${counts.Total}</div>`;
+        cargarLogs();
     }
+
+    let nombreUsuarioActual = "";
 
     document.getElementById("btnReg").onclick = async () => {
         const email = document.getElementById("email").value;
@@ -164,14 +183,22 @@
     document.getElementById("btnAscender").onclick = async () => {
         const email = document.getElementById("targetEmail").value;
         const nuevo = document.getElementById("newRankAdmin").value;
-        try { await updateDoc(doc(db, "usuarios", email), { rango: nuevo }); alert("Rango actualizado."); cargarDatos(); } catch(e) { alert("Error"); }
+        try { 
+            await updateDoc(doc(db, "usuarios", email), { rango: nuevo }); 
+            registrarAccion(`${nombreUsuarioActual} cambió el rango de ${email} a ${nuevo}`);
+            alert("Rango actualizado."); cargarDatos(); 
+        } catch(e) { alert("Error"); }
     };
 
     document.getElementById("btnBaja").onclick = async () => {
         const email = document.getElementById("targetEmail").value;
-        if(!email) return alert("Ingresa el correo del soldado");
-        if(confirm(`¿Está seguro de dar de baja al soldado ${email}? Esta acción es irreversible.`)) {
-            try { await deleteDoc(doc(db, "usuarios", email)); alert("Soldado dado de baja."); cargarDatos(); } catch(e) { alert("Error al eliminar."); }
+        if(!email) return alert("Ingresa el correo");
+        if(confirm(`¿Dar de baja a ${email}?`)) {
+            try { 
+                await deleteDoc(doc(db, "usuarios", email)); 
+                registrarAccion(`${nombreUsuarioActual} dio de baja al soldado ${email}`);
+                alert("Soldado eliminado."); cargarDatos(); 
+            } catch(e) { alert("Error"); }
         }
     };
 
@@ -180,9 +207,10 @@
             const snap = await getDoc(doc(db, "usuarios", user.email));
             if (snap.exists()) {
                 const d = snap.data();
+                nombreUsuarioActual = d.nombre || user.email;
                 document.getElementById("loginBox").style.display = "none";
-                ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
-                document.getElementById("welcome").innerText = "OFICIAL: " + (d.nombre || "Usuario");
+                ["panel", "listaPanel", "statsPanel", "logPanel"].forEach(id => document.getElementById(id).style.display = "block");
+                document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual;
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
                 const r = d.rango.toLowerCase().trim();

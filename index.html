@@ -78,14 +78,14 @@
     </div>
 
     <div class="box" id="panel">
-        <h3 id="welcome"></h3>
+        <h3 id="welcome">CARGANDO IDENTIDAD...</h3>
         <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
         <button id="btnLogout">CERRAR SESIÓN</button>
     </div>
 
     <div class="box" id="logPanel">
-        <h3>HISTORIAL DE MANDO</h3>
-        <div id="logContent">Sincronizando...</div>
+        <h3>HISTORIAL DE MANDO (ÚLTIMO REPORTE)</h3>
+        <div id="logContent">Sincronizando con el servidor...</div>
     </div>
 
     <div class="box" id="statsPanel">
@@ -97,7 +97,7 @@
         <h3 style="color:red">ALTO MANDO: GESTIÓN</h3>
         <input id="targetEmail" placeholder="Correo del soldado">
         <select id="newRankAdmin"></select>
-        <input id="manualDays" type="number" placeholder="Añadir días de antigüedad (opcional)">
+        <input id="manualDays" type="number" placeholder="Días de antigüedad manual">
         <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR CAMBIOS</button>
         <button id="btnBaja" style="background: #400; color: white; border: 1px solid red;">DAR DE BAJA (ELIMINAR)</button>
         <hr style="border:0.5px solid #333; margin:15px 0;">
@@ -167,7 +167,6 @@
             const x = snap.data();
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
-            
             let diasBase = 0;
             if(x.fechaIngreso) {
                 const fIngreso = new Date(x.fechaIngreso);
@@ -176,7 +175,6 @@
             }
             const diasManuales = parseInt(x.antiguedadManual || 0);
             document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + diasManuales} DÍAS`;
-
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
             document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
@@ -224,7 +222,7 @@
         cargarLogs();
     }
 
-    let nombreUsuarioActual = "";
+    let nombreUsuarioActual = "Oficial Desconocido";
 
     document.getElementById("btnReg").onclick = async () => {
         const email = document.getElementById("email").value;
@@ -243,7 +241,7 @@
     document.getElementById("btnLogin").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Error"); }
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Credenciales incorrectas"); }
     };
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
@@ -253,13 +251,12 @@
         const nuevo = document.getElementById("newRankAdmin").value;
         const diasExtra = document.getElementById("manualDays").value || 0;
         try { 
-            await updateDoc(doc(db, "usuarios", email), { 
-                rango: nuevo,
-                antiguedadManual: parseInt(diasExtra)
-            }); 
-            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${email} (Rango: ${nuevo}, Días Extra: ${diasExtra})`);
-            alert("Datos actualizados."); cargarDatos(); 
-        } catch(e) { alert("Error"); }
+            const tSnap = await getDoc(doc(db, "usuarios", email));
+            const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
+            await updateDoc(doc(db, "usuarios", email), { rango: nuevo, antiguedadManual: parseInt(diasExtra) }); 
+            registrarAccion(`${nombreUsuarioActual} actualizó el perfil de ${nombreT} (Rango: ${nuevo}, Días Extra: ${diasExtra})`);
+            alert("Cambios aplicados."); cargarDatos(); 
+        } catch(e) { alert("No se encontró el soldado."); }
     };
 
     document.getElementById("btnMedalla").onclick = async () => {
@@ -267,22 +264,26 @@
         const med = document.getElementById("selectMedalla").value;
         if(!email) return alert("Ingresa el correo");
         try {
+            const tSnap = await getDoc(doc(db, "usuarios", email));
+            const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
             await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
-            registrarAccion(`${nombreUsuarioActual} condecoró con ${med} a ${email}`);
+            registrarAccion(`${nombreUsuarioActual} condecoró con ${med} a ${nombreT}`);
             alert("Medalla otorgada!"); cargarDatos();
-        } catch(e) { alert(e.message); }
+        } catch(e) { alert("Error al condecorar."); }
     };
 
     document.getElementById("btnBaja").onclick = async () => {
         const email = document.getElementById("targetEmail").value;
         if(!email) return alert("Ingresa el correo");
-        if(confirm(`¿Dar de baja a ${email}?`)) {
-            try { 
+        try {
+            const tSnap = await getDoc(doc(db, "usuarios", email));
+            const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
+            if(confirm(`¿Confirmar baja definitiva del soldado ${nombreT}?`)) {
                 await deleteDoc(doc(db, "usuarios", email)); 
-                registrarAccion(`${nombreUsuarioActual} dio de baja a ${email}`);
+                registrarAccion(`${nombreUsuarioActual} dio de baja al soldado ${nombreT}`);
                 alert("Soldado eliminado."); cargarDatos(); 
-            } catch(e) { alert("Error"); }
-        }
+            }
+        } catch(e) { alert("Error al eliminar."); }
     };
 
     onAuthStateChanged(auth, async (user) => {

@@ -41,6 +41,9 @@
 
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
         #panel, #listaPanel { display: none; }
+        
+        /* Buscador */
+        #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
     </style>
 </head>
 <body>
@@ -63,19 +66,20 @@
     <div class="box" id="panel">
         <h3 id="welcome"></h3>
         <p>RANGO: <span id="rank"></span> | DIVISIÓN: <span id="div"></span></p>
-        <button id="btnLogout">Cerrar Sesión</button>
+        <button id="btnLogout">CERRAR SESIÓN</button>
     </div>
 
     <div class="box admin-box" id="adminPanel">
-        <h3 style="color:red">ALTO MANDO</h3>
-        <input id="targetEmail" placeholder="Correo del soldado">
+        <h3 style="color:red">ALTO MANDO: GESTIÓN DE RANGOS</h3>
+        <input id="targetEmail" placeholder="Correo del soldado a cambiar">
         <select id="newRankAdmin"></select>
-        <button id="btnAscender" style="color:red">Aplicar Rango</button>
+        <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR CAMBIO DE RANGO</button>
     </div>
 
     <div class="box" id="listaPanel">
         <h3>REGISTRO ESTRATÉGICO DE TROPAS</h3>
-        <div id="lista">Cargando datos...</div>
+        <input type="text" id="searchBar" placeholder="🔍 Buscar soldado por nombre..." onkeyup="filtrarSoldados()">
+        <div id="lista">Cargando base de datos...</div>
     </div>
 
 <script type="module">
@@ -96,32 +100,39 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Coronel", "General en Jefe"];
+    const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
+    
+    // Llenar el selector de rangos para el admin
     const sel = document.getElementById("newRankAdmin");
-    RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
+    RANGOS_LISTA.forEach(r => { 
+        let o = document.createElement("option"); 
+        o.value = r; 
+        o.textContent = r; 
+        sel.appendChild(o); 
+    });
 
-    // --- FUNCIÓN DE CARGA ---
+    // Función para buscar en la lista
+    window.filtrarSoldados = function() {
+        let input = document.getElementById('searchBar').value.toLowerCase();
+        let tarjetas = document.getElementsByClassName('tarjeta');
+        for (let i = 0; i < tarjetas.length; i++) {
+            let nombre = tarjetas[i].getElementsByTagName("b")[0].innerText.toLowerCase();
+            tarjetas[i].style.display = nombre.includes(input) ? "flex" : "none";
+        }
+    }
+
     async function cargarLista() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
-        
-        // MAPA DE INSIGNIAS (Esto soluciona lo del Cabo 2°)
         const mapaInsignias = {
-            "Cabo 2°": "cabo_2.png",
-            "Cabo 1°": "cabo_1.png",
-            "Sargento 2°": "sargento_2.png",
-            "Sargento 1°": "sargento_1.png",
-            "General en Jefe": "general_en_jefe.png",
-            "General de Brigada": "general_brigada.png",
-            "General de División": "general_division.png",
-            "Suboficial Mayor": "subof_mayor.png"
+            "Cabo 2°": "cabo_2.png", "Cabo 1°": "cabo_1.png",
+            "Sargento 2°": "sargento_2.png", "Sargento 1°": "sargento_1.png",
+            "General en Jefe": "general_en_jefe.png", "Suboficial Mayor": "subof_mayor.png"
         };
 
         qs.forEach(d => {
             const x = d.data();
             const rangoReal = x.rango || "Recluta";
-            
-            // Busca en el mapa, si no está, lo limpia automáticamente
             let archivoFinal = mapaInsignias[rangoReal] || rangoReal.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
 
             h += `<div class="tarjeta ${x.division}">
@@ -136,7 +147,6 @@
         document.getElementById("lista").innerHTML = h;
     }
 
-    // --- BOTONES ---
     document.getElementById("btnReg").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
@@ -145,7 +155,7 @@
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div });
-            alert("¡Soldado Registrado!");
+            alert("Soldado registrado.");
             cargarLista();
         } catch(e) { alert(e.message); }
     };
@@ -153,9 +163,7 @@
     document.getElementById("btnLogin").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-        } catch(e) { alert("Error al entrar"); }
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Error"); }
     };
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
@@ -165,9 +173,9 @@
         const nuevo = document.getElementById("newRankAdmin").value;
         try {
             await updateDoc(doc(db, "usuarios", email), { rango: nuevo });
-            alert("¡Rango actualizado!");
+            alert("Rango actualizado.");
             cargarLista();
-        } catch(e) { alert("Error"); }
+        } catch(e) { alert("Error al actualizar."); }
     };
 
     onAuthStateChanged(auth, async (user) => {
@@ -178,16 +186,24 @@
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("panel").style.display = "block";
                 document.getElementById("listaPanel").style.display = "block";
-                document.getElementById("welcome").innerText = "OFICIAL: " + d.nombre;
+                document.getElementById("welcome").innerText = "OFICIAL: " + (d.nombre || "Usuario");
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
-                if(d.rango === "Coronel" || d.rango === "Capitán" || d.rango === "General en Jefe") {
+
+                // LÓGICA DE PERMISOS: Capitán o Superior
+                const rangosConPermiso = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
+                const rangoUsuario = d.rango.toLowerCase().trim();
+                
+                if (rangosConPermiso.includes(rangoUsuario)) {
                     document.getElementById("adminPanel").style.display = "block";
                 }
+                
                 cargarLista();
             }
         }
     });
 </script>
+</body>
+</html>
 </body>
 </html>

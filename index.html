@@ -26,28 +26,24 @@
         }
         button { cursor: pointer; transition: 0.3s; font-weight: bold; text-transform: uppercase; }
         button:hover { background: var(--neon-green); color: black; }
-
         .tarjeta { 
             border: 1px solid #333; padding: 15px; margin: 12px 0; 
             display: flex; align-items: center; background: rgba(20, 20, 20, 0.8); 
             text-align: left; border-left: 6px solid gray;
         }
         .insignia-img { width: 50px; height: 50px; margin-right: 15px; object-fit: contain; }
-        
         .Ejercito { border-left-color: var(--neon-green); }
         .FACH { border-left-color: var(--fach-white); }
         .BOE { border-left-color: var(--army-red); }
         .Armada { border-left-color: var(--armada-blue); }
-
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
-        #panel, #listaPanel { display: none; }
-        
-        /* Buscador */
+        #panel, #listaPanel, #statsPanel { display: none; }
         #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+        .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
     </style>
 </head>
 <body>
-
     <div class="box" id="loginBox">
         <h2>SISTEMA MILITAR CHILE</h2>
         <input id="regNombre" type="text" placeholder="Tu Nombre o Clave">
@@ -59,8 +55,8 @@
             <option value="Armada">Armada</option>
             <option value="BOE">BOE</option>
         </select>
-        <button id="btnReg">Registrar</button>
-        <button id="btnLogin">Entrar</button>
+        <button id="btnReg">Registrar Soldado</button>
+        <button id="btnLogin">Ingresar al Sistema</button>
     </div>
 
     <div class="box" id="panel">
@@ -69,23 +65,29 @@
         <button id="btnLogout">CERRAR SESIÓN</button>
     </div>
 
+    <div class="box" id="statsPanel">
+        <h3>ESTADO DE FUERZAS TOTALES</h3>
+        <div class="stats-grid" id="statsContent"></div>
+    </div>
+
     <div class="box admin-box" id="adminPanel">
-        <h3 style="color:red">ALTO MANDO: GESTIÓN DE RANGOS</h3>
-        <input id="targetEmail" placeholder="Correo del soldado a cambiar">
+        <h3 style="color:red">ALTO MANDO: GESTIÓN</h3>
+        <input id="targetEmail" placeholder="Correo del soldado">
         <select id="newRankAdmin"></select>
-        <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR CAMBIO DE RANGO</button>
+        <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR RANGO</button>
+        <button id="btnBaja" style="background: #400; color: white; border: 1px solid red;">DAR DE BAJA (ELIMINAR)</button>
     </div>
 
     <div class="box" id="listaPanel">
         <h3>REGISTRO ESTRATÉGICO DE TROPAS</h3>
-        <input type="text" id="searchBar" placeholder="🔍 Buscar soldado por nombre..." onkeyup="filtrarSoldados()">
+        <input type="text" id="searchBar" placeholder="🔍 Buscar soldado..." onkeyup="filtrarSoldados()">
         <div id="lista">Cargando base de datos...</div>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
@@ -101,17 +103,9 @@
     const db = getFirestore(app);
 
     const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
-    
-    // Llenar el selector de rangos para el admin
     const sel = document.getElementById("newRankAdmin");
-    RANGOS_LISTA.forEach(r => { 
-        let o = document.createElement("option"); 
-        o.value = r; 
-        o.textContent = r; 
-        sel.appendChild(o); 
-    });
+    RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
-    // Función para buscar en la lista
     window.filtrarSoldados = function() {
         let input = document.getElementById('searchBar').value.toLowerCase();
         let tarjetas = document.getElementsByClassName('tarjeta');
@@ -119,32 +113,31 @@
             let nombre = tarjetas[i].getElementsByTagName("b")[0].innerText.toLowerCase();
             tarjetas[i].style.display = nombre.includes(input) ? "flex" : "none";
         }
-    }
+    };
 
-    async function cargarLista() {
+    async function cargarDatos() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
-        const mapaInsignias = {
-            "Cabo 2°": "cabo_2.png", "Cabo 1°": "cabo_1.png",
-            "Sargento 2°": "sargento_2.png", "Sargento 1°": "sargento_1.png",
-            "General en Jefe": "general_en_jefe.png", "Suboficial Mayor": "subof_mayor.png"
-        };
+        let counts = { Ejercito: 0, FACH: 0, Armada: 0, BOE: 0, Total: 0 };
+        const mapa = { "Cabo 2°": "cabo_2.png", "Cabo 1°": "cabo_1.png", "Sargento 2°": "sargento_2.png", "Sargento 1°": "sargento_1.png", "General en Jefe": "general_en_jefe.png", "Suboficial Mayor": "subof_mayor.png" };
 
         qs.forEach(d => {
             const x = d.data();
-            const rangoReal = x.rango || "Recluta";
-            let archivoFinal = mapaInsignias[rangoReal] || rangoReal.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
-
+            const r = x.rango || "Recluta";
+            counts[x.division] = (counts[x.division] || 0) + 1;
+            counts.Total++;
+            let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
             h += `<div class="tarjeta ${x.division}">
-                <img src="img/${archivoFinal}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
-                <div>
-                    <b style="color:white;">${x.nombre || 'Soldado Anónimo'}</b><br>
-                    <small>${rangoReal} [${x.division}]</small>
-                </div>
+                <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
+                <div><b style="color:white;">${x.nombre || 'Anónimo'}</b><br><small>${r} [${x.division}]</small></div>
                 <div style="margin-left:auto; font-size:11px; color:var(--neon-green);">ACTIVO</div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
+        document.getElementById("statsContent").innerHTML = `
+            <div class="stat-item">EJÉRCITO: ${counts.Ejercito}</div><div class="stat-item">FACH: ${counts.FACH}</div>
+            <div class="stat-item">ARMADA: ${counts.Armada}</div><div class="stat-item">BOE: ${counts.BOE}</div>
+            <div class="stat-item" style="grid-column: span 2; border-color: var(--neon-green)">FUERZA TOTAL: ${counts.Total}</div>`;
     }
 
     document.getElementById("btnReg").onclick = async () => {
@@ -152,11 +145,11 @@
         const pass = document.getElementById("password").value;
         const nom = document.getElementById("regNombre").value;
         const div = document.getElementById("division").value;
+        if(!nom || !email || !pass) return alert("Faltan datos");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div });
-            alert("Soldado registrado.");
-            cargarLista();
+            alert("Soldado registrado."); cargarDatos();
         } catch(e) { alert(e.message); }
     };
 
@@ -171,11 +164,15 @@
     document.getElementById("btnAscender").onclick = async () => {
         const email = document.getElementById("targetEmail").value;
         const nuevo = document.getElementById("newRankAdmin").value;
-        try {
-            await updateDoc(doc(db, "usuarios", email), { rango: nuevo });
-            alert("Rango actualizado.");
-            cargarLista();
-        } catch(e) { alert("Error al actualizar."); }
+        try { await updateDoc(doc(db, "usuarios", email), { rango: nuevo }); alert("Rango actualizado."); cargarDatos(); } catch(e) { alert("Error"); }
+    };
+
+    document.getElementById("btnBaja").onclick = async () => {
+        const email = document.getElementById("targetEmail").value;
+        if(!email) return alert("Ingresa el correo del soldado");
+        if(confirm(`¿Está seguro de dar de baja al soldado ${email}? Esta acción es irreversible.`)) {
+            try { await deleteDoc(doc(db, "usuarios", email)); alert("Soldado dado de baja."); cargarDatos(); } catch(e) { alert("Error al eliminar."); }
+        }
     };
 
     onAuthStateChanged(auth, async (user) => {
@@ -184,26 +181,17 @@
             if (snap.exists()) {
                 const d = snap.data();
                 document.getElementById("loginBox").style.display = "none";
-                document.getElementById("panel").style.display = "block";
-                document.getElementById("listaPanel").style.display = "block";
+                ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
                 document.getElementById("welcome").innerText = "OFICIAL: " + (d.nombre || "Usuario");
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
-
-                // LÓGICA DE PERMISOS: Capitán o Superior
-                const rangosConPermiso = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
-                const rangoUsuario = d.rango.toLowerCase().trim();
-                
-                if (rangosConPermiso.includes(rangoUsuario)) {
-                    document.getElementById("adminPanel").style.display = "block";
-                }
-                
-                cargarLista();
+                const r = d.rango.toLowerCase().trim();
+                const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
+                if (jerarquia.includes(r)) document.getElementById("adminPanel").style.display = "block";
+                cargarDatos();
             }
         }
     });
 </script>
-</body>
-</html>
 </body>
 </html>

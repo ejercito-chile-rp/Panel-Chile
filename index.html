@@ -43,7 +43,6 @@
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
         #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
         
-        /* Modal del Expediente */
         .modal {
             display: none; position: fixed; z-index: 100; left: 0; top: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -98,7 +97,8 @@
         <h3 style="color:red">ALTO MANDO: GESTIÓN</h3>
         <input id="targetEmail" placeholder="Correo del soldado">
         <select id="newRankAdmin"></select>
-        <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR RANGO</button>
+        <input id="manualDays" type="number" placeholder="Añadir días de antigüedad (opcional)">
+        <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR CAMBIOS</button>
         <button id="btnBaja" style="background: #400; color: white; border: 1px solid red;">DAR DE BAJA (ELIMINAR)</button>
         <hr style="border:0.5px solid #333; margin:15px 0;">
         <input id="targetMedalla" placeholder="Correo para condecorar">
@@ -120,7 +120,6 @@
     <div id="modalExpediente" class="modal">
         <div class="modal-content">
             <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
-            <div id="expImgContainer"></div>
             <p id="expRangoDiv"></p>
             <p id="expAntiguedad" style="color:#aaa; font-style:italic; font-size:0.9em;"></p>
             <hr>
@@ -169,16 +168,14 @@
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
             
-            // Cálculo de antigüedad
+            let diasBase = 0;
             if(x.fechaIngreso) {
                 const fIngreso = new Date(x.fechaIngreso);
                 const hoy = new Date();
-                const diffTime = Math.abs(hoy - fIngreso);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diffDays - 1} DÍAS`;
-            } else {
-                document.getElementById("expAntiguedad").innerText = "ANTIGÜEDAD NO REGISTRADA";
+                diasBase = Math.floor(Math.abs(hoy - fIngreso) / (1000 * 60 * 60 * 24));
             }
+            const diasManuales = parseInt(x.antiguedadManual || 0);
+            document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + diasManuales} DÍAS`;
 
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
@@ -238,7 +235,7 @@
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             const hoy = new Date().toISOString();
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy });
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy, antiguedadManual: 0 });
             alert("Soldado registrado."); cargarDatos();
         } catch(e) { alert(e.message); }
     };
@@ -254,10 +251,14 @@
     document.getElementById("btnAscender").onclick = async () => {
         const email = document.getElementById("targetEmail").value;
         const nuevo = document.getElementById("newRankAdmin").value;
+        const diasExtra = document.getElementById("manualDays").value || 0;
         try { 
-            await updateDoc(doc(db, "usuarios", email), { rango: nuevo }); 
-            registrarAccion(`${nombreUsuarioActual} cambió el rango de ${email} a ${nuevo}`);
-            alert("Rango actualizado."); cargarDatos(); 
+            await updateDoc(doc(db, "usuarios", email), { 
+                rango: nuevo,
+                antiguedadManual: parseInt(diasExtra)
+            }); 
+            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${email} (Rango: ${nuevo}, Días Extra: ${diasExtra})`);
+            alert("Datos actualizados."); cargarDatos(); 
         } catch(e) { alert("Error"); }
     };
 
@@ -267,9 +268,9 @@
         if(!email) return alert("Ingresa el correo");
         try {
             await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
-            registrarAccion(`${nombreUsuarioActual} otorgó una condecoración ${med} a ${email}`);
+            registrarAccion(`${nombreUsuarioActual} condecoró con ${med} a ${email}`);
             alert("Medalla otorgada!"); cargarDatos();
-        } catch(e) { alert("Error"); }
+        } catch(e) { alert(e.message); }
     };
 
     document.getElementById("btnBaja").onclick = async () => {
@@ -278,7 +279,7 @@
         if(confirm(`¿Dar de baja a ${email}?`)) {
             try { 
                 await deleteDoc(doc(db, "usuarios", email)); 
-                registrarAccion(`${nombreUsuarioActual} dio de baja al soldado ${email}`);
+                registrarAccion(`${nombreUsuarioActual} dio de baja a ${email}`);
                 alert("Soldado eliminado."); cargarDatos(); 
             } catch(e) { alert("Error"); }
         }

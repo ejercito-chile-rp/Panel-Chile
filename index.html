@@ -41,6 +41,7 @@
         .Armada { border-left-color: var(--armada-blue); }
 
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
+        /* El logPanel ahora inicia oculto por defecto */
         #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
         
         .modal {
@@ -85,7 +86,7 @@
     </div>
 
     <div class="box" id="logPanel">
-        <h3>HISTORIAL DE MANDO</h3>
+        <h3 style="color:var(--gold)">HISTORIAL DE MANDO (CONFIDENCIAL)</h3>
         <div id="logContent">Sincronizando...</div>
     </div>
 
@@ -219,8 +220,6 @@
             counts[x.division] = (counts[x.division] || 0) + 1;
             counts.Total++;
             let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
-            
-            // Texto de última conexión para la tarjeta
             const fCon = x.ultimaConexion ? formatearFecha(x.ultimaConexion).split(",")[0] : "---";
 
             h += `<div class="tarjeta ${x.division}" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')">
@@ -315,19 +314,26 @@
             if (snap.exists()) {
                 const d = snap.data();
                 nombreUsuarioActual = d.nombre || user.email;
-                
-                // Actualizar su propia última conexión al entrar
                 await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
 
                 document.getElementById("loginBox").style.display = "none";
-                ["panel", "listaPanel", "statsPanel", "logPanel"].forEach(id => document.getElementById(id).style.display = "block");
+                
+                // Estos paneles se muestran para TODOS los logueados
+                ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
+                
                 document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual;
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
                 
                 const r = d.rango.toLowerCase().trim();
+                // Definición de jerarquía para acceso a Mando
                 const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
-                if (jerarquia.includes(r)) document.getElementById("adminPanel").style.display = "block";
+                
+                // Si el rango está en la jerarquía, mostramos Gestión y el Historial
+                if (jerarquia.includes(r)) {
+                    document.getElementById("adminPanel").style.display = "block";
+                    document.getElementById("logPanel").style.display = "block";
+                }
                 
                 cargarDatos();
             }

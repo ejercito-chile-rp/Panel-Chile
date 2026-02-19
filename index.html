@@ -165,10 +165,20 @@
         qs.forEach(d => {
             const x = d.data();
             const div = x.division || "Ejercito";
-            // Aquí mostramos el NOMBRE, el correo ya no se ve públicamente
+            
+            // Esto limpia el nombre: cambia espacios por "_" 
+            // y asegura que busque en la carpeta "img"
+            const nombreArchivo = x.rango.replace(/ /g, "_"); 
+            
             h += `<div class="tarjeta ${div}">
-                <div><b>${x.nombre || 'Soldado Anónimo'}</b><br><small>${x.rango} [${div}]</small></div>
-                <div>${x.estado || 'Activo'}</div>
+                <img src="img/${nombreArchivo}.png" class="insignia-img" 
+                     style="width:40px; margin-right:15px;"
+                     onerror="this.src='https://cdn-icons-png.flaticon.com/512/614/614131.png'">
+                <div class="info-soldado">
+                    <b>${x.nombre || 'Soldado Anónimo'}</b><br>
+                    <small>${x.rango} [${div}]</small>
+                </div>
+                <div style="font-weight:bold; font-size: 12px;">${x.estado || 'Activo'}</div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;

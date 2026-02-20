@@ -35,14 +35,27 @@
         .tarjeta:hover { filter: brightness(1.3); transform: scale(1.01); }
         .insignia-img { width: 50px; height: 50px; margin-right: 15px; object-fit: contain; }
         
+        /* ESTILOS DEL HANGAR */
+        .hangar-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 15px; }
+        .avion-card {
+            background: #111; border: 1px solid var(--armada-blue);
+            border-radius: 8px; overflow: hidden; text-align: left;
+            transition: 0.3s;
+        }
+        .avion-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3); }
+        .avion-img { width: 100%; height: 250px; object-fit: cover; border-bottom: 2px solid var(--armada-blue); }
+        .avion-info { padding: 15px; }
+        .avion-info h4 { margin: 0; color: var(--fach-white); text-transform: uppercase; letter-spacing: 2px; }
+        .avion-info p { font-size: 0.9em; color: var(--neon-green); margin: 5px 0; }
+        .avion-info small { color: #888; font-style: italic; }
+
         .Ejercito { border-left-color: var(--neon-green); }
         .FACH { border-left-color: var(--fach-white); }
         .BOE { border-left-color: var(--army-red); }
         .Armada { border-left-color: var(--armada-blue); }
 
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
-        /* El logPanel ahora inicia oculto por defecto */
-        #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
+        #panel, #listaPanel, #statsPanel, #logPanel, #hangarPanel { display: none; }
         
         .modal {
             display: none; position: fixed; z-index: 100; left: 0; top: 0; 
@@ -119,6 +132,36 @@
         <div id="lista">Cargando base de datos...</div>
     </div>
 
+    <div class="box" id="hangarPanel">
+        <h3 style="color:var(--fach-white)">🏢 HANGAR DE FLOTA AÉREA (FACH)</h3>
+        <div class="hangar-grid">
+            <div class="avion-card">
+                <img src="https://www.defensa.com/adjuntos/f16_chile_1.jpg" class="avion-img" onerror="this.src='https://images.unsplash.com/photo-1517976384346-3136801d605d?q=80&w=1000'">
+                <div class="avion-info">
+                    <h4>F-16 Fighting Falcon</h4>
+                    <p>ESTADO: OPERATIVO | COMBATE MULTIPROPÓSITO</p>
+                    <small>Punta de lanza de la defensa aérea chilena.</small>
+                </div>
+            </div>
+            <div class="avion-card">
+                <img src="https://www.infodefensa.com/images/showid2/4862557?w=900&mh=700" class="avion-img" onerror="this.src='https://images.unsplash.com/photo-1527431505305-649033284079?q=80&w=1000'">
+                <div class="avion-info">
+                    <h4>C-130 Hercules</h4>
+                    <p>ESTADO: EN MISIÓN | TRANSPORTE TÁCTICO</p>
+                    <small>Capacidad de despliegue global y apoyo humanitario.</small>
+                </div>
+            </div>
+            <div class="avion-card">
+                <img src="https://www.zona-militar.com/wp-content/uploads/2021/04/Super-Tucano-FACh.jpg" class="avion-img" onerror="this.src='https://images.unsplash.com/photo-1628150493721-396561579be4?q=80&w=1000'">
+                <div class="avion-info">
+                    <h4>A-29 Super Tucano</h4>
+                    <p>ESTADO: OPERATIVO | ATAQUE LIGERO</p>
+                    <small>Vigilancia de fronteras y entrenamiento avanzado.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modalExpediente" class="modal">
         <div class="modal-content">
             <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
@@ -176,7 +219,6 @@
             const x = snap.data();
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
-            
             let diasBase = 0;
             if(x.fechaIngreso) {
                 const fIngreso = new Date(x.fechaIngreso);
@@ -186,7 +228,6 @@
             const diasManuales = parseInt(x.antiguedadManual || 0);
             document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + diasManuales} DÍAS`;
             document.getElementById("expUltimaCon").innerText = `ÚLTIMA CONEXIÓN: ${formatearFecha(x.ultimaConexion)}`;
-
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
             document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
@@ -220,26 +261,16 @@
             counts[x.division] = (counts[x.division] || 0) + 1;
             counts.Total++;
             let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
-            const fCon = x.ultimaConexion ? formatearFecha(x.ultimaConexion).split(",")[0] : "---";
-
             h += `<div class="tarjeta ${x.division}" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')">
                 <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
                 <div>
                     <b style="color:white;">${x.nombre || 'Anónimo'}</b><br>
-                    <small>${r} [${x.division}]</small><br>
-                    <span class="last-con">Visto: ${fCon}</span>
-                </div>
-                <div style="margin-left:auto; text-align:right;">
-                    ${x.medallas ? x.medallas[0] || '' : ''} 
-                    <br><small style="color:var(--neon-green);">ACTIVO</small>
+                    <small>${r} [${x.division}]</small>
                 </div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
-        document.getElementById("statsContent").innerHTML = `
-            <div class="stat-item">EJÉRCITO: ${counts.Ejercito}</div><div class="stat-item">FACH: ${counts.FACH}</div>
-            <div class="stat-item">ARMADA: ${counts.Armada}</div><div class="stat-item">BOE: ${counts.BOE}</div>
-            <div class="stat-item" style="grid-column: span 2; border-color: var(--neon-green)">FUERZA TOTAL: ${counts.Total}</div>`;
+        document.getElementById("statsContent").innerHTML = `<div class="stat-item">FUERZA TOTAL: ${counts.Total}</div>`;
         cargarLogs();
     }
 
@@ -262,7 +293,7 @@
     document.getElementById("btnLogin").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Error"); }
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Error de ingreso"); }
     };
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
@@ -275,35 +306,8 @@
             const tSnap = await getDoc(doc(db, "usuarios", email));
             const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
             await updateDoc(doc(db, "usuarios", email), { rango: nuevo, antiguedadManual: parseInt(diasExtra) }); 
-            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${nombreT} (Rango: ${nuevo}, Días Extra: ${diasExtra})`);
-            alert("Datos actualizados."); cargarDatos(); 
-        } catch(e) { alert("Error"); }
-    };
-
-    document.getElementById("btnMedalla").onclick = async () => {
-        const email = document.getElementById("targetMedalla").value;
-        const med = document.getElementById("selectMedalla").value;
-        if(!email) return alert("Ingresa el correo");
-        try {
-            const tSnap = await getDoc(doc(db, "usuarios", email));
-            const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
-            await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
-            registrarAccion(`${nombreUsuarioActual} condecoró con ${med} a ${nombreT}`);
-            alert("Medalla otorgada!"); cargarDatos();
-        } catch(e) { alert(e.message); }
-    };
-
-    document.getElementById("btnBaja").onclick = async () => {
-        const email = document.getElementById("targetEmail").value;
-        if(!email) return alert("Ingresa el correo");
-        try {
-            const tSnap = await getDoc(doc(db, "usuarios", email));
-            const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
-            if(confirm(`¿Dar de baja a ${nombreT}?`)) {
-                await deleteDoc(doc(db, "usuarios", email)); 
-                registrarAccion(`${nombreUsuarioActual} dio de baja a ${nombreT}`);
-                alert("Soldado eliminado."); cargarDatos(); 
-            }
+            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${nombreT}`);
+            alert("Cambios aplicados."); cargarDatos(); 
         } catch(e) { alert("Error"); }
     };
 
@@ -315,26 +319,17 @@
                 const d = snap.data();
                 nombreUsuarioActual = d.nombre || user.email;
                 await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
-
                 document.getElementById("loginBox").style.display = "none";
-                
-                // Estos paneles se muestran para TODOS los logueados
-                ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
-                
+                ["panel", "listaPanel", "statsPanel", "hangarPanel"].forEach(id => document.getElementById(id).style.display = "block");
                 document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual;
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
-                
                 const r = d.rango.toLowerCase().trim();
-                // Definición de jerarquía para acceso a Mando
                 const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
-                
-                // Si el rango está en la jerarquía, mostramos Gestión y el Historial
                 if (jerarquia.includes(r)) {
                     document.getElementById("adminPanel").style.display = "block";
                     document.getElementById("logPanel").style.display = "block";
                 }
-                
                 cargarDatos();
             }
         }

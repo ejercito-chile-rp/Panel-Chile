@@ -71,7 +71,6 @@
             cursor: pointer;
         }
 
-        /* --- ACTUALIZACIÓN DE MOVIMIENTO EN TARJETAS --- */
         .tarjeta { 
             background: rgba(255, 255, 255, 0.02);
             border-left: 4px solid var(--tactical-green);
@@ -80,18 +79,17 @@
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transición suave */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             left: 0;
         }
 
         .tarjeta:hover { 
             background: var(--dim-green); 
-            transform: translateX(10px); /* Movimiento hacia la derecha */
+            transform: translateX(10px);
             box-shadow: -5px 0 15px rgba(77, 242, 77, 0.3);
-            border-left-width: 8px; /* Engrosa la barra lateral al pasar el mouse */
+            border-left-width: 8px;
         }
-        /* ---------------------------------------------- */
 
         .insignia-img { 
             width: 60px; height: 60px; 
@@ -237,6 +235,26 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // --- SISTEMA DE SONIDO TÁCTICO ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    window.playHoverSound = () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        oscillator.type = 'sine'; 
+        oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); // Tono agudo y corto
+        
+        gainNode.gain.setValueAtTime(0.015, audioCtx.currentTime); // Volumen muy sutil (1.5%)
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.05);
+    };
+
     const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     
     const SUELDOS_FIJOS = {
@@ -325,7 +343,9 @@
             counts.Total++;
             const statusClass = getStatusClass(x.ultimaConexion);
             let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
-            h += `<div class="tarjeta" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')" style="border-left-color: ${getDivisionColor(x.division)}">
+            
+            // Se añadió onmouseenter="playHoverSound()" para el sonido
+            h += `<div class="tarjeta" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')" onmouseenter="playHoverSound()" style="border-left-color: ${getDivisionColor(x.division)}">
                 <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
                 <div><b style="color:white;">${x.nombre}</b><br><small>${r} [${x.division}]</small></div>
                 <div style="margin-left:auto; text-align:right;">

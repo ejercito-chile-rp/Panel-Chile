@@ -35,28 +35,22 @@
         .tarjeta:hover { filter: brightness(1.3); transform: scale(1.01); }
         .insignia-img { width: 50px; height: 50px; margin-right: 15px; object-fit: contain; }
         
-        /* ESTILOS DEL HANGAR */
-        .hangar-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 15px; }
-        .avion-card {
-            background: #111; border: 1px solid var(--armada-blue);
-            border-radius: 8px; overflow: hidden; text-align: left;
-            transition: 0.3s;
-        }
-        .avion-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3); }
-        .avion-img { width: 100%; height: 250px; object-fit: cover; border-bottom: 2px solid var(--armada-blue); }
-        .avion-info { padding: 15px; }
-        .avion-info h4 { margin: 0; color: var(--fach-white); text-transform: uppercase; letter-spacing: 2px; }
-        .avion-info p { font-size: 0.9em; color: var(--neon-green); margin: 5px 0; }
-        .avion-info small { color: #888; font-style: italic; }
-
         .Ejercito { border-left-color: var(--neon-green); }
         .FACH { border-left-color: var(--fach-white); }
         .BOE { border-left-color: var(--army-red); }
         .Armada { border-left-color: var(--armada-blue); }
 
         .admin-box { border: 2px solid var(--army-red) !important; display: none; }
-        #panel, #listaPanel, #statsPanel, #logPanel, #hangarPanel { display: none; }
+        #panel, #listaPanel, #statsPanel, #logPanel, #chatPanel { display: none; }
         
+        #chatBox { 
+            height: 250px; overflow-y: auto; text-align: left; 
+            padding: 10px; border: 1px solid #222; background: #050505;
+            margin-bottom: 10px; font-size: 0.85em;
+        }
+        .msg { margin-bottom: 8px; border-bottom: 1px solid #111; padding-bottom: 4px; }
+        .msg b { color: var(--gold); }
+
         .modal {
             display: none; position: fixed; z-index: 100; left: 0; top: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -66,28 +60,26 @@
             margin: 5% auto; padding: 30px; width: 80%; max-width: 500px;
             box-shadow: 0 0 30px var(--neon-green); text-align: center;
         }
+        .progress-container {
+            width: 100%; background-color: #222; border: 1px solid var(--neon-green);
+            height: 20px; margin: 15px 0; border-radius: 10px; overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, #1e5210, var(--neon-green));
+            width: 0%; transition: width 1s ease-in-out;
+        }
+        .hito { opacity: 0.2; filter: grayscale(1); font-size: 0.8em; }
+        .hito.active { opacity: 1; filter: grayscale(0); color: var(--gold); font-weight: bold; }
+        .hitos-container { display: flex; justify-content: space-around; margin-top: 10px; }
         .medal-icon { font-size: 30px; margin: 5px; display: inline-block; filter: drop-shadow(0 0 5px var(--gold)); }
-
-        #searchBar { margin-bottom: 20px; border-color: var(--armada-blue); }
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
-        #logContent { font-size: 0.85em; color: #39ff14; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="box" id="loginBox">
         <h2>SISTEMA MILITAR CHILE</h2>
-        <input id="regNombre" type="text" placeholder="Tu Nombre o Clave">
         <input id="email" type="email" placeholder="Correo">
         <input id="password" type="password" placeholder="Contraseña">
-        <select id="division">
-            <option value="Ejercito">Ejército</option>
-            <option value="FACH">FACH</option>
-            <option value="Armada">Armada</option>
-            <option value="BOE">BOE</option>
-        </select>
-        <button id="btnReg">Registrar Soldado</button>
         <button id="btnLogin">Ingresar al Sistema</button>
     </div>
 
@@ -102,83 +94,59 @@
         <div id="logContent">Sincronizando...</div>
     </div>
 
+    <div class="box" id="chatPanel">
+        <h3 style="color:var(--armada-blue)">CANAL TÁCTICO DE COMANDANCIA</h3>
+        <div id="chatBox">Cargando transmisiones...</div>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="chatInput" placeholder="Escribir mensaje..." style="width: 70%;">
+            <button id="btnSendChat" style="width: 25%;">ENVIAR</button>
+        </div>
+    </div>
+
     <div class="box" id="statsPanel">
         <h3>ESTADO DE FUERZAS TOTALES</h3>
-        <div class="stats-grid" id="statsContent"></div>
+        <div id="statsContent"></div>
     </div>
 
     <div class="box admin-box" id="adminPanel">
         <h3 style="color:red">ALTO MANDO: GESTIÓN</h3>
         <input id="targetEmail" placeholder="Correo del soldado">
         <select id="newRankAdmin"></select>
-        <input id="manualDays" type="number" placeholder="Días de antigüedad manual">
-        <button id="btnAscender" style="color:red; border: 1px solid red;">APLICAR CAMBIOS</button>
-        <button id="btnBaja" style="background: #400; color: white; border: 1px solid red;">DAR DE BAJA (ELIMINAR)</button>
-        <hr style="border:0.5px solid #333; margin:15px 0;">
-        <input id="targetMedalla" placeholder="Correo para condecorar">
-        <select id="selectMedalla">
-            <option value="🎖️">Medalla al Valor</option>
-            <option value="🛡️">Escudo de Lealtad</option>
-            <option value="⭐">Estrella de Puntería</option>
-            <option value="🔥">Infante de Élite</option>
-        </select>
-        <button id="btnMedalla" style="border-color: var(--gold); color: var(--gold);">CONDECORAR SOLDADO</button>
+        <input id="manualDays" type="number" placeholder="Días extra">
+        <button id="btnAscender">APLICAR CAMBIOS</button>
+        <button id="btnMedalla">CONDECORAR</button>
+        <button id="btnBaja" style="color:red">DAR DE BAJA</button>
     </div>
 
     <div class="box" id="listaPanel">
-        <h3>REGISTRO ESTRATÉGICO DE TROPAS</h3>
         <input type="text" id="searchBar" placeholder="🔍 Buscar soldado..." onkeyup="filtrarSoldados()">
-        <div id="lista">Cargando base de datos...</div>
-    </div>
-
-    <div class="box" id="hangarPanel">
-        <h3 style="color:var(--fach-white)">🏢 HANGAR DE FLOTA AÉREA (ACTUALIZADO)</h3>
-        <div class="hangar-grid">
-            <div class="avion-card">
-                <img src="https://www.af.mil/Portals/1/images/AFEvents/Raptor.jpg" class="avion-img" alt="F-22 Raptor">
-                <div class="avion-info">
-                    <h4>F-22 Raptor (x5)</h4>
-                    <p>ESTADO: SUPERIORIDAD AÉREA | SIGILO</p>
-                    <small>Cazas de quinta generación para dominancia absoluta.</small>
-                </div>
-            </div>
-            <div class="avion-card">
-                <img src="https://www.lockheedmartin.com/content/dam/lockheed-martin/mfc/photo/f-16/f-16-v-block-70.jpg" class="avion-img" alt="F-16">
-                <div class="avion-info">
-                    <h4>F-16 Fighting Falcon</h4>
-                    <p>ESTADO: OPERATIVO | COMBATE MULTIPROPÓSITO</p>
-                    <small>Versatilidad táctica y respuesta rápida.</small>
-                </div>
-            </div>
-            <div class="avion-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/C-130_Hercules_air_to_air.jpg" class="avion-img" alt="C-130 Hercules">
-                <div class="avion-info">
-                    <h4>C-130 Hercules</h4>
-                    <p>ESTADO: DISPONIBLE | TRANSPORTE PESADO</p>
-                    <small>Logística y despliegue estratégico de tropas.</small>
-                </div>
-            </div>
-        </div>
+        <div id="lista">Cargando tropa...</div>
     </div>
 
     <div id="modalExpediente" class="modal">
         <div class="modal-content">
-            <h2 id="expNombre" style="color:var(--neon-green)">EXPEDIENTE</h2>
+            <h2 id="expNombre"></h2>
             <p id="expRangoDiv"></p>
-            <p id="expAntiguedad" style="color:#aaa; font-style:italic; font-size:0.9em;"></p>
-            <p id="expUltimaCon" style="color:var(--armada-blue); font-size:0.8em; margin-top: -10px;"></p>
+            <div style="background: #111; padding: 15px; border-radius: 5px; border: 1px solid #333;">
+                <span id="expAntiguedad"></span>
+                <div class="progress-container"><div id="expBarra" class="progress-bar"></div></div>
+                <div class="hitos-container">
+                    <div id="hito1" class="hito">🥉 15D</div>
+                    <div id="hito2" class="hito">🥈 30D</div>
+                    <div id="hito3" class="hito">🥇 60D</div>
+                </div>
+            </div>
             <hr>
             <h4>CONDECORACIONES:</h4>
-            <div id="expMedallas"></div>
-            <br>
-            <button onclick="cerrarModal()">CERRAR EXPEDIENTE</button>
+            <div id="expMedallas"></div><br>
+            <button onclick="cerrarModal()">CERRAR</button>
         </div>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
@@ -197,19 +165,35 @@
     const sel = document.getElementById("newRankAdmin");
     RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
-    function formatearFecha(isoString) {
-        if(!isoString) return "Nunca";
-        const fecha = new Date(isoString);
-        return fecha.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
+    let nombreUsuarioActual = "";
+    let rangoUsuarioActual = "";
+
+    function activarChat() {
+        const q = query(collection(db, "chat_oficiales"), orderBy("timestamp", "desc"), limit(30));
+        onSnapshot(q, (snapshot) => {
+            let html = "";
+            snapshot.docs.reverse().forEach(doc => {
+                const m = doc.data();
+                html += `<div class="msg"><b>[${m.rango}] ${m.nombre}:</b> ${m.mensaje}</div>`;
+            });
+            const box = document.getElementById("chatBox");
+            box.innerHTML = html;
+            box.scrollTop = box.scrollHeight;
+        });
     }
 
-    window.filtrarSoldados = function() {
-        let input = document.getElementById('searchBar').value.toLowerCase();
-        let tarjetas = document.getElementsByClassName('tarjeta');
-        for (let i = 0; i < tarjetas.length; i++) {
-            let nombre = tarjetas[i].getAttribute('data-nombre').toLowerCase();
-            tarjetas[i].style.display = nombre.includes(input) ? "flex" : "none";
-        }
+    document.getElementById("btnSendChat").onclick = async () => {
+        const txt = document.getElementById("chatInput").value;
+        // CORRECCIÓN: Validar que los datos existan antes de enviar
+        if(!txt || !nombreUsuarioActual || !rangoUsuarioActual) return alert("Error: Perfil no cargado.");
+        
+        await addDoc(collection(db, "chat_oficiales"), {
+            nombre: nombreUsuarioActual,
+            rango: rangoUsuarioActual,
+            mensaje: txt,
+            timestamp: serverTimestamp()
+        });
+        document.getElementById("chatInput").value = "";
     };
 
     window.verExpediente = async (email) => {
@@ -217,119 +201,68 @@
         if (snap.exists()) {
             const x = snap.data();
             document.getElementById("expNombre").innerText = x.nombre || "Sin Nombre";
-            document.getElementById("expRangoDiv").innerText = `${x.rango} | División: ${x.division}`;
-            let diasBase = 0;
-            if(x.fechaIngreso) {
-                const fIngreso = new Date(x.fechaIngreso);
-                const hoy = new Date();
-                diasBase = Math.floor(Math.abs(hoy - fIngreso) / (1000 * 60 * 60 * 24));
-            }
-            const diasManuales = parseInt(x.antiguedadManual || 0);
-            document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + diasManuales} DÍAS`;
-            document.getElementById("expUltimaCon").innerText = `ÚLTIMA CONEXIÓN: ${formatearFecha(x.ultimaConexion)}`;
+            document.getElementById("expRangoDiv").innerText = `${x.rango} | ${x.division}`;
+            let dias = Math.floor((new Date() - new Date(x.fechaIngreso)) / (1000*60*60*24)) + parseInt(x.antiguedadManual || 0);
+            document.getElementById("expAntiguedad").innerText = `${dias} DÍAS`;
+            document.getElementById("expBarra").style.width = Math.min((dias/30)*100, 100) + "%";
+            document.getElementById("hito1").className = dias >= 15 ? "hito active" : "hito";
+            document.getElementById("hito2").className = dias >= 30 ? "hito active" : "hito";
+            document.getElementById("hito3").className = dias >= 60 ? "hito active" : "hito";
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span class="medal-icon">${m}</span>`);
-            document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
+            document.getElementById("expMedallas").innerHTML = meds || "Ninguna";
             document.getElementById("modalExpediente").style.display = "block";
         }
     };
 
     window.cerrarModal = () => document.getElementById("modalExpediente").style.display = "none";
 
-    async function registrarAccion(mensaje) {
-        const ahora = new Date();
-        const fechaHora = ahora.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
-        await setDoc(doc(db, "config", "logs"), { ultimaAccion: `[${fechaHora}] ${mensaje}` });
-        cargarLogs();
-    }
-
-    async function cargarLogs() {
-        const snap = await getDoc(doc(db, "config", "logs"));
-        if(snap.exists()) document.getElementById("logContent").innerText = snap.data().ultimaAccion;
-    }
-
     async function cargarDatos() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
-        let counts = { Ejercito: 0, FACH: 0, Armada: 0, BOE: 0, Total: 0 };
+        const mapa = { "Cabo 2°": "cabo_2.png", "Cabo 1°": "cabo_1.png", "Sargento 2°": "sargento_2.png", "Sargento 1°": "sargento_1.png", "General en Jefe": "general_en_jefe.png", "Suboficial Mayor": "subof_mayor.png" };
         qs.forEach(d => {
             const x = d.data();
-            const r = x.rango || "Recluta";
-            counts[x.division] = (counts[x.division] || 0) + 1;
-            counts.Total++;
+            let img = mapa[x.rango] || "soldado.png";
             h += `<div class="tarjeta ${x.division}" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')">
-                <img src="https://cdn-icons-png.flaticon.com/512/2592/2592201.png" class="insignia-img">
-                <div>
-                    <b style="color:white;">${x.nombre || 'Anónimo'}</b><br>
-                    <small>${r} [${x.division}]</small>
-                </div>
+                <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
+                <div><b>${x.nombre}</b><br><small>${x.rango}</small></div>
             </div>`;
         });
         document.getElementById("lista").innerHTML = h;
-        document.getElementById("statsContent").innerHTML = `<div class="stat-item">FUERZA TOTAL: ${counts.Total}</div>`;
-        cargarLogs();
     }
-
-    let nombreUsuarioActual = "";
-
-    document.getElementById("btnReg").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        const nom = document.getElementById("regNombre").value;
-        const div = document.getElementById("division").value;
-        if(!nom || !email || !pass) return alert("Faltan datos");
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            const hoy = new Date().toISOString();
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy, antiguedadManual: 0, ultimaConexion: hoy });
-            alert("Soldado registrado."); cargarDatos();
-        } catch(e) { alert(e.message); }
-    };
-
-    document.getElementById("btnLogin").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("Error de ingreso"); }
-    };
-
-    document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
-
-    document.getElementById("btnAscender").onclick = async () => {
-        const email = document.getElementById("targetEmail").value;
-        const nuevo = document.getElementById("newRankAdmin").value;
-        const diasExtra = document.getElementById("manualDays").value || 0;
-        try { 
-            const tSnap = await getDoc(doc(db, "usuarios", email));
-            const nombreT = tSnap.exists() ? (tSnap.data().nombre || email) : email;
-            await updateDoc(doc(db, "usuarios", email), { rango: nuevo, antiguedadManual: parseInt(diasExtra) }); 
-            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${nombreT}`);
-            alert("Cambios aplicados."); cargarDatos(); 
-        } catch(e) { alert("Error"); }
-    };
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const userRef = doc(db, "usuarios", user.email);
-            const snap = await getDoc(userRef);
+            const snap = await getDoc(doc(db, "usuarios", user.email));
             if (snap.exists()) {
                 const d = snap.data();
-                nombreUsuarioActual = d.nombre || user.email;
-                await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
+                nombreUsuarioActual = d.nombre; // Sincronización de perfil
+                rangoUsuarioActual = d.rango;
+                
                 document.getElementById("loginBox").style.display = "none";
-                ["panel", "listaPanel", "statsPanel", "hangarPanel"].forEach(id => document.getElementById(id).style.display = "block");
+                ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
                 document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual;
-                document.getElementById("rank").innerText = d.rango;
+                document.getElementById("rank").innerText = rangoUsuarioActual;
                 document.getElementById("div").innerText = d.division;
-                const r = d.rango.toLowerCase().trim();
+
                 const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
-                if (jerarquia.includes(r)) {
+                if (jerarquia.includes(rangoUsuarioActual.toLowerCase())) {
                     document.getElementById("adminPanel").style.display = "block";
                     document.getElementById("logPanel").style.display = "block";
+                    document.getElementById("chatPanel").style.display = "block";
+                    activarChat();
                 }
                 cargarDatos();
             }
         }
     });
+
+    document.getElementById("btnLogin").onclick = async () => {
+        try { await signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value); } 
+        catch(e) { alert("Error de acceso"); }
+    };
+    document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
 </script>
 </body>
 </html>

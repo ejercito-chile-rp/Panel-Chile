@@ -72,7 +72,6 @@
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .stat-item { border: 1px solid #333; padding: 10px; font-size: 0.9em; }
         #logContent { font-size: 0.85em; color: #39ff14; font-weight: bold; }
-        .last-con { font-size: 0.75em; color: #888; display: block; }
     </style>
 </head>
 <body>
@@ -133,30 +132,30 @@
     </div>
 
     <div class="box" id="hangarPanel">
-        <h3 style="color:var(--fach-white)">🏢 HANGAR DE FLOTA AÉREA (FACH)</h3>
+        <h3 style="color:var(--fach-white)">🏢 HANGAR DE FLOTA AÉREA (ACTUALIZADO)</h3>
         <div class="hangar-grid">
             <div class="avion-card">
-                <img src="https://www.defensa.com/adjuntos/f16_chile_1.jpg" class="avion-img" onerror="this.src='https://images.unsplash.com/photo-1517976384346-3136801d605d?q=80&w=1000'">
+                <img src="https://www.af.mil/Portals/1/images/AFEvents/Raptor.jpg" class="avion-img" alt="F-22 Raptor">
+                <div class="avion-info">
+                    <h4>F-22 Raptor (x5)</h4>
+                    <p>ESTADO: SUPERIORIDAD AÉREA | SIGILO</p>
+                    <small>Cazas de quinta generación para dominancia absoluta.</small>
+                </div>
+            </div>
+            <div class="avion-card">
+                <img src="https://www.lockheedmartin.com/content/dam/lockheed-martin/mfc/photo/f-16/f-16-v-block-70.jpg" class="avion-img" alt="F-16">
                 <div class="avion-info">
                     <h4>F-16 Fighting Falcon</h4>
                     <p>ESTADO: OPERATIVO | COMBATE MULTIPROPÓSITO</p>
-                    <small>Punta de lanza de la defensa aérea chilena.</small>
+                    <small>Versatilidad táctica y respuesta rápida.</small>
                 </div>
             </div>
             <div class="avion-card">
-                <img src="https://www.infodefensa.com/images/showid2/4862557?w=900&mh=700" class="avion-img" onerror="this.src='https://images.unsplash.com/photo-1527431505305-649033284079?q=80&w=1000'">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/C-130_Hercules_air_to_air.jpg" class="avion-img" alt="C-130 Hercules">
                 <div class="avion-info">
                     <h4>C-130 Hercules</h4>
-                    <p>ESTADO: EN MISIÓN | TRANSPORTE TÁCTICO</p>
-                    <small>Capacidad de despliegue global y apoyo humanitario.</small>
-                </div>
-            </div>
-            <div class="avion-card">
-                <img src="https://www.zona-militar.com/wp-content/uploads/2021/04/Super-Tucano-FACh.jpg" class="avion-img" onerror="this.src='https://images.unsplash.com/photo-1628150493721-396561579be4?q=80&w=1000'">
-                <div class="avion-info">
-                    <h4>A-29 Super Tucano</h4>
-                    <p>ESTADO: OPERATIVO | ATAQUE LIGERO</p>
-                    <small>Vigilancia de fronteras y entrenamiento avanzado.</small>
+                    <p>ESTADO: DISPONIBLE | TRANSPORTE PESADO</p>
+                    <small>Logística y despliegue estratégico de tropas.</small>
                 </div>
             </div>
         </div>
@@ -253,16 +252,13 @@
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
         let counts = { Ejercito: 0, FACH: 0, Armada: 0, BOE: 0, Total: 0 };
-        const mapa = { "Cabo 2°": "cabo_2.png", "Cabo 1°": "cabo_1.png", "Sargento 2°": "sargento_2.png", "Sargento 1°": "sargento_1.png", "General en Jefe": "general_en_jefe.png", "Suboficial Mayor": "subof_mayor.png" };
-
         qs.forEach(d => {
             const x = d.data();
             const r = x.rango || "Recluta";
             counts[x.division] = (counts[x.division] || 0) + 1;
             counts.Total++;
-            let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
             h += `<div class="tarjeta ${x.division}" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')">
-                <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
+                <img src="https://cdn-icons-png.flaticon.com/512/2592/2592201.png" class="insignia-img">
                 <div>
                     <b style="color:white;">${x.nombre || 'Anónimo'}</b><br>
                     <small>${r} [${x.division}]</small>

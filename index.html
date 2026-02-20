@@ -89,7 +89,6 @@
             filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg); 
         }
 
-        /* Indicador de Estado Dinámico */
         .online-dot {
             width: 10px; height: 10px;
             border-radius: 50%;
@@ -113,7 +112,7 @@
             backdrop-filter: blur(10px);
         }
         .modal-content {
-            background: #080a08; border: 1px solid var(--neon-green);
+            background: #080a08; border: 1px solid var(--tactical-green);
             margin: 5% auto; padding: 40px; width: 85%; max-width: 550px;
             box-shadow: 0 0 40px rgba(57, 255, 20, 0.3); text-align: center;
         }
@@ -127,44 +126,44 @@
 
     <div class="box" id="loginBox">
         <h2>CENTRO DE MANDO</h2>
-        <input id="regNombre" type="text" placeholder="ID_OPERATIVO">
-        <input id="email" type="email" placeholder="CORREO_ENCRIPTADO">
-        <input id="password" type="password" placeholder="ACCESS_CODE">
+        <input id="regNombre" type="text" placeholder="NOMBRE COMPLETO">
+        <input id="email" type="email" placeholder="CORREO">
+        <input id="password" type="password" placeholder="CONTRASEÑA">
         <select id="division">
             <option value="Ejercito">EJÉRCITO</option>
             <option value="FACH">FACH</option>
             <option value="Armada">ARMADA</option>
             <option value="BOE">BOE</option>
         </select>
-        <button id="btnReg">REGISTRAR_ASSET</button>
-        <button id="btnLogin" style="border-color: var(--alert-amber); color: var(--alert-amber);">ACCEDER_SISTEMA</button>
+        <button id="btnReg">REGISTRAR SOLDADO</button>
+        <button id="btnLogin" style="border-color: var(--alert-amber); color: var(--alert-amber);">INGRESAR AL SISTEMA</button>
     </div>
 
     <div class="box" id="panel">
-        <h3 id="welcome">IDENTIFYING_ASSET...</h3>
+        <h3 id="welcome">IDENTIFICANDO...</h3>
         <p>RANGO: <span id="rank" style="color:white"></span> | DIVISIÓN: <span id="div" style="color:white"></span></p>
         <button id="btnLogout" style="width: auto; padding: 5px 20px;">DESCONECTAR</button>
     </div>
 
     <div class="box" id="logPanel">
-        <h3 style="color:var(--gold)">LOG_DE_OPERACIONES</h3>
+        <h3 style="color:var(--gold)">LOG DE OPERACIONES</h3>
         <div id="logContent">Sincronizando...</div>
     </div>
 
     <div class="box" id="statsPanel">
-        <h3>ESTADO_FUERZAS_TOTALES</h3>
+        <h3>FUERZAS TOTALES</h3>
         <div class="stats-grid" id="statsContent"></div>
     </div>
 
     <div class="box admin-box" id="adminPanel">
         <h3>ALTO MANDO: GESTIÓN</h3>
-        <input id="targetEmail" placeholder="CORREO_DEL_SOLDADO">
+        <input id="targetEmail" placeholder="CORREO DEL SOLDADO">
         <select id="newRankAdmin"></select>
-        <input id="manualDays" type="number" placeholder="DÍAS_SERVICIO_EXTRA">
-        <button id="btnAscender" style="color:var(--danger-red); border: 1px solid var(--danger-red);">APLICAR_CAMBIOS</button>
-        <button id="btnBaja" style="background: #400; color: white;">ELIMINAR_DEL_SERVICIO</button>
+        <input id="manualDays" type="number" placeholder="DÍAS SERVICIO EXTRA">
+        <button id="btnAscender" style="color:var(--danger-red); border: 1px solid var(--danger-red);">APLICAR CAMBIOS</button>
+        <button id="btnBaja" style="background: #400; color: white;">ELIMINAR DEL SERVICIO</button>
         <hr>
-        <input id="targetMedalla" placeholder="CORREO_PARA_MEDALLA">
+        <input id="targetMedalla" placeholder="CORREO PARA MEDALLA">
         <select id="selectMedalla">
             <option value="🎖️">Medalla al Valor</option>
             <option value="🛡️">Escudo de Lealtad</option>
@@ -175,9 +174,9 @@
     </div>
 
     <div class="box" id="listaPanel">
-        <h3>PERSONNEL_RECORDS</h3>
-        <input type="text" id="searchBar" placeholder="🔍 BUSCAR_CALLSIGN..." onkeyup="filtrarSoldados()">
-        <div id="lista">ACCEDIENDO_BASE_DE_DATOS...</div>
+        <h3>REGISTRO DE TROPAS</h3>
+        <input type="text" id="searchBar" placeholder="🔍 BUSCAR SOLDADO..." onkeyup="filtrarSoldados()">
+        <div id="lista">ACCEDIENDO A BASE DE DATOS...</div>
     </div>
 
     <div id="modalExpediente" class="modal">
@@ -190,7 +189,7 @@
             <h4>CONDECORACIONES:</h4>
             <div id="expMedallas"></div>
             <br>
-            <button onclick="cerrarModal()">CERRAR_EXPEDIENTE</button>
+            <button onclick="cerrarModal()">CERRAR EXPEDIENTE</button>
         </div>
     </div>
 
@@ -221,15 +220,13 @@
         return new Date(isoString).toLocaleString('es-CL', { timeZone: 'America/Santiago' });
     }
 
-    // Lógica de control de inactividad
     function getStatusClass(ultimaConexion) {
         if(!ultimaConexion) return "status-inactivo";
         const diffMs = new Date() - new Date(ultimaConexion);
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
-        
-        if (diffDays < 2) return "status-activo";   // 0-48h
-        if (diffDays < 7) return "status-reserva";  // 2-7 días
-        return "status-inactivo";                  // +7 días
+        if (diffDays < 2) return "status-activo";
+        if (diffDays < 7) return "status-reserva";
+        return "status-inactivo";
     }
 
     window.filtrarSoldados = function() {
@@ -247,7 +244,6 @@
             const x = snap.data();
             document.getElementById("expNombre").innerText = x.nombre || "Sin ID";
             document.getElementById("expRangoDiv").innerText = `${x.rango} | ${x.division}`;
-            
             let diasBase = 0;
             if(x.fechaIngreso) {
                 const fIngreso = new Date(x.fechaIngreso);
@@ -255,7 +251,6 @@
             }
             document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + parseInt(x.antiguedadManual || 0)} DÍAS`;
             document.getElementById("expUltimaCon").innerText = `ÚLTIMA CONEXIÓN: ${formatearFecha(x.ultimaConexion)}`;
-
             let meds = "";
             if(x.medallas) x.medallas.forEach(m => meds += `<span style="font-size:30px; margin:5px;">${m}</span>`);
             document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
@@ -287,7 +282,6 @@
             const r = x.rango || "Recluta";
             counts[x.division] = (counts[x.division] || 0) + 1;
             counts.Total++;
-            
             const statusClass = getStatusClass(x.ultimaConexion);
             let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
 
@@ -323,19 +317,19 @@
         const pass = document.getElementById("password").value;
         const nom = document.getElementById("regNombre").value;
         const div = document.getElementById("division").value;
-        if(!nom || !email || !pass) return alert("DATOS_INCOMPLETOS");
+        if(!nom || !email || !pass) return alert("DATOS INCOMPLETOS");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             const hoy = new Date().toISOString();
             await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy, antiguedadManual: 0, ultimaConexion: hoy });
-            alert("SOLDADO_REGISTRADO"); cargarDatos();
+            alert("SOLDADO REGISTRADO"); cargarDatos();
         } catch(e) { alert(e.message); }
     };
 
     document.getElementById("btnLogin").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("ERROR_DE_ACCESO"); }
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("ERROR DE ACCESO"); }
     };
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
@@ -347,7 +341,7 @@
         try { 
             await updateDoc(doc(db, "usuarios", email), { rango: nuevo, antiguedadManual: parseInt(diasExtra) }); 
             registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${email}`);
-            alert("CAMBIOS_APLICADOS"); cargarDatos(); 
+            alert("CAMBIOS APLICADOS"); cargarDatos(); 
         } catch(e) { alert("ERROR"); }
     };
 
@@ -357,14 +351,14 @@
         try {
             await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
             registrarAccion(`${nombreUsuarioActual} condecoró a ${email} con ${med}`);
-            alert("MEDALLA_OTORGADA"); cargarDatos();
+            alert("MEDALLA OTORGADA"); cargarDatos();
         } catch(e) { alert("ERROR"); }
     };
 
     document.getElementById("btnBaja").onclick = async () => {
         const email = document.getElementById("targetEmail").value;
         if(confirm(`¿DAR DE BAJA A ${email}?`)) {
-            try { await deleteDoc(doc(db, "usuarios", email)); alert("BAJA_CONFIRMADA"); cargarDatos(); } catch(e) { alert("ERROR"); }
+            try { await deleteDoc(doc(db, "usuarios", email)); alert("BAJA CONFIRMADA"); cargarDatos(); } catch(e) { alert("ERROR"); }
         }
     };
 
@@ -376,14 +370,11 @@
                 const d = snap.data();
                 nombreUsuarioActual = d.nombre || user.email;
                 await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
-
                 document.getElementById("loginBox").style.display = "none";
                 ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
-                
-                document.getElementById("welcome").innerText = "OFICIAL_LOGUEADO: " + nombreUsuarioActual.toUpperCase();
+                document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual.toUpperCase();
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
-                
                 const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
                 if (jerarquia.includes(d.rango.toLowerCase())) {
                     document.getElementById("adminPanel").style.display = "block";

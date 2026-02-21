@@ -26,163 +26,156 @@
         /* SIDEBAR */
         .sidebar {
             width: 260px;
-            background: rgba(5, 10, 5, 0.8);
+            background: rgba(5, 10, 5, 0.9);
             border-right: 1px solid var(--dim-green);
             display: flex; flex-direction: column; padding: 20px 0;
         }
 
-        .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; }
+        .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
 
         .menu-item {
             padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px;
-            transition: 0.2s; border-left: 3px solid transparent;
+            transition: 0.2s; border-left: 3px solid transparent; color: var(--tactical-green);
         }
 
         .menu-item:hover { background: var(--dim-green); border-left-color: var(--tactical-green); }
-        .menu-item.active { background: rgba(255, 180, 0, 0.1); border-left-color: var(--alert-amber); color: #fff; }
+        .menu-item.active { background: rgba(0, 242, 255, 0.1); border-left-color: var(--admin-blue); color: #fff; }
 
         /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); }
 
-        /* SECCIÓN FACH (Nuevo Diseño Basado en Imagen 12) */
-        #seccionFach { display: none; height: 100%; }
+        /* SECCIÓN FACH */
+        #seccionFach { display: none; }
+        .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
         
-        .fach-grid { display: grid; grid-template-columns: 300px 1fr 250px; gap: 20px; height: 80vh; }
-        
-        .fach-panel { border: 1px solid var(--dim-green); background: rgba(0, 15, 0, 0.4); padding: 15px; position: relative; }
-        
-        /* Lista de Contactos ID */
-        .pilot-list { overflow-y: auto; height: 90%; }
-        .pilot-entry { 
-            padding: 10px; border: 1px solid transparent; margin-bottom: 5px; cursor: pointer;
-            display: flex; align-items: center; gap: 10px; font-size: 12px;
+        .pilot-container { 
+            border: 1px solid var(--dim-green); 
+            background: rgba(0, 10, 0, 0.6); 
+            padding: 15px; 
+            overflow-y: auto;
         }
-        .pilot-entry:hover { border-color: var(--tactical-green); background: var(--dim-green); }
-        .pilot-status { width: 8px; height: 8px; border-radius: 50%; background: var(--tactical-green); }
 
-        /* Visor Central */
-        .flight-viewer { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 1px solid var(--dim-green); background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(77, 242, 77, 0.03) 1px, rgba(77, 242, 77, 0.03) 2px);
+        .sub-header { 
+            font-size: 11px; color: var(--alert-amber); 
+            padding: 10px 0; border-bottom: 1px solid var(--dim-green);
+            margin-bottom: 15px; display: flex; align-items: center; gap: 5px;
         }
-        .plane-display { font-size: 80px; filter: drop-shadow(0 0 15px var(--tactical-green)); margin-bottom: 20px; }
 
-        /* Radar Táctico Circular */
-        .radar-circle {
-            width: 200px; height: 200px; border: 2px solid var(--tactical-green); border-radius: 50%;
-            margin: 0 auto; position: relative; overflow: hidden;
-            background: radial-gradient(circle, rgba(77, 242, 77, 0.1) 0%, transparent 70%);
+        .pilot-card-mini {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(77, 242, 77, 0.1);
+            padding: 12px; margin-bottom: 10px;
+            display: grid; grid-template-columns: 50px 1fr 40px;
+            align-items: center; gap: 10px; transition: 0.3s;
         }
-        .radar-line {
-            position: absolute; width: 50%; height: 2px; background: var(--tactical-green);
-            top: 50%; left: 50%; transform-origin: left; animation: scan 4s linear infinite;
+
+        .pilot-card-mini:hover { background: var(--dim-green); border-color: var(--admin-blue); cursor: pointer; }
+
+        .icon-box {
+            width: 45px; height: 45px; background: rgba(0,0,0,0.5);
+            border: 1px solid var(--admin-blue); display: flex;
+            align-items: center; justify-content: center; font-size: 20px;
         }
+
+        .mini-radar {
+            width: 35px; height: 35px; border: 1px solid var(--tactical-green);
+            border-radius: 50%; position: relative; opacity: 0.6;
+        }
+        .mini-radar::after {
+            content: ''; position: absolute; width: 50%; height: 1px;
+            background: var(--tactical-green); top: 50%; left: 50%;
+            transform-origin: left; animation: scan 2s linear infinite;
+        }
+
         @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* RESTO DE ESTILOS EXISTENTES */
-        .admin-auth-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center;
+        /* VISOR CENTRAL DINÁMICO */
+        .flight-display {
+            border: 1px solid var(--dim-green);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; position: relative;
+            transition: all 0.5s ease;
         }
-        .auth-card { width: 500px; padding: 40px; border: 1px solid var(--tactical-green); text-align: center; }
-        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 15px; width: 100%; margin-bottom: 20px; font-family: inherit; }
-        .grid-tropas { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
-        .soldado-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(77, 242, 77, 0.1); position: relative; padding: 20px; display: flex; gap: 15px; }
-        .status-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+        .main-icon-display { 
+            font-size: 120px; z-index: 2; 
+            transition: all 0.5s ease;
+        }
+
+        .tech-data {
+            margin-top: 20px; text-align: center;
+            border-top: 1px solid var(--dim-green);
+            padding-top: 20px; width: 80%;
+        }
+
+        /* ELEMENTOS GENERALES */
         #adminTools { display: none; border: 1px solid var(--danger-red); padding: 20px; margin-bottom: 30px; background: rgba(255,0,0,0.05); }
-        button { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px 20px; cursor: pointer; font-family: inherit; }
+        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 15px; font-family: inherit; }
+        .grid-tropas { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+        .soldado-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(77, 242, 77, 0.1); position: relative; padding: 15px; display: flex; gap: 12px; }
+        .status-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+        button { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px 20px; cursor: pointer; font-family: inherit; font-weight: bold; }
         #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
     <div id="loginScreen">
-        <div class="auth-card" style="width: 350px;">
-            <h3>TERMINAL DE ACCESO</h3>
-            <input type="email" id="userEmail" class="auth-input" placeholder="CORREO">
-            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
-            <button onclick="login()">INGRESAR AL SISTEMA</button>
-        </div>
-    </div>
-
-    <div id="adminAuthOverlay" class="admin-auth-overlay">
-        <div class="auth-card">
-            <h2 style="letter-spacing: 5px; color: var(--tactical-green);">LEVEL 5 ACCESS REQUIRED</h2>
-            <input type="password" id="accessCodeInput" class="auth-input" placeholder="ACCESS_CODE">
-            <div style="display: flex; gap: 10px;">
-                <button onclick="verificarCodigoAdmin()" style="flex: 1;">DESBLOQUEAR</button>
-                <button onclick="cerrarAdminAuth()" style="flex: 1; border-color: var(--danger-red); color: var(--danger-red);">CANCELAR</button>
-            </div>
+        <div style="width: 350px; border: 1px solid var(--tactical-green); padding: 40px; text-align: center;">
+            <h3>TERMINAL CHILE</h3>
+            <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL">
+            <input type="password" id="userPass" class="auth-input" placeholder="PASS">
+            <button onclick="login()" style="width: 100%;">ENTRAR</button>
         </div>
     </div>
 
     <div class="sidebar">
         <div style="padding: 20px; border-bottom: 1px solid var(--dim-green); margin-bottom: 10px;">
-            <div id="userName" style="color: white; font-weight: bold;">CARGANDO...</div>
-            <div id="userRank" style="font-size: 10px; color: var(--alert-amber);">IDENTIFICANDO RANGO</div>
+            <div id="userName" style="color: white; font-weight: bold;">...</div>
+            <div id="userRank" style="font-size: 10px; color: var(--alert-amber);">CARGANDO RANGO</div>
         </div>
-
         <div class="menu-category">PERSONAL Y COMANDO</div>
         <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')"><span>📋</span> Personal RP</div>
         <div class="menu-item" id="btnFach" onclick="switchTab('fach')"><span>✈️</span> Sección Fach</div>
-        
-        <div class="menu-category">OPERACIONES TÁCTICAS</div>
-        <div class="menu-item" onclick="abrirAdminAuth()">
-            <span style="color: var(--admin-blue);">🌐</span> Menu Admin
-        </div>
-        
-        <div style="margin-top: auto; padding: 20px;">
-            <button onclick="logout()" style="width: 100%; border-color: var(--danger-red); color: var(--danger-red);">DESCONECTAR</button>
-        </div>
+        <div class="menu-category">SISTEMAS DE VUELO</div>
+        <div class="menu-item" onclick="abrirAdminAuth()"><span style="color: var(--admin-blue);">🌐</span> Menu Admin</div>
+        <button onclick="logout()" style="margin: auto 20px 20px; border-color: var(--danger-red); color: var(--danger-red);">SALIR</button>
     </div>
 
     <div class="main-content">
         <div id="seccionPersonal">
             <div id="adminTools">
-                <h3 style="color: var(--danger-red); margin-top: 0;">MODIFICACIÓN DE EXPEDIENTES</h3>
-                <div style="display: flex; gap: 15px;">
-                    <select id="targetSoldier" class="auth-input" style="margin:0; flex: 2;"></select>
-                    <select id="targetRank" class="auth-input" style="margin:0; flex: 2;"></select>
-                    <button onclick="procesarCambioRango()" style="flex: 1; border-color: var(--danger-red);">APLICAR RANGO</button>
+                <p style="color: var(--danger-red); margin: 0 0 10px 0;">MODIFICACIÓN DE EXPEDIENTES</p>
+                <div style="display: flex; gap: 10px;">
+                    <select id="targetSoldier" class="auth-input" style="flex:2; margin:0;"></select>
+                    <select id="targetRank" class="auth-input" style="flex:2; margin:0;"></select>
+                    <button onclick="procesarCambioRango()">APLICAR</button>
                 </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2 style="margin: 0;">REGISTRO TÁCTICO</h2>
-                <input type="text" id="search" placeholder="🔍 FILTRAR NOMBRE..." onkeyup="filtrar()" style="background: none; border: 1px solid var(--dim-green); color: white; padding: 8px;">
             </div>
             <div id="listaSoldados" class="grid-tropas"></div>
         </div>
 
         <div id="seccionFach">
-            <h2 style="margin-top: 0; color: var(--admin-blue);">SECCIÓN FACH // CONTROL AÉREO</h2>
-            <div class="fach-grid">
-                <div class="fach-panel">
-                    <div style="font-size: 10px; margin-bottom: 10px; color: var(--alert-amber);">CONTACTOS ID // PILOTOS</div>
-                    <div class="pilot-list" id="pilotList">
-                        </div>
+            <div class="fach-layout">
+                <div class="pilot-container">
+                    <div class="sub-header">▶ CONTACTOS ID.</div>
+                    
+                    <div style="font-size: 9px; color: #555; margin-bottom: 10px;">— PILOTO COMANDANTE —</div>
+                    <div id="listaComandante"></div>
+
+                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— PILOTO INSTRUCTOR —</div>
+                    <div id="listaInstructor"></div>
+
+                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— CADETE —</div>
+                    <div id="listaCadete"></div>
                 </div>
 
-                <div class="fach-panel flight-viewer">
-                    <div class="plane-display">✈️</div>
-                    <div id="activePilotName" style="font-size: 24px; color: white; font-weight: bold;">ESPERANDO SELECCIÓN</div>
-                    <div id="activePilotInfo" style="font-size: 12px; color: var(--alert-amber); margin-top: 10px;">SEÑAL ENCRIPTADA</div>
-                    <button style="margin-top: 30px; border-color: var(--admin-blue);">VOLVER AL MANDO CENTRAL</button>
-                </div>
-
-                <div class="fach-panel">
-                    <div style="font-size: 10px; margin-bottom: 10px; color: var(--alert-amber);">RADAR TÁCTICO</div>
-                    <div class="radar-circle">
-                        <div class="radar-line"></div>
-                        <div style="position: absolute; width: 4px; height: 4px; background: red; top: 30%; left: 60%; border-radius: 50%;"></div>
-                        <div style="position: absolute; width: 4px; height: 4px; background: cyan; top: 70%; left: 40%; border-radius: 50%;"></div>
-                    </div>
-                    <div style="margin-top: 20px; font-size: 11px; line-height: 1.8;">
-                        <div>COOR: 4.711 // -74.07Z</div>
-                        <div>MISIÓN: <span style="color: var(--tactical-green);">RECONOCIMIENTO</span></div>
-                        <div>ESTADO: <span style="color: var(--tactical-green);">ESTABLE</span></div>
-                        <div style="margin-top: 10px; border-top: 1px solid var(--dim-green); padding-top: 5px;">ALTITUD: 12,500 FT</div>
-                        <div>VELOCIDAD: 450 KNOTS</div>
+                <div class="flight-display" id="mainDisplayFach">
+                    <div class="main-icon-display" id="vIcon">🛸</div>
+                    <div id="vPilot" style="font-size: 28px; color: white; letter-spacing: 2px;">SELECCIONE UNIDAD</div>
+                    <div id="vRank" style="font-size: 14px; margin-top: 5px; letter-spacing: 1px;">SISTEMA EN ESPERA...</div>
+                    
+                    <div class="tech-data">
+                        <div id="vExtra" style="font-size: 12px; color: var(--alert-amber);">ESPERANDO ENLACE DE TELEMETRÍA...</div>
                     </div>
                 </div>
             </div>
@@ -207,116 +200,134 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const RANGOS = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
-    const MASTER_ACCESS_CODE = "CHILE2026"; 
+    const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-    // Cambio de Pestañas
     window.switchTab = (tab) => {
         document.getElementById("seccionPersonal").style.display = tab === 'personal' ? 'block' : 'none';
         document.getElementById("seccionFach").style.display = tab === 'fach' ? 'block' : 'none';
-        document.getElementById("btnPersonal").classList.toggle('active', tab === 'personal');
-        document.getElementById("btnFach").classList.toggle('active', tab === 'fach');
-    };
-
-    // Autenticación
-    window.login = async () => {
-        const e = document.getElementById("userEmail").value;
-        const p = document.getElementById("userPass").value;
-        try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert("DATOS INCORRECTOS"); }
+        document.getElementById("btnPersonal").className = tab === 'personal' ? 'menu-item active' : 'menu-item';
+        document.getElementById("btnFach").className = tab === 'fach' ? 'menu-item active' : 'menu-item';
     };
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "usuarios", user.email));
             if (snap.exists()) {
-                const u = snap.data();
                 document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("userName").innerText = u.nombre;
-                document.getElementById("userRank").innerText = u.rango;
-                cargarPersonal();
+                document.getElementById("userName").innerText = snap.data().nombre;
+                document.getElementById("userRank").innerText = snap.data().rango;
+                cargarDatos();
             }
-        } else {
-            document.getElementById("loginScreen").style.display = "flex";
-        }
+        } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
 
-    window.abrirAdminAuth = () => document.getElementById("adminAuthOverlay").style.display = "flex";
-    window.cerrarAdminAuth = () => document.getElementById("adminAuthOverlay").style.display = "none";
-
-    window.verificarCodigoAdmin = () => {
-        if (document.getElementById("accessCodeInput").value === MASTER_ACCESS_CODE) {
-            document.getElementById("adminAuthOverlay").style.display = "none";
-            document.getElementById("adminTools").style.display = "block";
-        } else { alert("CÓDIGO ERRÓNEO"); }
-    };
-
-    async function cargarPersonal() {
+    async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
         const lista = document.getElementById("listaSoldados");
-        const listFach = document.getElementById("pilotList");
-        const selectS = document.getElementById("targetSoldier");
-        const selectR = document.getElementById("targetRank");
-        
-        lista.innerHTML = "";
-        listFach.innerHTML = "";
-        selectS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
-        selectR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
+        const lCom = document.getElementById("listaComandante");
+        const lIns = document.getElementById("listaInstructor");
+        const lCad = document.getElementById("listaCadete");
+        const selS = document.getElementById("targetSoldier");
+        const selR = document.getElementById("targetRank");
 
-        snap.forEach((docSnap) => {
+        lista.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = "";
+        selS.innerHTML = '<option value="">SELECCIONAR...</option>';
+        selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
+
+        snap.forEach(docSnap => {
             const d = docSnap.data();
             const email = docSnap.id;
-            
-            // Llenar Admin
-            selectS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
+            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
-            // Llenar Personal RP
-            let color = "var(--tactical-green)";
-            if (d.rango.includes("General") || d.rango === "Coronel") color = "var(--alert-amber)";
-            if (d.division === "BOE") color = "var(--danger-red)";
-            if (d.division === "FACH") color = "var(--admin-blue)";
+            let color = d.division === "FACH" ? "var(--admin-blue)" : "var(--tactical-green)";
+            if (d.rango.includes("General")) color = "var(--alert-amber)";
 
             lista.innerHTML += `
                 <div class="soldado-card">
                     <div class="status-bar" style="background: ${color}"></div>
-                    <div style="width: 50px; height: 50px; background: ${color}33; display: flex; align-items: center; justify-content: center; border: 1px solid ${color}">▲</div>
+                    <div style="font-size:20px; color:${color}">▲</div>
                     <div>
-                        <div style="font-weight: bold; color: white;">${d.nombre.toUpperCase()}</div>
-                        <div style="font-size: 11px; color: ${color}">${d.rango} [${d.division}]</div>
+                        <div style="font-weight:bold; color:white;">${d.nombre.toUpperCase()}</div>
+                        <div style="font-size:10px; color:${color}">${d.rango}</div>
                     </div>
                 </div>`;
 
-            // Llenar Sección Fach (Solo pilotos)
             if (d.division === "FACH") {
-                listFach.innerHTML += `
-                    <div class="pilot-entry" onclick="selectPilot('${d.nombre}', '${d.rango}')">
-                        <div class="pilot-status"></div>
+                let cat = "cadete";
+                if (d.rango.includes("General") || d.rango === "Coronel") cat = "comandante";
+                else if (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango)) cat = "instructor";
+
+                const item = `<div class="pilot-card-mini" onclick="verPiloto('${d.nombre}', '${d.rango}', '${cat}')">
+                        <div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
                         <div>
-                            <div style="font-weight: bold;">[${email.split('@')[0].toUpperCase()}]</div>
-                            <div style="font-size: 10px; color: var(--admin-blue);">${d.nombre}</div>
+                            <div style="color:var(--admin-blue); font-size:10px;">[ID-${email.split('@')[0].toUpperCase()}]</div>
+                            <div style="font-size:12px; color:white; font-weight:bold;">${d.nombre}</div>
                         </div>
+                        <div class="mini-radar"></div>
                     </div>`;
+                
+                if (cat === "comandante") lCom.innerHTML += item;
+                else if (cat === "instructor") lIns.innerHTML += item;
+                else lCad.innerHTML += item;
             }
         });
     }
 
-    window.selectPilot = (nombre, rango) => {
-        document.getElementById("activePilotName").innerText = nombre.toUpperCase();
-        document.getElementById("activePilotInfo").innerText = `PILOTO OFICIAL // RANGO: ${rango}`;
+    window.verPiloto = (nombre, rango, cat) => {
+        const display = document.getElementById("mainDisplayFach");
+        const icon = document.getElementById("vIcon");
+        const vPilot = document.getElementById("vPilot");
+        const vRank = document.getElementById("vRank");
+        const vExtra = document.getElementById("vExtra");
+
+        vPilot.innerText = nombre.toUpperCase();
+        vRank.innerText = rango.toUpperCase();
+
+        if (cat === "comandante") {
+            display.style.borderColor = "var(--alert-amber)";
+            display.style.boxShadow = "inset 0 0 50px rgba(255, 180, 0, 0.1)";
+            icon.innerText = "🦅";
+            icon.style.filter = "drop-shadow(0 0 20px var(--alert-amber))";
+            vRank.style.color = "var(--alert-amber)";
+            vExtra.innerText = "ACCESO PRIORITARIO // AUTORIDAD DE VUELO MÁXIMA";
+            vExtra.style.color = "var(--alert-amber)";
+        } 
+        else if (cat === "instructor") {
+            display.style.borderColor = "var(--admin-blue)";
+            display.style.boxShadow = "inset 0 0 50px rgba(0, 242, 255, 0.1)";
+            icon.innerText = "✈️";
+            icon.style.filter = "drop-shadow(0 0 20px var(--admin-blue))";
+            vRank.style.color = "var(--admin-blue)";
+            vExtra.innerText = "SUPERVISIÓN DE FLOTA // ASIGNACIÓN DE MISIONES";
+            vExtra.style.color = "var(--admin-blue)";
+        } 
+        else {
+            display.style.borderColor = "var(--tactical-green)";
+            display.style.boxShadow = "inset 0 0 50px rgba(77, 242, 77, 0.1)";
+            icon.innerText = "🪖";
+            icon.style.filter = "drop-shadow(0 0 20px var(--tactical-green))";
+            vRank.style.color = "var(--tactical-green)";
+            vExtra.innerText = "UNIDAD EN ENTRENAMIENTO // MONITOREO BÁSICO";
+            vExtra.style.color = "var(--tactical-green)";
+        }
     };
 
-    window.procesarCambioRango = async () => {
-        const email = document.getElementById("targetSoldier").value;
-        const nuevoRango = document.getElementById("targetRank").value;
-        await updateDoc(doc(db, "usuarios", email), { rango: nuevoRango });
-        alert("RANGO ACTUALIZADO");
-        cargarPersonal();
+    window.login = async () => {
+        const e = document.getElementById("userEmail").value;
+        const p = document.getElementById("userPass").value;
+        try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("ERROR"); }
     };
-
     window.logout = () => signOut(auth).then(() => location.reload());
-    window.filtrar = () => {
-        const q = document.getElementById("search").value.toLowerCase();
-        const cards = document.getElementsByClassName("soldado-card");
-        for (let c of cards) c.style.display = c.innerText.toLowerCase().includes(q) ? "flex" : "none";
+    window.abrirAdminAuth = () => {
+        const code = prompt("LEVEL 5 ACCESS CODE:");
+        if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block";
+    };
+    window.procesarCambioRango = async () => {
+        const e = document.getElementById("targetSoldier").value;
+        const r = document.getElementById("targetRank").value;
+        await updateDoc(doc(db, "usuarios", e), { rango: r });
+        alert("EXPEDIENTE ACTUALIZADO");
+        cargarDatos();
     };
 </script>
 </body>

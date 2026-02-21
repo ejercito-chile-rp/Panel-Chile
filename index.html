@@ -140,6 +140,18 @@
         </div>
     </div>
 
+    <div id="modalDefconAuth" class="custom-modal">
+        <div class="modal-body">
+            <h3 style="color: var(--alert-amber); margin-top: 0; letter-spacing: 2px;">PROTOCOLO DEFCON</h3>
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">INGRESE CÓDIGO DE AUTORIZACIÓN (ESTADO ACTUAL: DEFCON <span id="spanCurrentDefcon">5</span>)</p>
+            <input type="password" id="defconPassInput" class="auth-input" placeholder="CÓDIGO SECRETO" style="text-align: center; border-color: var(--alert-amber); color: white;">
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button onclick="verificarDefconAuth()" class="btn-tactical" style="flex: 1; border-color: var(--alert-amber); color: var(--alert-amber);">CONFIRMAR</button>
+                <button onclick="cerrarDefconAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: #555;">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
     <div id="perfilModal">
         <div class="perfil-container">
             <div class="perfil-header">
@@ -218,7 +230,7 @@
         <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad General</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
         
-        <div class="menu-item btn-alert" id="btnDefcon" onclick="cicloDefcon()" onmouseenter="playHover()"><span>🚨</span> ESTADO: DEFCON 5</div>
+        <div class="menu-item btn-alert" id="btnDefcon" onclick="abrirDefconAuth()" onmouseenter="playHover()"><span>🚨</span> ESTADO: DEFCON 5</div>
 
         <button onclick="logout()" style="margin: auto 20px 20px; background: rgba(255,0,0,0.1); border: 1px solid var(--danger-red); color: var(--danger-red); padding: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;">DESCONECTAR</button>
     </div>
@@ -276,7 +288,7 @@
         <div id="seccionLicencias">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA DE LICENCIAS</h2>
             <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin-bottom: 20px; display: none;" id="panelAdminLicencias">
-                <h4 style="margin-top:0; color:var(--admin-blue);">OTORGAR / MODIFICAR LICENCIAS (PANEL ADMIN)</h4>
+                <h4 style="margin-top:0; color:var(--admin-blue);">OTORGAR / MODIFICAR LICENCIAS (PANEL OFICIALES/ADMIN)</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
                     <select id="targetSoldadoLicencia" class="auth-input"></select>
                     <select id="tipoLicencia" class="auth-input">
@@ -381,7 +393,7 @@
 
     window.currentUserEmail = null; window.currentUserName = "Desconocido"; window.currentUserRank = ""; window.isAdmin = false;
     let windowUsersData = {};
-    window.cachedLogs = []; // CACHE DE LOGS PARA PERFILES
+    window.cachedLogs = [];
 
     const sndHover = document.getElementById("sndHover"); const sndClick = document.getElementById("sndClick"); const sndAlert = document.getElementById("sndAlert"); const sndError = document.getElementById("sndError"); const sndStartup = document.getElementById("sndStartup");
     window.playHover = () => { sndHover.currentTime = 0; sndHover.play().catch(()=>{}); };
@@ -398,16 +410,40 @@
     };
 
     let currentDefcon = 5;
-    window.cicloDefcon = () => {
-        if (!window.isAdmin) { window.showToast("ACCESO DENEGADO: Solo el General en Jefe puede modificar el estado de alerta DEFCON.", "error"); return; }
+    
+    // NUEVO: FLUJO PARA CAMBIAR DEFCON CON CÓDIGO
+    window.abrirDefconAuth = () => {
+        window.playClick(); 
+        document.getElementById("modalDefconAuth").style.display = "flex"; 
+        document.getElementById("defconPassInput").value = ""; 
+        document.getElementById("spanCurrentDefcon").innerText = currentDefcon;
+        document.getElementById("defconPassInput").focus(); 
+    };
+    
+    window.cerrarDefconAuth = () => { 
+        window.playClick(); 
+        document.getElementById("modalDefconAuth").style.display = "none"; 
+    };
+    
+    window.verificarDefconAuth = () => {
         window.playClick();
+        if(document.getElementById("defconPassInput").value === "2629") {
+            document.getElementById("modalDefconAuth").style.display = "none";
+            ejecutarCambioDefcon();
+        } else { 
+            window.showToast("CÓDIGO DEFCON INVÁLIDO.", "error"); 
+        }
+    };
+
+    function ejecutarCambioDefcon() {
         currentDefcon--; if (currentDefcon < 1) currentDefcon = 5;
         document.body.className = document.body.className.replace(/defcon-\d/g, '').trim();
         document.body.classList.add(`defcon-${currentDefcon}`);
         document.getElementById('btnDefcon').innerHTML = `<span>🚨</span> ESTADO: DEFCON ${currentDefcon}`;
         if (currentDefcon === 1) { sndAlert.play(); registrarLog("ALERTA DEFCON", "Nivel máximo activado (DEFCON 1)."); } 
         else { sndAlert.pause(); sndAlert.currentTime = 0; registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`); }
-    };
+        window.showToast(`ESTADO DEFCON ACTUALIZADO A NIVEL ${currentDefcon}`, "success");
+    }
 
     window.abrirAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "flex"; document.getElementById("adminPassInput").value = ""; document.getElementById("adminPassInput").focus(); };
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
@@ -460,11 +496,13 @@
                 
                 if (window.isAdmin) {
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
-                    document.getElementById("panelAdminLicencias").style.display = "block";
                 }
+                
+                // PANEL LICENCIAS Y DOCUMENTOS VISIBLES PARA TODOS LOS OFICIALES (O ADMIN)
                 if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
                     document.getElementById("menuOficialesTitle").classList.remove("menu-hidden");
                     document.getElementById("btnDocumentos").classList.remove("menu-hidden");
+                    document.getElementById("panelAdminLicencias").style.display = "block"; // AHORA VISIBLE PARA OFICIALES
                 }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); if(window.isAdmin) cargarLogsVisual();

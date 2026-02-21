@@ -2,350 +2,208 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SISTEMA DE MANDO TÁCTICO - CHILE</title>
+<title>Panel Militar — Ejército de Chile</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-:root { 
-    --tactical-green: #4df24d; 
-    --dim-green: rgba(77, 242, 77, 0.15);
-    --army-dark: #020602;
-    --alert-amber: #ffb400;
-    --danger-red: #ff3b3b;
-    --admin-blue: #00f2ff;
+body{
+    margin:0;
+    background:#020a02;
+    font-family:Consolas, monospace;
+    color:#00ff88;
 }
 
-body {
-    background: var(--army-dark);
-    color: var(--tactical-green);
-    font-family: 'Share Tech Mono', monospace;
-    margin: 0;
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 260px;
-    background: rgba(5, 10, 5, 0.9);
-    border-right: 1px solid var(--dim-green);
-    padding: 20px 0;
-}
-
-.menu-item {
-    padding: 12px 25px;
-    cursor: pointer;
-}
-
-.main-content {
-    flex: 1;
-    padding: 30px;
-    overflow-y: auto;
-}
-
-#adminTools {
-    display: none;
-    border: 1px solid var(--danger-red);
-    padding: 20px;
-    margin-bottom: 30px;
-}
-
-.auth-input {
-    background: black;
-    border: 1px solid var(--tactical-green);
-    color: var(--tactical-green);
-    padding: 10px;
-    width: 100%;
-}
-
-#loginScreen {
-    position: fixed;
-    inset: 0;
-    background: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-.soldado-card{
-    padding:15px;
+/* CONTENEDOR GENERAL */
+.panel{
     display:flex;
-    gap:15px;
+    height:100vh;
+}
+
+/* PANEL IZQUIERDO */
+.sidebar{
+    width:250px;
+    border-right:1px solid #00ff88;
+    padding:15px;
+}
+
+.sidebar h3{
+    color:#ffaa00;
+    font-size:12px;
+    margin-top:20px;
+}
+
+.sidebar button{
+    display:block;
+    width:100%;
+    margin-top:5px;
+    background:none;
+    border:none;
+    color:#00ff88;
+    text-align:left;
+    padding:8px;
+    cursor:pointer;
+}
+
+.sidebar button:hover{
+    background:#003322;
+}
+
+/* PANEL CENTRAL */
+.center{
+    flex:1;
+    display:flex;
     align-items:center;
-    background: rgba(255,255,255,0.03);
+    justify-content:center;
+    flex-direction:column;
+}
+
+.card{
+    border:1px solid #00ff88;
+    padding:30px;
+    text-align:center;
+    width:400px;
+}
+
+.btn{
+    margin-top:10px;
+    padding:10px;
+    background:none;
+    border:1px solid #00ff88;
+    color:#00ff88;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#003322;
+}
+
+/* NUEVO PANEL DERECHO */
+.rightpanel{
+    width:300px;
+    border-left:1px solid #00ff88;
+    padding:15px;
+}
+
+/* BLOQUES */
+.block{
+    border:1px solid #00ff88;
+    margin-bottom:15px;
+    padding:10px;
+}
+
+.block h4{
+    color:#ffaa00;
+    font-size:12px;
+    margin:0 0 10px 0;
+}
+
+/* ITEMS */
+.item{
+    padding:6px;
+    border-bottom:1px solid #003322;
+}
+
+.item:last-child{
+    border-bottom:none;
+}
+
+.online{
+    color:#00ff88;
+}
+
+.offline{
+    color:#ff4444;
+}
+
+.warning{
+    color:#ffaa00;
 }
 
 </style>
 </head>
-
 <body>
 
-<div id="loginScreen">
-    <div style="width:350px;border:1px solid var(--tactical-green);padding:30px;">
-        <h3>ACCESO MILITAR</h3>
+<div class="panel">
 
-        <input id="userEmail" type="email" class="auth-input" placeholder="EMAIL">
-        <input id="userPass" type="password" class="auth-input" placeholder="CONTRASEÑA">
-
-        <button onclick="login()">INICIAR SESIÓN</button>
-    </div>
-</div>
-
+<!-- IZQUIERDA -->
 <div class="sidebar">
 
-<div id="userName">...</div>
-<div id="userRank">...</div>
+<h3>PERSONAL Y COMANDO</h3>
+<button>Personal RP</button>
+<button>Sección FACH</button>
 
-<div class="menu-item" onclick="abrirAdminAuth()">ADMIN</div>
-
-<button onclick="logout()">SALIR</button>
-
-</div>
-
-<div class="main-content">
-
-<div id="adminTools">
-
-<select id="targetSoldier" class="auth-input"></select>
-
-<select id="targetRank" class="auth-input"></select>
-
-<select id="targetAeronave" class="auth-input">
-<option>F-16</option>
-<option>F-22</option>
-<option>BLACK HAWK</option>
-<option>CHINOOK</option>
-</select>
-
-<button onclick="procesarCambiosAdmin()">ACTUALIZAR</button>
+<h3>OPERACIONES</h3>
+<button>Menu Admin</button>
 
 </div>
 
-<div id="listaSoldados"></div>
+
+<!-- CENTRO -->
+<div class="center">
+
+<div class="card">
+
+<h2>LUKAS BROWN</h2>
+
+<p>PILOTO OFICIAL</p>
+<p>RANGO: GENERAL EN JEFE</p>
+
+<button class="btn">Panel General</button>
+<button class="btn">Ascensos</button>
+<button class="btn">Sanciones</button>
 
 </div>
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-getDoc,
-updateDoc,
-collection,
-getDocs
-}
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-
-apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
-authDomain: "panel-chile.firebaseapp.com",
-projectId: "panel-chile",
-storageBucket: "panel-chile.appspot.com",
-messagingSenderId: "124864601883",
-appId: "1:124864601883:web:839163be2060253f68bdbe"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
+</div>
 
 
+<!-- NUEVO PANEL DERECHO -->
+<div class="rightpanel">
 
-/* NUEVO SISTEMA COLOR DIVISION */
-function getDivisionColor(division){
+<div class="block">
+<h4>UNIDADES MILITARES</h4>
 
-if(division==="FACH") return "#ffffff";
-
-if(division==="BOE") return "#ff3b3b";
-
-if(division==="ARMADA") return "#00a2ff";
-
-return "#4df24d";
-
-}
-
-
-
-const RANGOS = [
-
-"Cabo 2°",
-"Cabo 1°",
-"Sargento 2°",
-"Sargento 1°",
-"Suboficial",
-"Suboficial Mayor",
-"Subteniente",
-"Teniente",
-"Capitán",
-"Mayor",
-"Teniente Coronel",
-"Coronel",
-"General de Brigada",
-"General de División",
-"General en Jefe"
-
-];
-
-
-
-onAuthStateChanged(auth, async(user)=>{
-
-if(user){
-
-const snap = await getDoc(doc(db,"usuarios",user.email));
-
-if(snap.exists()){
-
-document.getElementById("loginScreen").style.display="none";
-
-document.getElementById("userName").innerText=snap.data().nombre;
-
-document.getElementById("userRank").innerText=snap.data().rango;
-
-cargarDatos();
-
-}
-
-}
-
-});
-
-
-
-async function cargarDatos(){
-
-const snap = await getDocs(collection(db,"usuarios"));
-
-const lista = document.getElementById("listaSoldados");
-
-const sel = document.getElementById("targetSoldier");
-
-const selRank = document.getElementById("targetRank");
-
-lista.innerHTML="";
-sel.innerHTML="";
-selRank.innerHTML="";
-
-RANGOS.forEach(r=>{
-
-selRank.innerHTML+=`<option>${r}</option>`;
-
-});
-
-snap.forEach(docSnap=>{
-
-const d = docSnap.data();
-
-const email = docSnap.id;
-
-const divisionColor = getDivisionColor(d.division);
-
-sel.innerHTML+=`<option value="${email}">${d.nombre}</option>`;
-
-lista.innerHTML+=`
-
-<div class="soldado-card"
-
-style="border:1px solid ${divisionColor};">
-
-<div style="font-size:26px;color:${divisionColor};">👤</div>
-
-<div>
-
-<div style="color:${divisionColor};font-weight:bold;">
-
-${d.nombre}
+<div class="item online">Ejército — Operativo</div>
+<div class="item online">FACH — Operativo</div>
+<div class="item online">Armada — Operativo</div>
+<div class="item warning">BOE — En espera</div>
 
 </div>
 
-<div style="color:${divisionColor};font-size:12px;">
 
-${d.rango} // ${d.division||"EJERCITO"}
+<div class="block">
+<h4>AVIACIÓN</h4>
+
+<div class="item online">F-16 Falcon</div>
+<div class="item online">F-5 Tiger III</div>
+<div class="item offline">A-29 Super Tucano</div>
+<div class="item online">C-130 Hércules</div>
+
+</div>
+
+
+<div class="block">
+<h4>BASE DE DATOS</h4>
+
+<div class="item online">Personal registrado: 128</div>
+<div class="item online">Oficiales: 32</div>
+<div class="item online">Suboficiales: 41</div>
+<div class="item online">Soldados: 55</div>
+
+</div>
+
+
+<div class="block">
+<h4>ESTADO OPERATIVO</h4>
+
+<div class="item online">Sistema: ONLINE</div>
+<div class="item online">Firebase: Conectado</div>
+<div class="item online">Permisos: Activos</div>
 
 </div>
 
 </div>
 
 </div>
-
-`;
-
-});
-
-}
-
-
-
-window.procesarCambiosAdmin = async ()=>{
-
-const email=document.getElementById("targetSoldier").value;
-
-const rango=document.getElementById("targetRank").value;
-
-const aeronave=document.getElementById("targetAeronave").value;
-
-await updateDoc(doc(db,"usuarios",email),{
-
-rango:rango,
-
-aeronave:aeronave
-
-});
-
-alert("ACTUALIZADO");
-
-cargarDatos();
-
-};
-
-
-
-window.login = async ()=>{
-
-const e=document.getElementById("userEmail").value;
-
-const p=document.getElementById("userPass").value;
-
-await signInWithEmailAndPassword(auth,e,p);
-
-};
-
-
-
-window.logout=()=>{
-
-signOut(auth);
-
-location.reload();
-
-};
-
-
-
-window.abrirAdminAuth=()=>{
-
-const code=prompt("CODIGO");
-
-if(code==="CHILE2026"){
-
-document.getElementById("adminTools").style.display="block";
-
-}
-
-};
-
-</script>
 
 </body>
 </html>

@@ -276,9 +276,17 @@
             <h3 style="color: var(--admin-blue); margin-top: 0; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px;">[ ACCESO CLASIFICADO - ADMINISTRADOR ]</h3>
             
             <p style="color: white; font-weight: bold; margin: 20px 0 10px; font-size: 14px;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px;">
                 <select id="targetSoldier" class="auth-input" style="margin:0;"></select>
                 <select id="targetRank" class="auth-input" style="margin:0;"></select>
+                
+                <select id="targetDivision" class="auth-input" style="margin:0;">
+                    <option value="EJÉRCITO">EJÉRCITO</option>
+                    <option value="FACH">FACH</option>
+                    <option value="ARMADA">ARMADA</option>
+                    <option value="BOE">BOE</option>
+                </select>
+
                 <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves" style="margin:0;"></select>
                 <button onclick="procesarCambiosAdmin()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ACTUALIZAR</button>
             </div>
@@ -514,7 +522,6 @@
         setTimeout(() => { toast.style.animation = "fadeOut 0.5s forwards"; setTimeout(() => toast.remove(), 500); }, 3500);
     };
 
-    // ALTERNAR ENTRE LOGIN Y REGISTRO
     let isLoginMode = true;
     window.toggleAuthMode = () => {
         window.playClick();
@@ -525,42 +532,17 @@
         document.getElementById("authModeToggle").innerHTML = isLoginMode ? "¿No tienes credenciales? Solicita registro aquí." : "Ya poseo credenciales. Iniciar conexión.";
     };
 
-    // FUNCIONES DE ACCESO
-    window.login = async () => { 
-        window.playClick(); 
-        const e = document.getElementById("userEmail").value; 
-        const p = document.getElementById("userPass").value; 
-        try { 
-            await signInWithEmailAndPassword(auth, e, p); 
-            registrarLog("INGRESO SISTEMA", `El correo ${e} inició conexión táctica.`); 
-        } catch { window.showToast("CREDENCIALES INVÁLIDAS", "error"); } 
-    };
+    window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició conexión táctica.`); } catch { window.showToast("CREDENCIALES INVÁLIDAS", "error"); } };
 
     window.register = async () => {
         window.playClick();
-        const n = document.getElementById("regNombre").value.trim();
-        const e = document.getElementById("userEmail").value.trim();
-        const p = document.getElementById("userPass").value;
+        const n = document.getElementById("regNombre").value.trim(); const e = document.getElementById("userEmail").value.trim(); const p = document.getElementById("userPass").value;
         if (!n || !e || !p) return window.showToast("COMPLETE TODOS LOS CAMPOS PARA REGISTRO", "error");
-        
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "usuarios", e), {
-                nombre: n,
-                rango: "Cabo 2°",
-                division: "EJÉRCITO",
-                estado: "Online",
-                fechaCreacion: new Date().toLocaleDateString('es-CL'),
-                sanciones: [],
-                licencias: {},
-                misionActiva: null,
-                aeronave: null
-            });
-            registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`);
-            window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
-        } catch (error) {
-            window.showToast("ERROR AL REGISTRAR: Verifica formato de correo o clave (min 6 caracteres).", "error");
-        }
+            await createUserWithEmailAndPassword(auth, e, p);
+            await setDoc(doc(db, "usuarios", e), { nombre: n, rango: "Cabo 2°", division: "EJÉRCITO", estado: "Online", fechaCreacion: new Date().toLocaleDateString('es-CL'), sanciones: [], licencias: {}, misionActiva: null, aeronave: null });
+            registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`); window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
+        } catch (error) { window.showToast("ERROR AL REGISTRAR: Verifica formato o clave.", "error"); }
     };
 
     let currentDefcon = 5;
@@ -602,7 +584,7 @@
         
         const targetEl = document.getElementById(targetId);
         targetEl.style.display = 'block';
-        void targetEl.offsetWidth; // trigger reflow
+        void targetEl.offsetWidth; 
         targetEl.classList.add('fade-in');
         document.getElementById(btnId).classList.add('active');
     };
@@ -846,7 +828,27 @@
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
     window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
     window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
-    window.procesarCambiosAdmin = async () => { window.playClick(); const email = document.getElementById("targetSoldier").value; const rango = document.getElementById("targetRank").value; const avion = document.getElementById("targetAeronave").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { rango: rango, aeronave: avion === "SIN ASIGNAR" ? null : avion }); registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango} y aeronave ${avion}.`); window.showToast("BASE DE DATOS ACTUALIZADA", "success"); cargarDatos(); };
+    
+    window.procesarCambiosAdmin = async () => { 
+        window.playClick(); 
+        const email = document.getElementById("targetSoldier").value; 
+        const rango = document.getElementById("targetRank").value; 
+        const division = document.getElementById("targetDivision").value; 
+        const avion = document.getElementById("targetAeronave").value; 
+        
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
+        
+        await updateDoc(doc(db, "usuarios", email), { 
+            rango: rango, 
+            division: division, 
+            aeronave: avion === "SIN ASIGNAR" ? null : avion 
+        }); 
+        
+        registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango}, división ${division} y aeronave ${avion}.`); 
+        window.showToast("BASE DE DATOS ACTUALIZADA", "success"); 
+        cargarDatos(); 
+    };
+
     async function cargarLogsVisual() { const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = ""; window.cachedLogs.forEach(d => { lCont.innerHTML += `<div style="font-size: 13px; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: #bbb; font-family:'Share Tech Mono';"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}</div>`; }); }
     window.logout = () => signOut(auth).then(() => location.reload());
 </script>

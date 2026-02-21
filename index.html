@@ -5,72 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA DE MANDO TÁCTICO - CHILE</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Jura:wght@400;600;700&family=Share+Tech+Mono&display=swap');
 
         :root { 
-            --theme-color: #4df24d; 
-            --theme-dim: rgba(77, 242, 77, 0.15);
-            --army-dark: #020602;
+            --theme-color: #00e5ff; /* Cyan más elegante y moderno */
+            --theme-dim: rgba(0, 229, 255, 0.15);
+            --army-dark: #070b11; /* Azul marino ultra oscuro en vez de negro puro */
+            --glass-bg: rgba(15, 22, 35, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --alert-amber: #ffb400;
             --danger-red: #ff3b3b;
-            --admin-blue: #00f2ff;
+            --admin-blue: #4d90f2;
         }
 
-        body.defcon-5 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } 
-        body.defcon-4 { --theme-color: #4db8f2; --theme-dim: rgba(77, 184, 242, 0.15); } 
+        /* DEFCON DYNAMIC COLORS */
+        body.defcon-5 { --theme-color: #00e5ff; --theme-dim: rgba(0, 229, 255, 0.15); } 
+        body.defcon-4 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } 
         body.defcon-3 { --theme-color: #f2e24d; --theme-dim: rgba(242, 226, 77, 0.15); } 
         body.defcon-2 { --theme-color: #f28a4d; --theme-dim: rgba(242, 138, 77, 0.15); } 
-        body.defcon-1 { --theme-color: #ff3b3b; --theme-dim: rgba(255, 59, 59, 0.15); animation: red-pulse 1.5s infinite; } 
+        body.defcon-1 { --theme-color: #ff3b3b; --theme-dim: rgba(255, 59, 59, 0.15); animation: red-pulse 2s infinite; } 
 
-        body { background: var(--army-dark); color: var(--theme-color); font-family: 'Share Tech Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; transition: background-color 0.5s ease, color 0.5s ease; }
+        body { 
+            background: radial-gradient(circle at 50% 0%, #111a28 0%, var(--army-dark) 100%); 
+            color: var(--theme-color); 
+            font-family: 'Jura', sans-serif; 
+            margin: 0; display: flex; height: 100vh; overflow: hidden; 
+            transition: background-color 0.8s ease, color 0.8s ease; 
+        }
 
-        @keyframes red-pulse { 0% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; } 50% { box-shadow: inset 0 0 150px var(--theme-color); background: #2a0000; } 100% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; } }
+        @keyframes red-pulse { 0% { box-shadow: inset 0 0 0px var(--theme-color); } 50% { box-shadow: inset 0 0 120px rgba(255, 59, 59, 0.3); } 100% { box-shadow: inset 0 0 0px var(--theme-color); } }
 
-        /* ANIMACIONES PROFESIONALES */
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .slide-up { animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        /* ANIMACIONES Y SCROLL */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
-        ::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 4px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-dim); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--theme-color); }
 
-        .sidebar { width: 260px; background: rgba(5, 10, 5, 0.9); border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; padding: 20px 0; z-index: 10; transition: border-color 0.5s; backdrop-filter: blur(10px); }
-        .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
-        .menu-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.3s; border-left: 3px solid transparent; color: var(--theme-color); position: relative; overflow: hidden; }
-        .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); transform: translateX(5px); }
-        .menu-item.active { background: var(--theme-dim); border-left-color: var(--theme-color); color: #fff; transform: translateX(5px); }
-        .btn-alert { color: var(--theme-color); border-left-color: transparent; font-weight: bold; background: rgba(0,0,0,0.3); border-top: 1px dashed var(--theme-dim); border-bottom: 1px dashed var(--theme-dim); margin-top: 10px;}
+        /* CLASES GLASSMORPHISM (ELEGANCIA) */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-panel:hover {
+            border-color: var(--theme-dim);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* SIDEBAR */
+        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(20px); border-radius: 0 15px 15px 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5);}
+        .menu-category { font-size: 11px; color: #888; padding: 10px 25px; letter-spacing: 2px; font-weight: 700; margin-top: 10px;}
+        .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
+        .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); color: var(--theme-color); padding-left: 30px; }
+        .menu-item.active { background: linear-gradient(90deg, var(--theme-dim), transparent); border-left-color: var(--theme-color); color: white; padding-left: 30px; }
+        .btn-alert { color: var(--danger-red); border-left-color: transparent; margin-top: auto; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        .btn-alert:hover { color: var(--danger-red); background: rgba(255, 59, 59, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
 
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); z-index: 5; position: relative;}
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento { display: none; }
+        /* CONTENIDO PRINCIPAL */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative;}
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa { display: none; }
         
-        .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
-        .pilot-container { border: 1px solid var(--theme-dim); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; }
-        .pilot-card-mini { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; margin-bottom: 10px; display: grid; grid-template-columns: 50px 1fr 40px; align-items: center; gap: 10px; transition: all 0.3s ease; cursor: pointer; }
-        .pilot-card-mini:hover { background: var(--theme-dim); border-color: var(--theme-color); transform: translateX(5px); }
-        .icon-box { width: 45px; height: 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--theme-color); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .flight-display { border: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
 
-        .auth-input { background: rgba(0,0,0,0.8); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 12px; width: 100%; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; outline: none; }
-        .auth-input:focus { box-shadow: 0 0 10px var(--theme-dim); background: rgba(0,20,0,0.9); }
-        .btn-tactical { background: var(--theme-dim); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 10px 20px; font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-tactical:hover { background: var(--theme-color); color: black; }
+        /* BOTONES E INPUTS */
+        .auth-input { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: white; padding: 14px; width: 100%; margin-bottom: 15px; font-family: 'Share Tech Mono', monospace; box-sizing: border-box; outline: none; border-radius: 8px; transition: 0.3s; }
+        .auth-input:focus { border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); background: rgba(0,0,0,0.6); }
+        .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px);}
+        .btn-tactical:hover { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 20px var(--theme-dim); transform: translateY(-2px); }
 
-        /* LOGIN CON FOTO */
+        /* LOGIN */
         #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 3000; display: flex; justify-content: center; align-items: center; }
-        #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(2, 6, 2, 0.85); backdrop-filter: blur(5px); }
-        .login-box { position: relative; width: 400px; border: 1px solid var(--theme-color); padding: 40px; text-align: center; background: rgba(0,20,0,0.6); backdrop-filter: blur(10px); box-shadow: 0 0 30px var(--theme-dim); animation: slideUp 0.8s ease-out; }
-        .login-photo-circle { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -90px auto 20px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; box-shadow: 0 0 20px var(--theme-color); overflow: hidden; position: relative; }
-        .login-photo-circle::after { content: ''; position: absolute; inset: 0; background: radial-gradient(transparent, rgba(0,255,0,0.2)); }
-        
-        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-body { width: 400px; background: #050a05; border: 1px solid var(--theme-color); box-shadow: 0 0 30px var(--theme-dim); display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; padding: 25px; text-align: center; }
-        
-        /* RADAR ANIMADO REALISTA */
-        .radar-realista { position: relative; width: 150px; height: 150px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 255, 0, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #020602; overflow: hidden; box-shadow: 0 0 20px var(--theme-dim), inset 0 0 20px var(--theme-dim); margin: auto; }
+        #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
+        .login-box { position: relative; width: 420px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
+
+        /* MODALES */
+        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.4s ease-out; }
+
+        /* PERFIL COMPLETO */
+        .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; overflow: hidden; border-radius: 15px;}
+        .perfil-header { background: rgba(0,0,0,0.5); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; border-bottom: 1px solid var(--theme-color); }
+        .perfil-body { display: grid; grid-template-columns: 280px 1fr; gap: 0; background: rgba(10, 15, 25, 0.9); }
+        .perfil-col-izq { padding: 30px; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.01); }
+        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+        .perfil-col-der { padding: 30px; display: flex; flex-direction: column; gap: 20px; }
+        .perfil-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .perfil-item { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; }
+        .perfil-item span { display: block; font-size: 11px; color: #888; margin-bottom: 5px; font-family: 'Share Tech Mono', monospace;}
+        .perfil-item strong { color: white; font-size: 15px; text-transform: uppercase; }
+        .historial-content { padding: 15px; overflow-y: auto; max-height: 200px; font-size: 13px; display: flex; flex-direction: column; gap: 10px; font-family: 'Share Tech Mono', monospace; }
+        .historial-log { border-left: 2px solid var(--theme-color); padding-left: 12px; color: #ccc; background: rgba(255,255,255,0.02); padding-top: 5px; padding-bottom: 5px;}
+
+        /* HANGAR Y VEHÍCULOS */
+        .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .hangar-card-new { display: flex; flex-direction: column; overflow: hidden; }
+        .hangar-img { height: 190px; background-size: cover; background-position: center; border-bottom: 2px solid var(--theme-dim); transition: transform 0.7s; }
+        .hangar-card-new:hover .hangar-img { transform: scale(1.05); }
+        .img-wrapper { overflow: hidden; border-radius: 12px 12px 0 0; }
+
+        /* TOAST NOTIFICACIONES */
+        #toastContainer { position: fixed; left: 25px; bottom: 25px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
+        .toast { background: rgba(10, 15, 25, 0.95); border-left: 4px solid; color: white; padding: 18px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 350px; backdrop-filter: blur(10px);}
+        .toast-error { border-color: var(--danger-red); }
+        .toast-success { border-color: var(--theme-color); }
+        @keyframes slideRight { from { transform: translateX(-150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* RADAR ANIMADO */
+        .radar-realista { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 229, 255, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #050a0f; overflow: hidden; box-shadow: 0 0 25px var(--theme-dim), inset 0 0 25px var(--theme-dim); margin: auto; }
         .radar-realista::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--theme-dim); }
         .radar-realista::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--theme-dim); }
         .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg, var(--theme-color) 0%, transparent 60%); transform-origin: 0 0; animation: sweep 2.5s linear infinite; opacity: 0.6; }
@@ -78,47 +130,23 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        /* PERFIL MILITAR COMPLETO */
-        #perfilModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .perfil-container { width: 800px; max-width: 95vw; background: #050a05; border: 1px solid var(--theme-color); box-shadow: 0 0 30px var(--theme-dim); display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; }
-        .perfil-header { background: var(--theme-color); color: black; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; }
-        .perfil-body { display: grid; grid-template-columns: 250px 1fr; gap: 0; }
-        .perfil-col-izq { padding: 25px; border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.02); }
-        .perfil-foto-hd { width: 180px; height: 220px; border: 2px solid var(--theme-color); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 20px; position: relative; }
-        .perfil-foto-hd::after { content: ''; position: absolute; inset:0; background: linear-gradient(to bottom, transparent 50%, rgba(0,255,0,0.1) 100%); }
-        .perfil-col-der { padding: 25px; display: flex; flex-direction: column; gap: 20px; }
-        .perfil-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .perfil-item { background: rgba(0,0,0,0.5); border: 1px solid var(--theme-dim); padding: 12px; }
-        .perfil-item span { display: block; font-size: 10px; color: #888; margin-bottom: 5px; }
-        .perfil-item strong { color: white; font-size: 14px; text-transform: uppercase; }
-        .perfil-historial { flex: 1; border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.8); display: flex; flex-direction: column; }
-        .historial-title { background: var(--theme-dim); padding: 8px 15px; font-size: 12px; font-weight: bold; color: var(--theme-color); }
-        .historial-content { padding: 15px; overflow-y: auto; max-height: 200px; font-size: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .historial-log { border-left: 2px solid var(--theme-color); padding-left: 10px; color: #ddd; }
-        .historial-date { color: var(--theme-color); font-size: 10px; }
-        .btn-cerrar-perfil { background: transparent; border: none; color: black; font-weight: bold; font-family: inherit; font-size: 16px; cursor: pointer; transition: transform 0.2s; }
-        .btn-cerrar-perfil:hover { transform: scale(1.2); }
-
-        #toastContainer { position: fixed; left: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: rgba(0,0,0,0.9); border-left: 5px solid; color: white; padding: 15px 20px; box-shadow: 0 0 15px rgba(0,0,0,0.5); font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 10px; animation: slideRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 300px; }
-        .toast-error { border-color: var(--danger-red); box-shadow: 0 0 15px rgba(255,59,59,0.3); }
-        .toast-success { border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); }
-        @keyframes slideRight { from { transform: translateX(-150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateX(-50px); } }
-
-        .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .hangar-card-new { background: #020602; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s; }
-        .hangar-card-new:hover { box-shadow: 0 10px 25px var(--theme-dim); transform: translateY(-5px); border-color: var(--theme-color); z-index: 2; }
-        .hangar-img { height: 180px; background-size: cover; background-position: center; border-bottom: 2px solid var(--theme-color); transition: border-color 0.5s; position: relative; }
+        /* MAPA TÁCTICO MILITAR */
+        .map-wrapper { position: relative; height: 65vh; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .map-bg { position: absolute; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Chile_relief_location_map.jpg/800px-Chile_relief_location_map.jpg') center/cover no-repeat; opacity: 0.4; filter: grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.6) contrast(1.2); }
+        .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; }
+        .map-scanner { position: absolute; width: 200%; height: 2px; background: var(--theme-color); box-shadow: 0 0 20px var(--theme-color); top: -10%; left: -50%; animation: mapScan 5s linear infinite; opacity: 0.6; }
+        @keyframes mapScan { 0% { top: -10%; } 100% { top: 110%; } }
         
-        .licencia-badge { padding: 5px 10px; font-size: 11px; font-weight: bold; border: 1px solid; border-radius: 2px; margin-right: 5px; display: inline-block; margin-bottom: 5px; letter-spacing: 1px;}
-        .lic-activa { color: var(--theme-color); border-color: var(--theme-color); background: var(--theme-dim); }
-        .lic-suspendida { color: var(--alert-amber); border-color: var(--alert-amber); background: rgba(255,180,0,0.1); }
-        .lic-revocada { color: var(--danger-red); border-color: var(--danger-red); background: rgba(255,59,59,0.1); }
-        .lic-ninguna { color: #555; border-color: #333; }
+        .map-unit { position: absolute; width: 14px; height: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; animation: pulseNode 2s infinite; z-index: 2; }
+        .unit-ground { background: var(--admin-blue); border-radius: 50%; box-shadow: 0 0 15px var(--admin-blue); }
+        .unit-air { background: var(--alert-amber); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); animation: floatAir 3s ease-in-out infinite, pulseAir 2s infinite; }
+        .map-unit span { position: absolute; left: 25px; color: white; font-size: 11px; white-space: nowrap; background: rgba(0,0,0,0.7); padding: 4px 8px; border: 1px solid var(--glass-border); border-radius: 4px; backdrop-filter: blur(4px); opacity: 0; transition: 0.3s; pointer-events: none; font-family: 'Share Tech Mono', monospace;}
+        .map-unit:hover span { opacity: 1; left: 20px; }
+        
+        @keyframes pulseNode { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes pulseAir { 0% { filter: drop-shadow(0 0 5px var(--alert-amber)); } 50% { filter: drop-shadow(0 0 15px var(--alert-amber)); } 100% { filter: drop-shadow(0 0 5px var(--alert-amber)); } }
+        @keyframes floatAir { 0% { margin-top: 0; } 50% { margin-top: -8px; } 100% { margin-top: 0; } }
 
-        .stat-card-wrapper { background: rgba(0,0,0,0.6); border: 1px solid var(--theme-dim); padding: 30px 20px; text-align: center; transition: 0.3s; }
-        .stat-card-wrapper:hover { border-color: var(--theme-color); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="defcon-5">
@@ -129,73 +157,74 @@
     <audio id="sndError" src="https://www.soundjay.com/buttons/sounds/beep-03.mp3" preload="auto"></audio>
     <audio id="sndStartup" src="https://www.soundjay.com/computers/sounds/computer-startup-1.mp3" preload="auto"></audio>
 
-    <div style="position: fixed; bottom: 10px; right: 15px; font-size: 11px; color: rgba(255,255,255,0.2); z-index: 5000; letter-spacing: 1px; pointer-events: none; font-family: sans-serif;">
+    <div style="position: fixed; bottom: 15px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.2); z-index: 5000; letter-spacing: 1px; pointer-events: none; display: flex; align-items: center; gap: 5px;">
         Desarrollado por: Lukas Brown 🇨🇱
     </div>
 
     <div id="toastContainer"></div>
 
     <div id="modalAdminAuth" class="custom-modal">
-        <div class="modal-body">
+        <div class="modal-body glass-panel">
             <h3 style="color: var(--danger-red); margin-top: 0; letter-spacing: 2px;">ACCESO RESTRINGIDO</h3>
             <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">INGRESE CLAVE DE AUTORIDAD GENERAL</p>
-            <input type="password" id="adminPassInput" class="auth-input" placeholder="CONTRASEÑA SECRETA" style="text-align: center; border-color: var(--danger-red); color: white;">
+            <input type="password" id="adminPassInput" class="auth-input" placeholder="CONTRASEÑA SECRETA" style="text-align: center; border-color: var(--danger-red);">
             <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button onclick="verificarAdminAuth()" class="btn-tactical" style="flex: 1; border-color: var(--danger-red); color: var(--danger-red);">AUTORIZAR</button>
-                <button onclick="cerrarAdminAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: #555;">CANCELAR</button>
+                <button onclick="verificarAdminAuth()" class="btn-tactical" style="flex: 1; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red);">AUTORIZAR</button>
+                <button onclick="cerrarAdminAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
             </div>
         </div>
     </div>
 
     <div id="modalDefconAuth" class="custom-modal">
-        <div class="modal-body">
+        <div class="modal-body glass-panel">
             <h3 style="color: var(--alert-amber); margin-top: 0; letter-spacing: 2px;">PROTOCOLO DEFCON</h3>
-            <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">INGRESE CÓDIGO DE AUTORIZACIÓN (ESTADO ACTUAL: DEFCON <span id="spanCurrentDefcon">5</span>)</p>
-            <input type="password" id="defconPassInput" class="auth-input" placeholder="CÓDIGO SECRETO" style="text-align: center; border-color: var(--alert-amber); color: white;">
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">INGRESE CÓDIGO DE AUTORIZACIÓN (ESTADO ACTUAL: <span id="spanCurrentDefcon">5</span>)</p>
+            <input type="password" id="defconPassInput" class="auth-input" placeholder="CÓDIGO SECRETO" style="text-align: center; border-color: var(--alert-amber);">
             <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button onclick="verificarDefconAuth()" class="btn-tactical" style="flex: 1; border-color: var(--alert-amber); color: var(--alert-amber);">CONFIRMAR</button>
-                <button onclick="cerrarDefconAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: #555;">CANCELAR</button>
+                <button onclick="verificarDefconAuth()" class="btn-tactical" style="flex: 1; background: rgba(255,180,0,0.1); border-color: var(--alert-amber); color: var(--alert-amber);">CONFIRMAR</button>
+                <button onclick="cerrarDefconAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <div id="perfilModal">
-        <div class="perfil-container">
+    <div id="perfilModal" class="custom-modal">
+        <div class="perfil-container glass-panel">
             <div class="perfil-header">
-                <span>[ EXPEDIENTE CLASIFICADO ]</span>
-                <button class="btn-cerrar-perfil" onclick="cerrarPerfil()">X</button>
+                <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:20px;">🎖️</span> EXPEDIENTE CLASIFICADO</span>
+                <button class="btn-cerrar-perfil" onclick="cerrarPerfil()" style="color:white;">✖</button>
             </div>
             <div class="perfil-body">
                 <div class="perfil-col-izq">
                     <div class="perfil-foto-hd"></div>
-                    <div style="margin-top: 20px; text-align: center; width: 100%;">
-                        <div style="font-size: 10px; color: #888; margin-bottom: 10px;">ESTADO DE SEÑAL VITAL</div>
-                        <div class="radar-realista" style="width: 120px; height: 120px;">
+                    <div style="margin-top: 10px; text-align: center; width: 100%;">
+                        <div style="font-size: 10px; color: #888; margin-bottom: 15px; letter-spacing: 1px;">SEÑAL VITAL (EN LÍNEA)</div>
+                        <div class="radar-realista" style="width: 130px; height: 130px;">
                             <div class="radar-sweep"></div>
-                            <div class="blip" style="top: 30%; left: 60%; animation-delay: 0.5s;"></div>
-                            <div class="blip" style="top: 70%; left: 40%; animation-delay: 1.2s;"></div>
+                            <div class="blip" style="top: 25%; left: 55%; animation-delay: 0.2s;"></div>
+                            <div class="blip" style="top: 65%; left: 35%; animation-delay: 1.4s;"></div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="perfil-col-der">
-                    <div style="border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">
-                        <h2 id="p_nombre" style="margin: 0; color: white; font-size: 28px; text-transform: uppercase; letter-spacing: 1px;">NOMBRE SOLDADO</h2>
-                        <div style="color: var(--theme-color); font-size: 14px;" id="p_id">CHL-XXXXXX-000</div>
+                    <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
+                        <h2 id="p_nombre" style="margin: 0; color: white; font-size: 32px; letter-spacing: 1px;">NOMBRE SOLDADO</h2>
+                        <div style="color: var(--theme-color); font-size: 13px; font-family: 'Share Tech Mono'; margin-top:5px;" id="p_id">CHL-XXXXXX-000</div>
                     </div>
                     
                     <div class="perfil-data-grid">
                         <div class="perfil-item"><span>RANGO ACTUAL:</span> <strong id="p_rango" style="color: var(--alert-amber);">---</strong></div>
                         <div class="perfil-item"><span>DIVISIÓN ASIGNADA:</span> <strong id="p_division">---</strong></div>
                         <div class="perfil-item"><span>UNIDAD / AERONAVE:</span> <strong id="p_unidad" style="color: var(--admin-blue);">---</strong></div>
-                        <div class="perfil-item"><span>FECHA DE CREACIÓN:</span> <strong id="p_creacion">01/01/2026</strong></div>
-                        <div class="perfil-item" style="grid-column: span 2;"><span>ESTADO OPERACIONAL:</span> <strong id="p_mision" style="color: var(--theme-color);">DISPONIBLE</strong></div>
+                        <div class="perfil-item"><span>INGRESO AL SISTEMA:</span> <strong id="p_creacion">01/01/2026</strong></div>
+                        <div class="perfil-item glass-panel" style="grid-column: span 2; border: 1px solid var(--theme-dim); background: rgba(0,229,255,0.05);">
+                            <span>ESTADO OPERACIONAL:</span> <strong id="p_mision" style="color: var(--theme-color);">DISPONIBLE</strong>
+                        </div>
                     </div>
 
-                    <div class="perfil-historial">
-                        <div class="historial-title">HISTORIAL DE SERVICIO RECIENTE</div>
-                        <div class="historial-content" id="p_historial_logs">
-                            </div>
+                    <div class="perfil-historial glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
+                        <div class="historial-title" style="background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--glass-border);">HISTORIAL DE INTELIGENCIA RECIENTE</div>
+                        <div class="historial-content" id="p_historial_logs"></div>
                     </div>
                 </div>
             </div>
@@ -203,212 +232,241 @@
     </div>
 
     <div id="loginScreen">
-        <div class="login-box">
+        <div class="login-box glass-panel">
             <div class="login-photo-circle"></div>
-            <h3 style="letter-spacing: 3px; margin-top: 0; color: white;">SISTEMA TÁCTICO CHILE</h3>
-            <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL MILITAR">
-            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA SECRETA">
-            <button onclick="login()" class="btn-tactical" style="width: 100%;">INICIAR ENLACE</button>
+            <h3 style="letter-spacing: 3px; margin-top: 0; color: white; font-size: 24px;">COMANDO TÁCTICO</h3>
+            <p style="color: var(--theme-color); font-size: 12px; margin-top: -10px; margin-bottom: 30px; letter-spacing: 1px;">FUERZAS ARMADAS DE CHILE</p>
+            <input type="email" id="userEmail" class="auth-input" placeholder="CORREO ENCRIPTADO" style="text-align: center;">
+            <input type="password" id="userPass" class="auth-input" placeholder="CLAVE DE ACCESO" style="text-align: center;">
+            <button onclick="login()" class="btn-tactical" style="width: 100%; margin-top: 10px; background: var(--theme-color); color: #000;">INICIAR CONEXIÓN</button>
         </div>
     </div>
 
     <div class="sidebar">
-        <div style="padding: 20px; border-bottom: 1px solid var(--theme-dim); margin-bottom: 10px; text-align: center;">
-            <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase; font-size: 16px;">...</div>
-            <div id="userRank" style="font-size: 10px; color: var(--alert-amber); margin: 5px 0 15px;">IDENTIFICANDO...</div>
-            <select id="myStatus" class="auth-input" style="padding: 8px; font-size: 11px; text-align: center; background: rgba(0,0,0,0.5);" onchange="updateMyStatus()">
-                <option value="Online">🟢 DISPONIBLE / ONLINE</option>
+        <div style="padding: 0 25px 20px; border-bottom: 1px solid var(--glass-border); margin-bottom: 15px; text-align: center;">
+            <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase; font-size: 18px;">...</div>
+            <div id="userRank" style="font-size: 11px; color: var(--alert-amber); margin: 8px 0 20px; letter-spacing: 1px;">IDENTIFICANDO...</div>
+            <select id="myStatus" class="auth-input" style="padding: 10px; font-size: 12px; text-align: center; margin:0;" onchange="updateMyStatus()">
+                <option value="Online">🟢 DISPONIBLE</option>
                 <option value="En misión">🟡 EN OPERACIÓN</option>
                 <option value="Offline">🔴 FUERA DE SERVICIO</option>
             </select>
         </div>
         
-        <div class="menu-category">COMANDO CENTRAL</div>
+        <div class="menu-category">PANEL CENTRAL</div>
         <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
+        <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
         <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
         <div class="menu-item" id="btnLicencias" onclick="switchTab('licencias')" onmouseenter="playHover()"><span>🪪</span> Licencias</div>
-        <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Sección Fach</div>
         <div class="menu-item" id="btnHangar" onclick="switchTab('hangar')" onmouseenter="playHover()"><span>🛠️</span> Hangar / Flota</div>
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
+        <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Control Aéreo</div>
         
-        <div class="menu-category menu-hidden" id="menuOficialesTitle">SISTEMA OFICIALES</div>
+        <div class="menu-category menu-hidden" id="menuOficialesTitle">COMANDO SUPERIOR</div>
         <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
         <div class="menu-item menu-hidden" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
 
-        <div class="menu-category">ADMINISTRACIÓN</div>
-        <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad General</div>
+        <div class="menu-category">SISTEMA</div>
+        <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
         
-        <div class="menu-item btn-alert" id="btnDefcon" onclick="abrirDefconAuth()" onmouseenter="playHover()"><span>🚨</span> ESTADO: DEFCON 5</div>
+        <div class="menu-item btn-alert" id="btnDefcon" onclick="abrirDefconAuth()" onmouseenter="playHover()" style="margin-top:20px;"><span>🚨</span> NIVEL DEFCON 5</div>
 
-        <button onclick="logout()" style="margin: auto 20px 20px; background: rgba(255,0,0,0.1); border: 1px solid var(--danger-red); color: var(--danger-red); padding: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;">DESCONECTAR</button>
+        <button onclick="logout()" class="btn-tactical" style="margin: 20px 20px 0; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red); font-size:12px;">DESCONECTAR</button>
     </div>
 
     <div class="main-content" id="main-content-area">
         
-        <div id="adminTools">
-            <h3 style="color: var(--admin-blue); margin-top: 0; border-bottom: 1px solid; padding-bottom: 5px;">[ ACCESO CLASIFICADO - NIVEL GENERAL ]</h3>
+        <div id="adminTools" class="glass-panel" style="display:none; padding: 30px; margin-bottom: 30px; border-color: var(--admin-blue);">
+            <h3 style="color: var(--admin-blue); margin-top: 0; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px;">[ ACCESO CLASIFICADO - ADMINISTRADOR ]</h3>
             
-            <p style="color: var(--theme-color); font-weight: bold; margin: 15px 0 10px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
-                <select id="targetSoldier" class="auth-input"></select>
-                <select id="targetRank" class="auth-input"></select>
-                <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves"></select>
-                <button onclick="procesarCambiosAdmin()" class="btn-tactical" style="background: var(--admin-blue); color: black;">ACTUALIZAR</button>
+            <p style="color: white; font-weight: bold; margin: 20px 0 10px; font-size: 14px;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px;">
+                <select id="targetSoldier" class="auth-input" style="margin:0;"></select>
+                <select id="targetRank" class="auth-input" style="margin:0;"></select>
+                <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves" style="margin:0;"></select>
+                <button onclick="procesarCambiosAdmin()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ACTUALIZAR</button>
             </div>
             
-            <div style="border-top: 1px dashed var(--admin-blue); padding-top: 15px; margin-bottom: 15px;">
-                <p style="color: var(--alert-amber); font-weight: bold; margin: 0 0 10px 0;">🎯 ASIGNACIÓN Y CONTROL DE OPERACIONES</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 2fr auto auto; gap: 10px;">
-                    <select id="targetSoldadoMision" class="auth-input"></select>
-                    <select id="tipoMision" class="auth-input">
+            <div style="border-top: 1px dashed var(--glass-border); padding-top: 20px; margin-bottom: 25px;">
+                <p style="color: var(--alert-amber); font-weight: bold; margin: 0 0 10px; font-size: 14px;">🎯 ASIGNACIÓN Y CONTROL DE OPERACIONES</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 2fr auto auto; gap: 15px;">
+                    <select id="targetSoldadoMision" class="auth-input" style="margin:0;"></select>
+                    <select id="tipoMision" class="auth-input" style="margin:0;">
                         <option value="Reconocimiento">Reconocimiento</option>
                         <option value="Combate">Combate</option>
                         <option value="Entrenamiento">Entrenamiento</option>
                     </select>
-                    <input type="text" id="objMision" class="auth-input" placeholder="OBJETIVO (Ej: Patrullaje)">
-                    <button onclick="asignarMision()" class="btn-tactical" style="background: var(--alert-amber); color: black;">DESPLEGAR</button>
-                    <button onclick="finalizarMision()" class="btn-tactical" style="background: transparent;">FINALIZAR</button>
+                    <input type="text" id="objMision" class="auth-input" placeholder="OBJETIVO (Ej: Patrullaje Zona Sur)" style="margin:0;">
+                    <button onclick="asignarMision()" class="btn-tactical" style="background: var(--alert-amber); color: black; border:none;">DESPLEGAR</button>
+                    <button onclick="finalizarMision()" class="btn-tactical" style="background: transparent; color: white;">FINALIZAR</button>
                 </div>
             </div>
 
-            <div style="border-top: 1px dashed var(--danger-red); padding-top: 15px;">
-                <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 10px 0;">⚖️ SISTEMA DE SANCIONES DISCIPLINARIAS</p>
-                <div style="display: grid; grid-template-columns: 1fr 2fr 1fr auto; gap: 10px;">
-                    <select id="targetSoldadoSancion" class="auth-input"></select>
-                    <select id="targetSancion" class="auth-input">
+            <div style="border-top: 1px dashed var(--glass-border); padding-top: 20px;">
+                <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 10px; font-size: 14px;">⚖️ SISTEMA DE SANCIONES DISCIPLINARIAS</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 2fr 1fr auto auto; gap: 10px;">
+                    <select id="targetSoldadoSancion" class="auth-input" style="margin:0;"></select>
+                    <select id="targetSancion" class="auth-input" style="margin:0;">
                         <option value="Falta leve">Falta leve</option>
                         <option value="Falta grave">Falta grave</option>
                         <option value="Suspensión">Suspensión</option>
                         <option value="Expulsión">Expulsión</option>
                     </select>
-                    <input type="text" id="motivoSancion" class="auth-input" placeholder="MOTIVO DE INFRACCIÓN">
-                    <input type="text" id="duracionSancion" class="auth-input" placeholder="DURACIÓN (Ej: 2 días)">
-                    <button onclick="aplicarSancion()" class="btn-tactical" style="background: var(--danger-red); color: white; border-color: var(--danger-red);">SANCIONAR</button>
+                    <input type="text" id="motivoSancion" class="auth-input" placeholder="MOTIVO INFRACCIÓN" style="margin:0;">
+                    <input type="text" id="duracionSancion" class="auth-input" placeholder="DURACIÓN" style="margin:0;">
+                    <button onclick="aplicarSancion()" class="btn-tactical" style="background: rgba(255,59,59,0.2); border-color: var(--danger-red); color: var(--danger-red);">SANCIONAR</button>
+                    <button onclick="quitarSanciones()" class="btn-tactical" style="background: transparent; border-color: var(--theme-color); color: var(--theme-color);">LIMPIAR EXPEDIENTE</button>
                 </div>
             </div>
         </div>
 
         <div id="seccionPersonal">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">PERSONAL REGISTRADO</h2>
-            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; margin-top: 20px;"></div>
+            <h2 class="section-title"><span>📋</span> PERSONAL REGISTRADO</h2>
+            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;"></div>
+        </div>
+
+        <div id="seccionMapa">
+            <h2 class="section-title"><span>🗺️</span> MAPA ESTRATÉGICO GLOBAL</h2>
+            <div class="map-wrapper fade-in">
+                <div class="map-bg"></div>
+                <div class="map-grid"></div>
+                <div class="map-scanner"></div>
+                
+                <div class="map-unit unit-ground" style="top: 30%; left: 40%;"><span>Batallón Alpha (Tierra)</span></div>
+                <div class="map-unit unit-ground" style="top: 55%; left: 35%;"><span>Destacamento Sur</span></div>
+                <div class="map-unit unit-ground" style="top: 80%; left: 42%;"><span>Compañía Delta</span></div>
+                
+                <div class="map-unit unit-air" style="top: 20%; left: 60%;"><span>F-22 Raptor en Patrullaje</span></div>
+                <div class="map-unit unit-air" style="top: 70%; left: 50%;"><span>Black Hawk UH-60 (Extracción)</span></div>
+                <div class="map-unit unit-air" style="top: 45%; left: 75%;"><span>C-130 Hércules (Suministros)</span></div>
+
+                <div class="glass-panel" style="position: absolute; top: 25px; left: 25px; padding: 20px; border-left: 4px solid var(--theme-color);">
+                    <div style="font-size: 11px; color: #aaa; letter-spacing: 2px;">SISTEMA SATELITAL DE ENLACE</div>
+                    <div style="font-size: 20px; font-weight: bold; color: white; margin: 5px 0;">ESPACIO AÉREO / TERRESTRE</div>
+                    <div style="color: var(--theme-color); font-size: 13px; font-family: monospace; line-height: 1.8;">
+                        <span style="color:var(--admin-blue)">⬤</span> 3 Unidades Terrestres Desplegadas<br>
+                        <span style="color:var(--alert-amber)">▲</span> 3 Unidades Aéreas en Curso
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="seccionEstadisticas">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">ESTADÍSTICAS MILITARES GENERALES</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px;">
-                <div class="stat-card-wrapper slide-up">
-                    <div style="font-size: 50px; margin-bottom: 10px;">🪖</div>
-                    <div style="color: white; font-weight: bold; font-size: 36px; text-shadow: 0 0 15px var(--theme-color);" id="statTotalSoldados">0</div>
-                    <div style="color: var(--theme-color); font-size: 14px; margin-top: 10px; font-weight: bold; letter-spacing: 1px;">TOTAL SOLDADOS</div>
+            <h2 class="section-title"><span>📊</span> PANEL DE MANDO Y ESTADÍSTICAS</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+                <div class="glass-panel slide-up" style="padding: 40px 20px; text-align: center;">
+                    <div style="font-size: 55px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--theme-dim));">🪖</div>
+                    <div style="color: white; font-weight: bold; font-size: 42px; text-shadow: 0 0 20px var(--theme-color);" id="statTotalSoldados">0</div>
+                    <div style="color: var(--theme-color); font-size: 13px; margin-top: 10px; font-weight: bold; letter-spacing: 2px;">TOTAL SOLDADOS ACTIVOS</div>
                 </div>
-                <div class="stat-card-wrapper slide-up" style="animation-delay: 0.1s; border-color: rgba(255, 180, 0, 0.3);">
-                    <div style="font-size: 50px; margin-bottom: 10px;">⭐</div>
-                    <div style="color: white; font-weight: bold; font-size: 36px; text-shadow: 0 0 15px var(--alert-amber);" id="statTotalOficiales">0</div>
-                    <div style="color: var(--alert-amber); font-size: 14px; margin-top: 10px; font-weight: bold; letter-spacing: 1px;">TOTAL OFICIALES</div>
+                <div class="glass-panel slide-up" style="padding: 40px 20px; text-align: center; animation-delay: 0.1s; border-color: rgba(255, 180, 0, 0.2);">
+                    <div style="font-size: 55px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255,180,0,0.3));">⭐</div>
+                    <div style="color: white; font-weight: bold; font-size: 42px; text-shadow: 0 0 20px var(--alert-amber);" id="statTotalOficiales">0</div>
+                    <div style="color: var(--alert-amber); font-size: 13px; margin-top: 10px; font-weight: bold; letter-spacing: 2px;">OFICIALES AL MANDO</div>
                 </div>
-                <div class="stat-card-wrapper slide-up" style="animation-delay: 0.2s; border-color: rgba(0, 242, 255, 0.3);">
-                    <div style="font-size: 50px; margin-bottom: 10px;">✈️</div>
-                    <div style="color: white; font-weight: bold; font-size: 36px; text-shadow: 0 0 15px var(--admin-blue);" id="statTotalAeronaves">0</div>
-                    <div style="color: var(--admin-blue); font-size: 14px; margin-top: 10px; font-weight: bold; letter-spacing: 1px;">TOTAL AERONAVES</div>
+                <div class="glass-panel slide-up" style="padding: 40px 20px; text-align: center; animation-delay: 0.2s; border-color: rgba(77, 144, 242, 0.2);">
+                    <div style="font-size: 55px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(77,144,242,0.3));">✈️</div>
+                    <div style="color: white; font-weight: bold; font-size: 42px; text-shadow: 0 0 20px var(--admin-blue);" id="statTotalAeronaves">0</div>
+                    <div style="color: var(--admin-blue); font-size: 13px; margin-top: 10px; font-weight: bold; letter-spacing: 2px;">AERONAVES EN FLOTA</div>
                 </div>
             </div>
         </div>
 
         <div id="seccionLicencias">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA DE LICENCIAS</h2>
-            <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin-bottom: 20px; display: none;" id="panelAdminLicencias">
-                <h4 style="margin-top:0; color:var(--admin-blue);">OTORGAR / MODIFICAR LICENCIAS (PANEL OFICIALES/ADMIN)</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
-                    <select id="targetSoldadoLicencia" class="auth-input"></select>
-                    <select id="tipoLicencia" class="auth-input">
+            <h2 class="section-title"><span>🪪</span> GESTIÓN DE LICENCIAS TÁCTICAS</h2>
+            <div class="glass-panel" style="padding: 25px; border-color: var(--admin-blue); margin-bottom: 30px; display: none;" id="panelAdminLicencias">
+                <h4 style="margin-top:0; color:var(--admin-blue); font-size:16px;">OTORGAR / MODIFICAR LICENCIAS (PANEL OFICIALES)</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px;">
+                    <select id="targetSoldadoLicencia" class="auth-input" style="margin:0;"></select>
+                    <select id="tipoLicencia" class="auth-input" style="margin:0;">
                         <option value="piloto">Licencia de Piloto</option>
                         <option value="comando">Licencia de Comando</option>
                         <option value="armamento">Licencia de Armamento</option>
                     </select>
-                    <select id="estadoLicencia" class="auth-input">
+                    <select id="estadoLicencia" class="auth-input" style="margin:0;">
                         <option value="Activa">Activa</option>
                         <option value="Suspendida">Suspendida</option>
                         <option value="Revocada">Revocada</option>
                         <option value="Ninguna">Eliminar Licencia</option>
                     </select>
-                    <button onclick="actualizarLicencia()" class="btn-tactical" style="background: var(--admin-blue); color: black;">ACTUALIZAR</button>
+                    <button onclick="actualizarLicencia()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ACTUALIZAR</button>
                 </div>
             </div>
-            <div id="listaUsuariosLicencias" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+            <div id="listaUsuariosLicencias" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;"></div>
         </div>
 
         <div id="seccionReclutamiento">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA DE RECLUTAMIENTO</h2>
-            
-            <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin-bottom: 20px;">
-                <h4 style="margin-top:0; color:var(--admin-blue);">REGISTRAR NUEVO POSTULANTE</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <input type="text" id="recNombre" class="auth-input" placeholder="NOMBRE DEL POSTULANTE">
-                    <select id="recDivision" class="auth-input">
+            <h2 class="section-title"><span>📝</span> DEPARTAMENTO DE RECLUTAMIENTO</h2>
+            <div class="glass-panel" style="padding: 25px; border-color: var(--admin-blue); margin-bottom: 30px;">
+                <h4 style="margin-top:0; color:var(--admin-blue); font-size:16px;">REGISTRAR NUEVO POSTULANTE</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="text" id="recNombre" class="auth-input" placeholder="NOMBRE COMPLETO DEL POSTULANTE" style="margin:0;">
+                    <select id="recDivision" class="auth-input" style="margin:0;">
                         <option value="EJÉRCITO">EJÉRCITO</option>
                         <option value="FACH">FACH</option>
                         <option value="ARMADA">ARMADA</option>
                         <option value="BOE">BOE</option>
                     </select>
                 </div>
-                <textarea id="recNotas" class="auth-input" rows="2" placeholder="NOTAS / EXPERIENCIA PREVIA / OBSERVACIONES..."></textarea>
-                <button onclick="registrarPostulante()" class="btn-tactical" style="background: var(--admin-blue); color: black; width: 100%;">INGRESAR A BASE DE DATOS</button>
+                <textarea id="recNotas" class="auth-input" rows="2" placeholder="NOTAS DE ENTREVISTA / EXPERIENCIA PREVIA..." style="margin: 15px 0;"></textarea>
+                <button onclick="registrarPostulante()" class="btn-tactical" style="background: var(--admin-blue); color: black; width: 100%; border:none;">INGRESAR A BASE DE DATOS DE EVALUACIÓN</button>
             </div>
-            
-            <h3 style="color: var(--alert-amber); margin-top: 30px;">POSTULACIONES PENDIENTES DE EVALUACIÓN</h3>
-            <div id="listaPostulantes" style="display: grid; gap: 10px;"></div>
+            <h3 style="color: var(--alert-amber); margin-top: 20px; font-weight:normal; letter-spacing:1px;">POSTULACIONES PENDIENTES DE EVALUACIÓN</h3>
+            <div id="listaPostulantes" style="display: grid; gap: 15px;"></div>
         </div>
 
         <div id="seccionFach">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA AERONÁUTICO - FACH</h2>
+            <h2 class="section-title"><span>✈️</span> RED AERONÁUTICA - FACH</h2>
             <div class="fach-layout">
-                <div class="pilot-container">
-                    <div class="sub-header">▶ CONTACTOS ID // ACTIVOS</div>
-                    <div style="font-size: 9px; color: #888; margin-bottom: 10px;">— PILOTO COMANDANTE —</div><div id="listaComandante"></div>
-                    <div style="font-size: 9px; color: #888; margin: 20px 0 10px;">— PILOTO INSTRUCTOR —</div><div id="listaInstructor"></div>
-                    <div style="font-size: 9px; color: #888; margin: 20px 0 10px;">— CADETE —</div><div id="listaCadete"></div>
+                <div class="pilot-container glass-panel">
+                    <div style="font-size: 12px; color: var(--alert-amber); padding-bottom: 10px; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; letter-spacing:1px;">▶ CONTACTOS ACTIVOS IDENTIFICADOS</div>
+                    <div style="font-size: 10px; color: #888; margin-bottom: 15px; letter-spacing:2px;">— PILOTOS COMANDANTES —</div><div id="listaComandante"></div>
+                    <div style="font-size: 10px; color: #888; margin: 25px 0 15px; letter-spacing:2px;">— PILOTOS INSTRUCTORES —</div><div id="listaInstructor"></div>
+                    <div style="font-size: 10px; color: #888; margin: 25px 0 15px; letter-spacing:2px;">— CADETES DE VUELO —</div><div id="listaCadete"></div>
                 </div>
-                <div class="flight-display" id="mainDisplayFach">
-                    <div class="radar-realista" style="width: 250px; height: 250px; margin-bottom: 30px;">
+                <div class="flight-display glass-panel" id="mainDisplayFach">
+                    <div class="radar-realista" style="width: 280px; height: 280px; margin-bottom: 40px; box-shadow: 0 0 40px rgba(0,229,255,0.1);">
                         <div class="radar-sweep"></div>
                         <div class="blip" style="top: 20%; left: 30%; animation-delay: 0.1s;"></div>
                         <div class="blip" style="top: 80%; left: 70%; animation-delay: 1.5s;"></div>
                         <div class="blip" style="top: 40%; left: 80%; animation-delay: 0.8s;"></div>
                     </div>
-                    <div id="vPilot" style="font-size: 32px; color: white; letter-spacing: 4px; text-align: center;">SISTEMA EN ESPERA</div>
-                    <div id="vUnit" style="color: var(--admin-blue); font-size: 18px; margin-top: 10px; border: 1px solid; padding: 5px 20px; background: rgba(0,242,255,0.05);">---</div>
+                    <div id="vPilot" style="font-size: 36px; color: white; letter-spacing: 4px; text-align: center; text-shadow: 0 0 15px var(--theme-dim);">SISTEMA EN ESPERA</div>
+                    <div id="vUnit" style="color: var(--theme-color); font-size: 20px; margin-top: 15px; border: 1px solid var(--theme-dim); padding: 8px 30px; background: rgba(0,229,255,0.05); border-radius: 6px;">SELECCIONE CONTACTO EN RED</div>
                 </div>
             </div>
         </div>
 
         <div id="seccionHangar">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">FLOTA AÉREA NACIONAL</h2>
-            <div id="listaHangarAereo" class="hangar-grid-new" style="margin-top: 20px; margin-bottom: 40px;"></div>
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA DE VEHÍCULOS TERRESTRES</h2>
-            <div id="listaHangarTerrestre" class="hangar-grid-new" style="margin-top: 20px;"></div>
+            <h2 class="section-title"><span>✈️</span> FLOTA AÉREA NACIONAL</h2>
+            <div id="listaHangarAereo" class="hangar-grid-new" style="margin-bottom: 50px;"></div>
+            <h2 class="section-title"><span>🚁</span> SISTEMA DE VEHÍCULOS TERRESTRES</h2>
+            <div id="listaHangarTerrestre" class="hangar-grid-new"></div>
         </div>
 
         <div id="seccionMisiones">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">ESTADO DE OPERACIONES ACTIVAS</h2>
-            <div id="listaMisiones" style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px;"></div>
+            <h2 class="section-title"><span>🎯</span> ESTADO DE OPERACIONES ACTIVAS</h2>
+            <div id="listaMisiones" style="display: grid; grid-template-columns: 1fr; gap: 20px;"></div>
         </div>
 
         <div id="seccionDocumentos">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">INTELIGENCIA Y DOCUMENTOS</h2>
-            <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin: 20px 0;">
-                <h4 style="margin-top:0; color:var(--admin-blue);">SUBIR NUEVO REPORTE / ORDEN</h4>
-                <select id="docTipo" class="auth-input"><option value="REPORTE">REPORTE</option><option value="ORDEN">ORDEN TÁCTICA</option></select>
-                <input type="text" id="docTitulo" class="auth-input" placeholder="TÍTULO DEL DOCUMENTO">
-                <textarea id="docContenido" class="auth-input" rows="4" placeholder="CONTENIDO CLASIFICADO..."></textarea>
-                <button onclick="subirDocumento()" class="btn-tactical" style="background: var(--admin-blue); color: black;">ALMACENAR EN RED SECRETA</button>
+            <h2 class="section-title"><span>🗃️</span> INTELIGENCIA Y DOCUMENTOS CLASIFICADOS</h2>
+            <div class="glass-panel" style="padding: 30px; border-color: var(--admin-blue); margin-bottom: 30px;">
+                <h4 style="margin-top:0; color:var(--admin-blue); font-size:16px;">SUBIR NUEVO REPORTE O LEY TÁCTICA</h4>
+                <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 15px; margin-bottom:15px;">
+                    <select id="docTipo" class="auth-input" style="margin:0;"><option value="REPORTE">REPORTE</option><option value="ORDEN">ORDEN TÁCTICA</option></select>
+                    <input type="text" id="docTitulo" class="auth-input" placeholder="TÍTULO DEL DOCUMENTO..." style="margin:0;">
+                </div>
+                <textarea id="docContenido" class="auth-input" rows="5" placeholder="REDACCIÓN DEL CONTENIDO CLASIFICADO..."></textarea>
+                <button onclick="subirDocumento()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ALMACENAR EN LA RED SECRETA</button>
             </div>
-            <div id="listaDocumentos" style="display: grid; gap: 10px;"></div>
+            <div id="listaDocumentos" style="display: grid; gap: 15px;"></div>
         </div>
 
         <div id="seccionLogs">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">REGISTROS DEL SISTEMA (LOGS)</h2>
-            <div style="background: rgba(0,0,0,0.8); border: 1px solid var(--theme-dim); padding: 20px; height: 60vh; overflow-y: auto; margin-top: 20px;" id="listaLogsContainer"></div>
+            <h2 class="section-title"><span>🧑‍💻</span> REGISTROS DEL SISTEMA (LOGS)</h2>
+            <div class="glass-panel" style="padding: 25px; height: 65vh; overflow-y: auto;" id="listaLogsContainer"></div>
         </div>
     </div>
 
@@ -464,8 +522,7 @@
     let currentDefcon = 5;
     
     window.abrirDefconAuth = () => {
-        window.playClick(); 
-        document.getElementById("modalDefconAuth").style.display = "flex"; 
+        window.playClick(); document.getElementById("modalDefconAuth").style.display = "flex"; 
         document.getElementById("defconPassInput").value = ""; 
         document.getElementById("spanCurrentDefcon").innerText = currentDefcon;
         document.getElementById("defconPassInput").focus(); 
@@ -497,13 +554,13 @@
         if(document.getElementById("adminPassInput").value === "CHILE2026") {
             document.getElementById("modalAdminAuth").style.display = "none";
             document.getElementById("adminTools").style.display = "block";
-            window.showToast("AUTENTICACIÓN EXITOSA. Protocolos de administrador desbloqueados.", "success");
+            window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success");
         } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); }
     };
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa"].forEach(id => {
             const el = document.getElementById(id); el.style.display = 'none'; el.classList.remove('fade-in');
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -517,6 +574,7 @@
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
         if(tab === 'reclutamiento') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
+        if(tab === 'mapa') { targetId = 'seccionMapa'; btnId = 'btnMapa'; }
         
         const targetEl = document.getElementById(targetId);
         targetEl.style.display = 'block';
@@ -539,7 +597,6 @@
                 document.getElementById("userRank").innerText = window.currentUserRank;
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 
-                // ACTUALIZACIÓN SOLICITADA: Incluir "SIN ASIGNAR" en el menú de ascensos de administrador
                 document.getElementById("targetAeronave").innerHTML = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>` + FLOTA_AEREA.map(n => `<option value="${n.id}">${n.id}</option>`).join("");
                 
                 if (window.isAdmin) {
@@ -549,7 +606,7 @@
                 if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
                     document.getElementById("menuOficialesTitle").classList.remove("menu-hidden");
                     document.getElementById("btnDocumentos").classList.remove("menu-hidden");
-                    document.getElementById("btnReclutamiento").classList.remove("menu-hidden"); // RECLUTAMIENTO VISIBLE
+                    document.getElementById("btnReclutamiento").classList.remove("menu-hidden"); 
                     document.getElementById("panelAdminLicencias").style.display = "block";
                 }
                 
@@ -605,20 +662,18 @@
             if (divUpper === "FACH") divColor = "white"; else if (divUpper === "BOE") divColor = "var(--danger-red)"; else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
             let iconEstado = d.estado === "Online" ? "🟢" : (d.estado === "En misión" ? "🟡" : "🔴");
-            const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:10px; color:var(--danger-red); margin-top:5px; font-weight:bold;">⚠️ TIENE ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
+            const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:11px; color:var(--danger-red); margin-top:5px; font-weight:bold; background:rgba(255,59,59,0.1); padding:2px 6px; border-radius:3px; display:inline-block;">⚠️ ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
             const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
             const fCrea = d.fechaCreacion || "01/01/2026";
             const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
 
             lPer.innerHTML += `
-                <div class="slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${d.nombre}', '${d.rango}', '${d.division}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}')" 
-                     style="background: rgba(0,0,0,0.4); border: 1px solid var(--theme-dim); padding: 15px; display: flex; gap: 15px; align-items: center; cursor:pointer; transition: 0.3s;"
-                     onmouseover="this.style.borderColor='var(--theme-color)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.5)';" 
-                     onmouseout="this.style.borderColor='var(--theme-dim)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                    <div style="width: 50px; height: 50px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 5px; border: 1px solid var(--theme-color);"></div>
+                <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${d.nombre}', '${d.rango}', '${d.division}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}')" 
+                     style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
+                    <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 8px; border: 2px solid var(--theme-color); box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
                     <div>
-                        <div style="font-weight:bold; color:white; font-size:16px;">${iconEstado} ${d.nombre.toUpperCase()}</div>
-                        <div style="font-size:11px; color:${divColor}; margin-top:3px; letter-spacing:1px;">${d.rango.toUpperCase()} // ${divUpper}</div>
+                        <div style="font-weight:bold; color:white; font-size:18px; letter-spacing:1px;">${iconEstado} ${d.nombre.toUpperCase()}</div>
+                        <div style="font-size:12px; color:${divColor}; margin-top:3px; letter-spacing:1px; font-family:'Share Tech Mono';">${d.rango.toUpperCase()} // ${divUpper}</div>
                         ${alertaSancion}
                     </div>
                 </div>`;
@@ -632,26 +687,27 @@
             const licHTML = (lic.piloto || lic.comando || lic.armamento) ? (getLicBadge("Piloto", lic.piloto) + getLicBadge("Comando", lic.comando) + getLicBadge("Armamento", lic.armamento)) : `<span class="licencia-badge lic-ninguna">SIN LICENCIAS ASIGNADAS</span>`;
 
             lLic.innerHTML += `
-                <div class="slide-up" style="background: rgba(0,0,0,0.6); border: 1px solid var(--theme-dim); padding: 15px;">
-                    <div style="margin-bottom:10px;"><strong style="color:white; font-size:15px;">${d.nombre}</strong> <span style="font-size:10px; color:#aaa;">[${d.rango}]</span></div>
+                <div class="glass-panel slide-up" style="padding: 20px;">
+                    <div style="margin-bottom:15px; border-bottom:1px solid var(--glass-border); padding-bottom:10px;"><strong style="color:white; font-size:18px; letter-spacing:1px;">${d.nombre}</strong> <span style="font-size:11px; color:var(--theme-color); font-family:'Share Tech Mono';">[${d.rango}]</span></div>
                     <div>${licHTML}</div>
                 </div>`;
 
             if (d.division === "FACH") {
                 let cat = (d.rango.includes("General") || d.rango === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango) ? "instructor" : "cadete");
-                const item = document.createElement('div'); item.className = "pilot-card-mini slide-up";
+                const item = document.createElement('div'); item.className = "pilot-card-mini slide-up glass-panel";
+                item.style.border = "1px solid var(--glass-border)";
                 item.onclick = () => { document.getElementById("vPilot").innerText = d.nombre; document.getElementById("vUnit").innerText = aeronaveSafe; window.playClick(); };
-                item.innerHTML = `<div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
-                                  <div><div style="color:var(--admin-blue); font-size:10px; font-weight:bold;">[${aeronaveSafe}]</div><div style="font-size:12px; color:white;">${d.nombre}</div></div>`;
+                item.innerHTML = `<div class="icon-box" style="border-radius:6px; font-size:24px; background:rgba(0,0,0,0.5);">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
+                                  <div><div style="color:var(--admin-blue); font-size:11px; font-weight:bold; font-family:'Share Tech Mono'; letter-spacing:1px;">[${aeronaveSafe}]</div><div style="font-size:14px; color:white; font-weight:bold;">${d.nombre}</div></div>`;
                 if (cat === "comandante") lCom.appendChild(item); else if (cat === "instructor") lIns.appendChild(item); else lCad.appendChild(item);
             }
 
             if(d.misionActiva) {
                 let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--theme-color)");
                 lMis.innerHTML += `
-                    <div class="slide-up" style="border: 1px solid ${mColor}; background: rgba(0,0,0,0.6); padding: 20px; border-left: 5px solid ${mColor};">
-                        <div style="display:flex; justify-content: space-between;"><strong style="color: ${mColor}; font-size:20px; letter-spacing:1px;">OP: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 12px; color: #aaa;">ASIGNADO: ${d.nombre}</span></div>
-                        <div style="color: white; margin-top: 15px; font-size: 15px;">> OBJETIVO: ${d.misionActiva.detalle}</div>
+                    <div class="glass-panel slide-up" style="border-left: 4px solid ${mColor}; padding: 25px;">
+                        <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px;"><strong style="color: ${mColor}; font-size:22px; letter-spacing:1px;">OP: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 11px; color: white; background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px;">ASIGNADO: ${d.nombre}</span></div>
+                        <div style="color: #ddd; margin-top: 15px; font-size: 15px; line-height:1.6;">> OBJETIVO TÁCTICO:<br><span style="color:white; font-weight:bold;">${d.misionActiva.detalle}</span></div>
                     </div>`;
             }
         });
@@ -661,6 +717,7 @@
         document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
     }
 
+    // PERFIL MILITAR
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw) => {
         window.playClick(); 
         document.getElementById("p_nombre").innerText = nombre;
@@ -694,6 +751,7 @@
     };
     window.cerrarPerfil = () => { window.playClick(); document.getElementById("perfilModal").style.display = "none"; };
 
+    // LICENCIAS
     window.actualizarLicencia = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldadoLicencia").value; const tipoLic = document.getElementById("tipoLicencia").value; const estadoLic = document.getElementById("estadoLicencia").value;
@@ -706,6 +764,7 @@
         catch(e) { window.showToast("ERROR AL ACTUALIZAR LICENCIA.", "error"); }
     };
 
+    // SANCIONES (AGREGADO BOTÓN DE QUITAR)
     window.aplicarSancion = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldadoSancion").value; const tipo = document.getElementById("targetSancion").value; const motivo = document.getElementById("motivoSancion").value; const duracion = document.getElementById("duracionSancion").value;
@@ -720,7 +779,19 @@
         } catch(error) { window.showToast("ERROR AL APLICAR SANCIÓN", "error"); }
     };
 
-    // LOGICA RECLUTAMIENTO NUEVA
+    window.quitarSanciones = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoSancion").value;
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO DE LA LISTA", "error");
+        try {
+            await updateDoc(doc(db, "usuarios", email), { sanciones: [] });
+            registrarLog("SANCIÓN REMOVIDA", `Limpió el expediente de sanciones disciplinarias de ${email}.`);
+            window.showToast("EXPEDIENTE LIMPIADO SATISFACTORIAMENTE", "success");
+            cargarDatos();
+        } catch(e) { window.showToast("ERROR AL LIMPIAR EXPEDIENTE", "error"); }
+    };
+
+    // RECLUTAMIENTO
     window.registrarPostulante = async () => {
         window.playClick();
         const nombre = document.getElementById("recNombre").value;
@@ -735,41 +806,36 @@
                 fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
             });
             window.showToast("POSTULANTE REGISTRADO EN LA BASE DE DATOS.", "success");
-            document.getElementById("recNombre").value = "";
-            document.getElementById("recNotas").value = "";
+            document.getElementById("recNombre").value = ""; document.getElementById("recNotas").value = "";
             cargarReclutamiento();
-        } catch(e) {
-            window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error");
-        }
+        } catch(e) { window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error"); }
     };
 
     async function cargarReclutamiento() {
         const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q);
         const list = document.getElementById("listaPostulantes");
-        list.innerHTML = "";
-        let count = 0;
+        list.innerHTML = ""; let count = 0;
 
         snap.forEach(docSnap => {
             const d = docSnap.data();
             if(d.estado !== "Pendiente") return;
             count++;
             list.innerHTML += `
-                <div class="slide-up" style="border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.6); padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div class="glass-panel slide-up" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="color:white; font-weight:bold; font-size:16px;">${d.nombre}</div>
-                        <div style="color:var(--admin-blue); font-size:12px;">División de Interés: ${d.division}</div>
-                        <div style="color:#aaa; font-size:11px; margin-top:5px; max-width: 400px; word-wrap: break-word;">${d.notas || 'Sin observaciones'}</div>
+                        <div style="color:white; font-weight:bold; font-size:18px; letter-spacing:1px;">${d.nombre}</div>
+                        <div style="color:var(--admin-blue); font-size:12px; font-family:'Share Tech Mono'; margin:5px 0;">División de Interés: ${d.division}</div>
+                        <div style="color:#aaa; font-size:13px; max-width: 500px; line-height:1.5;">${d.notas || 'Sin observaciones'}</div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.2); border-color: var(--theme-color); color: var(--theme-color);">APROBAR</button>
-                        <button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(255,59,59,0.2); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button>
+                        <button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">APROBAR</button>
+                        <button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button>
                     </div>
                 </div>
             `;
         });
-
-        if (count === 0) list.innerHTML = "<div style='color:#555; font-style:italic;'>No hay postulaciones pendientes.</div>";
+        if (count === 0) list.innerHTML = "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>";
     }
 
     window.evaluarPostulante = async (id, estado, nombre) => {
@@ -779,20 +845,18 @@
             registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`);
             window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error');
             cargarReclutamiento();
-        } catch (e) {
-            window.showToast("ERROR AL EVALUAR POSTULANTE", "error");
-        }
+        } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); }
     };
 
     function cargarHangar() {
         const hAereo = document.getElementById("listaHangarAereo"); hAereo.innerHTML = "";
         const hTerr = document.getElementById("listaHangarTerrestre"); hTerr.innerHTML = "";
         const generarCard = (v) => `
-            <div class="hangar-card-new slide-up">
-                <div class="hangar-img" style="background-image: url('${v.img}');"></div>
-                <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="color: #fff; font-weight: bold; font-size: 15px;">${v.id}</div>
-                    <div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 5px 10px; border-radius: 3px;">CANT: ${v.cant}</div>
+            <div class="hangar-card-new glass-panel slide-up">
+                <div class="img-wrapper"><div class="hangar-img" style="background-image: url('${v.img}');"></div></div>
+                <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border);">
+                    <div style="color: #fff; font-weight: bold; font-size: 16px; letter-spacing:1px;">${v.id}</div>
+                    <div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 6px 12px; border-radius: 4px; font-family:'Share Tech Mono';">CANT: ${v.cant}</div>
                 </div>
             </div>`;
         FLOTA_AEREA.forEach(v => { hAereo.innerHTML += generarCard(v); });
@@ -805,17 +869,17 @@
         const lDoc = document.getElementById("listaDocumentos"); lDoc.innerHTML = "";
         snap.forEach(docSnap => {
             const d = docSnap.data(); const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
-            lDoc.innerHTML += `<div class="slide-up" style="border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.6); padding: 15px; border-left: 3px solid ${color};">
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa;"><span style="color:${color}; font-weight:bold;">[${d.tipo}]</span><span>${d.fecha} | AUTOR: ${d.autor}</span></div>
-                <div style="color:white; font-weight:bold; font-size:16px; margin:10px 0;">${d.titulo.toUpperCase()}</div><div style="color:var(--theme-color); font-size:13px; opacity:0.8;">${d.contenido}</div></div>`;
+            lDoc.innerHTML += `<div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;"><span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span><span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span></div>
+                <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div><div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);">${d.contenido}</div></div>`;
         });
     }
 
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
     window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
     window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
-    window.procesarCambiosAdmin = async () => { window.playClick(); const email = document.getElementById("targetSoldier").value; const rango = document.getElementById("targetRank").value; const avion = document.getElementById("targetAeronave").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { rango: rango, aeronave: avion }); registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango} y unidad ${avion}.`); window.showToast("BASE DE DATOS ACTUALIZADA", "success"); cargarDatos(); };
-    async function cargarLogsVisual() { const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = ""; window.cachedLogs.forEach(d => { lCont.innerHTML += `<div style="font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 10px 0; color: #bbb;"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> [${d.accion}] ${d.detalle}</div>`; }); }
+    window.procesarCambiosAdmin = async () => { window.playClick(); const email = document.getElementById("targetSoldier").value; const rango = document.getElementById("targetRank").value; const avion = document.getElementById("targetAeronave").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { rango: rango, aeronave: avion === "SIN ASIGNAR" ? null : avion }); registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango} y aeronave ${avion}.`); window.showToast("BASE DE DATOS ACTUALIZADA", "success"); cargarDatos(); };
+    async function cargarLogsVisual() { const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = ""; window.cachedLogs.forEach(d => { lCont.innerHTML += `<div style="font-size: 13px; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: #bbb; font-family:'Share Tech Mono';"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}</div>`; }); }
     window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició sesión.`); } catch { window.showToast("ACCESO DENEGADO", "error"); } };
     window.logout = () => signOut(auth).then(() => location.reload());
 </script>

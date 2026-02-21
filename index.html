@@ -1,209 +1,325 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Panel Militar — Ejército de Chile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE MANDO TÁCTICO - CHILE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-<style>
-body{
-    margin:0;
-    background:#020a02;
-    font-family:Consolas, monospace;
-    color:#00ff88;
-}
+        :root { 
+            --tactical-green: #4df24d; 
+            --dim-green: rgba(77, 242, 77, 0.15);
+            --army-dark: #020602;
+            --alert-amber: #ffb400;
+            --danger-red: #ff3b3b;
+            --admin-blue: #00f2ff;
+        }
 
-/* CONTENEDOR GENERAL */
-.panel{
-    display:flex;
-    height:100vh;
-}
+        body {
+            background: var(--army-dark);
+            color: var(--tactical-green);
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0; display: flex; height: 100vh; overflow: hidden;
+        }
 
-/* PANEL IZQUIERDO */
-.sidebar{
-    width:250px;
-    border-right:1px solid #00ff88;
-    padding:15px;
-}
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: rgba(5, 10, 5, 0.9);
+            border-right: 1px solid var(--dim-green);
+            display: flex; flex-direction: column; padding: 20px 0;
+        }
 
-.sidebar h3{
-    color:#ffaa00;
-    font-size:12px;
-    margin-top:20px;
-}
+        .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
 
-.sidebar button{
-    display:block;
-    width:100%;
-    margin-top:5px;
-    background:none;
-    border:none;
-    color:#00ff88;
-    text-align:left;
-    padding:8px;
-    cursor:pointer;
-}
+        .menu-item {
+            padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px;
+            transition: 0.2s; border-left: 3px solid transparent; color: var(--tactical-green);
+        }
 
-.sidebar button:hover{
-    background:#003322;
-}
+        .menu-item:hover { background: var(--dim-green); border-left-color: var(--tactical-green); }
+        .menu-item.active { background: rgba(0, 242, 255, 0.1); border-left-color: var(--admin-blue); color: #fff; }
 
-/* PANEL CENTRAL */
-.center{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-}
+        /* CONTENIDO PRINCIPAL */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); }
 
-.card{
-    border:1px solid #00ff88;
-    padding:30px;
-    text-align:center;
-    width:400px;
-}
+        /* SECCIÓN FACH REDISEÑADA */
+        #seccionFach { display: none; }
+        .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
+        
+        .pilot-container { 
+            border: 1px solid var(--dim-green); 
+            background: rgba(0, 10, 0, 0.6); 
+            padding: 15px; 
+            overflow-y: auto;
+        }
 
-.btn{
-    margin-top:10px;
-    padding:10px;
-    background:none;
-    border:1px solid #00ff88;
-    color:#00ff88;
-    cursor:pointer;
-}
+        .sub-header { 
+            font-size: 11px; color: var(--alert-amber); 
+            padding: 10px 0; border-bottom: 1px solid var(--dim-green);
+            margin-bottom: 15px; display: flex; align-items: center; gap: 5px;
+        }
 
-.btn:hover{
-    background:#003322;
-}
+        .pilot-card-mini {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(77, 242, 77, 0.1);
+            padding: 12px; margin-bottom: 10px;
+            display: grid; grid-template-columns: 50px 1fr 40px;
+            align-items: center; gap: 10px; transition: 0.3s;
+        }
 
-/* NUEVO PANEL DERECHO */
-.rightpanel{
-    width:300px;
-    border-left:1px solid #00ff88;
-    padding:15px;
-}
+        .pilot-card-mini:hover { background: var(--dim-green); border-color: var(--admin-blue); cursor: pointer; transform: translateX(5px); }
 
-/* BLOQUES */
-.block{
-    border:1px solid #00ff88;
-    margin-bottom:15px;
-    padding:10px;
-}
+        .icon-box {
+            width: 45px; height: 45px; background: rgba(0,0,0,0.5);
+            border: 1px solid var(--admin-blue); display: flex;
+            align-items: center; justify-content: center; font-size: 20px;
+        }
 
-.block h4{
-    color:#ffaa00;
-    font-size:12px;
-    margin:0 0 10px 0;
-}
+        .mini-radar {
+            width: 35px; height: 35px; border: 1px solid var(--tactical-green);
+            border-radius: 50%; position: relative; opacity: 0.4;
+        }
+        .mini-radar::after {
+            content: ''; position: absolute; width: 50%; height: 1px;
+            background: var(--tactical-green); top: 50%; left: 50%;
+            transform-origin: left; animation: scan 2s linear infinite;
+        }
 
-/* ITEMS */
-.item{
-    padding:6px;
-    border-bottom:1px solid #003322;
-}
+        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-.item:last-child{
-    border-bottom:none;
-}
+        /* VISOR CENTRAL DINÁMICO */
+        .flight-display {
+            border: 1px solid var(--dim-green);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; position: relative;
+            transition: all 0.5s ease;
+        }
+        .main-icon-display { font-size: 130px; z-index: 2; transition: all 0.5s ease; }
 
-.online{
-    color:#00ff88;
-}
-
-.offline{
-    color:#ff4444;
-}
-
-.warning{
-    color:#ffaa00;
-}
-
-</style>
+        /* PANEL ADMIN */
+        #adminTools { display: none; border: 1px solid var(--danger-red); padding: 20px; margin-bottom: 30px; background: rgba(255,0,0,0.05); }
+        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; }
+        
+        /* LOGIN */
+        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
+    </style>
 </head>
 <body>
 
-<div class="panel">
+    <div id="loginScreen">
+        <div style="width: 350px; border: 1px solid var(--tactical-green); padding: 40px; text-align: center;">
+            <h3 style="letter-spacing: 3px;">TERMINAL DE ACCESO</h3>
+            <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL MILITAR">
+            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
+            <button onclick="login()" style="width: 100%; background: transparent; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px; cursor: pointer; font-family: inherit;">INICIAR ENLACE</button>
+        </div>
+    </div>
 
-<!-- IZQUIERDA -->
-<div class="sidebar">
+    <div class="sidebar">
+        <div style="padding: 20px; border-bottom: 1px solid var(--dim-green); margin-bottom: 10px;">
+            <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase;">...</div>
+            <div id="userRank" style="font-size: 10px; color: var(--alert-amber);">IDENTIFICANDO...</div>
+        </div>
+        <div class="menu-category">COMANDO CENTRAL</div>
+        <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')"><span>📋</span> Personal RP</div>
+        <div class="menu-item" id="btnFach" onclick="switchTab('fach')"><span>✈️</span> Sección Fach</div>
+        <div class="menu-category">SISTEMAS DE VUELO</div>
+        <div class="menu-item" onclick="abrirAdminAuth()"><span style="color: var(--admin-blue);">🌐</span> Menu Admin</div>
+        <button onclick="logout()" style="margin: auto 20px 20px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 8px; cursor: pointer; font-family: inherit;">DESCONECTAR</button>
+    </div>
 
-<h3>PERSONAL Y COMANDO</h3>
-<button>Personal RP</button>
-<button>Sección FACH</button>
+    <div class="main-content">
+        <div id="seccionPersonal">
+            <div id="adminTools">
+                <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 15px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
+                    <select id="targetSoldier" class="auth-input"></select>
+                    <select id="targetRank" class="auth-input"></select>
+                    <select id="targetAeronave" class="auth-input">
+                        <option value="F-16">F-16 FALCON</option>
+                        <option value="F-22">F-22 RAPTOR</option>
+                        <option value="Black Hawk">BLACK HAWK</option>
+                        <option value="Chinook">CHINOOK</option>
+                        <option value="C-130 Hercules">C-130 HERCULES</option>
+                    </select>
+                    <button onclick="procesarCambiosAdmin()" style="background: var(--danger-red); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">ACTUALIZAR</button>
+                </div>
+            </div>
+            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+        </div>
 
-<h3>OPERACIONES</h3>
-<button>Menu Admin</button>
+        <div id="seccionFach">
+            <div class="fach-layout">
+                <div class="pilot-container">
+                    <div class="sub-header">▶ CONTACTOS ID // ACTIVOS</div>
+                    
+                    <div style="font-size: 9px; color: #555; margin-bottom: 10px;">— PILOTO COMANDANTE —</div>
+                    <div id="listaComandante"></div>
 
-</div>
+                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— PILOTO INSTRUCTOR —</div>
+                    <div id="listaInstructor"></div>
 
+                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— CADETE —</div>
+                    <div id="listaCadete"></div>
+                </div>
 
-<!-- CENTRO -->
-<div class="center">
+                <div class="flight-display" id="mainDisplayFach">
+                    <div class="main-icon-display" id="vIcon">📡</div>
+                    <div id="vPilot" style="font-size: 32px; color: white; letter-spacing: 4px;">SISTEMA EN ESPERA</div>
+                    <div id="vUnit" style="color: var(--admin-blue); font-size: 18px; margin-top: 10px; border: 1px solid; padding: 5px 20px;">---</div>
+                    <div id="vRank" style="font-size: 12px; margin-top: 15px; opacity: 0.7;">POR FAVOR SELECCIONE UNIDAD DE CONTACTO</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="card">
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<h2>LUKAS BROWN</h2>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
+        authDomain: "panel-chile.firebaseapp.com",
+        projectId: "panel-chile",
+        storageBucket: "panel-chile.firebasestorage.app",
+        messagingSenderId: "124864601883",
+        appId: "1:124864601883:web:839163be2060253f68bdbe"
+    };
 
-<p>PILOTO OFICIAL</p>
-<p>RANGO: GENERAL EN JEFE</p>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-<button class="btn">Panel General</button>
-<button class="btn">Ascensos</button>
-<button class="btn">Sanciones</button>
+    // Salarios y rangos según instrucción [cite: 2026-02-21]
+    const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-</div>
+    const hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
+    hoverSound.volume = 0.1;
 
-</div>
+    window.switchTab = (tab) => {
+        document.getElementById("seccionPersonal").style.display = tab === 'personal' ? 'block' : 'none';
+        document.getElementById("seccionFach").style.display = tab === 'fach' ? 'block' : 'none';
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(tab === 'personal' ? 'btnPersonal' : 'btnFach').classList.add('active');
+    };
 
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const snap = await getDoc(doc(db, "usuarios", user.email));
+            if (snap.exists()) {
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("userName").innerText = snap.data().nombre;
+                document.getElementById("userRank").innerText = snap.data().rango;
+                cargarDatos();
+            }
+        } else { document.getElementById("loginScreen").style.display = "flex"; }
+    });
 
-<!-- NUEVO PANEL DERECHO -->
-<div class="rightpanel">
+    async function cargarDatos() {
+        const snap = await getDocs(collection(db, "usuarios"));
+        const lPer = document.getElementById("listaSoldados");
+        const lCom = document.getElementById("listaComandante");
+        const lIns = document.getElementById("listaInstructor");
+        const lCad = document.getElementById("listaCadete");
+        const selS = document.getElementById("targetSoldier");
+        const selR = document.getElementById("targetRank");
 
-<div class="block">
-<h4>UNIDADES MILITARES</h4>
+        lPer.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = "";
+        selS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
+        selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
 
-<div class="item online">Ejército — Operativo</div>
-<div class="item online">FACH — Operativo</div>
-<div class="item online">Armada — Operativo</div>
-<div class="item warning">BOE — En espera</div>
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            const email = docSnap.id;
+            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
-</div>
+            // Lista Personal RP
+            lPer.innerHTML += `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--dim-green); padding: 15px; display: flex; gap: 15px; align-items: center;">
+                    <div style="font-size: 24px;">👤</div>
+                    <div>
+                        <div style="font-weight:bold; color:white;">${d.nombre}</div>
+                        <div style="font-size:10px; color:var(--tactical-green)">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
+                    </div>
+                </div>`;
 
+            // Sección Fach con Aeronaves [cite: 2026-02-21]
+            if (d.division === "FACH") {
+                let cat = "cadete";
+                if (d.rango.includes("General") || d.rango === "Coronel") cat = "comandante";
+                else if (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango)) cat = "instructor";
 
-<div class="block">
-<h4>AVIACIÓN</h4>
+                const avion = d.aeronave || "SIN ASIGNAR";
 
-<div class="item online">F-16 Falcon</div>
-<div class="item online">F-5 Tiger III</div>
-<div class="item offline">A-29 Super Tucano</div>
-<div class="item online">C-130 Hércules</div>
+                const item = document.createElement('div');
+                item.className = "pilot-card-mini";
+                item.onmouseenter = () => hoverSound.play();
+                item.onclick = () => verPiloto(d.nombre, d.rango, cat, avion);
+                item.innerHTML = `
+                    <div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
+                    <div>
+                        <div style="color:var(--admin-blue); font-size:10px; font-weight:bold;">[${avion}]</div>
+                        <div style="font-size:12px; color:white;">${d.nombre}</div>
+                    </div>
+                    <div class="mini-radar"></div>`;
+                
+                if (cat === "comandante") lCom.appendChild(item);
+                else if (cat === "instructor") lIns.appendChild(item);
+                else lCad.appendChild(item);
+            }
+        });
+    }
 
-</div>
+    window.verPiloto = (nombre, rango, cat, avion) => {
+        const display = document.getElementById("mainDisplayFach");
+        const icon = document.getElementById("vIcon");
+        document.getElementById("vPilot").innerText = nombre.toUpperCase();
+        document.getElementById("vUnit").innerText = "UNIDAD ACTUAL: " + avion.toUpperCase();
+        document.getElementById("vRank").innerText = "RANGO: " + rango.toUpperCase();
 
+        if (cat === "comandante") {
+            display.style.borderColor = "var(--alert-amber)";
+            icon.innerText = "🦅";
+            icon.style.filter = "drop-shadow(0 0 20px var(--alert-amber))";
+        } else if (cat === "instructor") {
+            display.style.borderColor = "var(--admin-blue)";
+            icon.innerText = "✈️";
+            icon.style.filter = "drop-shadow(0 0 20px var(--admin-blue))";
+        } else {
+            display.style.borderColor = "var(--tactical-green)";
+            icon.innerText = "🪖";
+            icon.style.filter = "drop-shadow(0 0 20px var(--tactical-green))";
+        }
+    };
 
-<div class="block">
-<h4>BASE DE DATOS</h4>
+    window.abrirAdminAuth = () => {
+        const code = prompt("CÓDIGO DE SEGURIDAD:");
+        if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block";
+    };
 
-<div class="item online">Personal registrado: 128</div>
-<div class="item online">Oficiales: 32</div>
-<div class="item online">Suboficiales: 41</div>
-<div class="item online">Soldados: 55</div>
+    window.procesarCambiosAdmin = async () => {
+        const email = document.getElementById("targetSoldier").value;
+        const rango = document.getElementById("targetRank").value;
+        const avion = document.getElementById("targetAeronave").value;
+        if(!email) return alert("SELECCIONE UN SOLDADO");
+        
+        await updateDoc(doc(db, "usuarios", email), { 
+            rango: rango,
+            aeronave: avion
+        });
+        alert("BASE DE DATOS ACTUALIZADA CON ÉXITO");
+        cargarDatos();
+    };
 
-</div>
-
-
-<div class="block">
-<h4>ESTADO OPERATIVO</h4>
-
-<div class="item online">Sistema: ONLINE</div>
-<div class="item online">Firebase: Conectado</div>
-<div class="item online">Permisos: Activos</div>
-
-</div>
-
-</div>
-
-</div>
-
+    window.login = async () => {
+        const e = document.getElementById("userEmail").value;
+        const p = document.getElementById("userPass").value;
+        try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("ACCESO DENEGADO"); }
+    };
+    window.logout = () => signOut(auth).then(() => location.reload());
+</script>
 </body>
 </html>

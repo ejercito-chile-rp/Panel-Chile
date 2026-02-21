@@ -118,11 +118,10 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
+        /* ESTILOS DEL MAPA GTA SA INTEGRADO */
         .map-wrapper { position: relative; height: 65vh; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .map-bg { position: absolute; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Chile_relief_location_map.jpg/800px-Chile_relief_location_map.jpg') center/cover no-repeat; opacity: 0.4; filter: grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.6) contrast(1.2); }
-        .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; }
-        .map-scanner { position: absolute; width: 200%; height: 2px; background: var(--theme-color); box-shadow: 0 0 20px var(--theme-color); top: -10%; left: -50%; animation: mapScan 5s linear infinite; opacity: 0.6; }
-        @keyframes mapScan { 0% { top: -10%; } 100% { top: 110%; } }
+        /* AQUÍ SE USA TU IMAGEN LOCAL DEL MAPA */
+        .map-bg { position: absolute; inset: 0; background: url('mapagtasa.jpg') center/cover no-repeat; opacity: 0.85; }
         
         .map-unit { position: absolute; width: 14px; height: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; animation: pulseNode 2s infinite; z-index: 2; }
         .unit-ground { background: var(--admin-blue); border-radius: 50%; box-shadow: 0 0 15px var(--admin-blue); }
@@ -279,14 +278,12 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px;">
                 <select id="targetSoldier" class="auth-input" style="margin:0;"></select>
                 <select id="targetRank" class="auth-input" style="margin:0;"></select>
-                
                 <select id="targetDivision" class="auth-input" style="margin:0;">
                     <option value="EJÉRCITO">EJÉRCITO</option>
                     <option value="FACH">FACH</option>
                     <option value="ARMADA">ARMADA</option>
                     <option value="BOE">BOE</option>
                 </select>
-
                 <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves" style="margin:0;"></select>
                 <button onclick="procesarCambiosAdmin()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ACTUALIZAR</button>
             </div>
@@ -330,23 +327,21 @@
         </div>
 
         <div id="seccionMapa">
-            <h2 class="section-title"><span>🗺️</span> MAPA ESTRATÉGICO GLOBAL</h2>
+            <h2 class="section-title"><span>🗺️</span> MAPA ESTRATÉGICO GLOBAL (SAN ANDREAS)</h2>
             <div class="map-wrapper fade-in">
                 <div class="map-bg"></div>
-                <div class="map-grid"></div>
-                <div class="map-scanner"></div>
                 
-                <div class="map-unit unit-ground" style="top: 30%; left: 40%;"><span>Batallón Alpha (Tierra)</span></div>
-                <div class="map-unit unit-ground" style="top: 55%; left: 35%;"><span>Destacamento Sur</span></div>
-                <div class="map-unit unit-ground" style="top: 80%; left: 42%;"><span>Compañía Delta</span></div>
+                <div class="map-unit unit-ground" style="top: 30%; left: 15%;"><span>Batallón Alpha (Los Santos)</span></div>
+                <div class="map-unit unit-ground" style="top: 65%; left: 80%;"><span>Destacamento Sur (Las Venturas)</span></div>
+                <div class="map-unit unit-ground" style="top: 45%; left: 35%;"><span>Compañía Delta (Red County)</span></div>
                 
-                <div class="map-unit unit-air" style="top: 20%; left: 60%;"><span>F-22 Raptor en Patrullaje</span></div>
-                <div class="map-unit unit-air" style="top: 70%; left: 50%;"><span>Black Hawk UH-60 (Extracción)</span></div>
-                <div class="map-unit unit-air" style="top: 45%; left: 75%;"><span>C-130 Hércules (Suministros)</span></div>
+                <div class="map-unit unit-air" style="top: 15%; left: 25%;"><span>F-22 Raptor en Patrullaje Aéreo</span></div>
+                <div class="map-unit unit-air" style="top: 50%; left: 60%;"><span>Black Hawk UH-60 (Extracción en Proceso)</span></div>
+                <div class="map-unit unit-air" style="top: 85%; left: 10%;"><span>C-130 Hércules (Suministros SF)</span></div>
 
                 <div class="glass-panel" style="position: absolute; top: 25px; left: 25px; padding: 20px; border-left: 4px solid var(--theme-color);">
-                    <div style="font-size: 11px; color: #aaa; letter-spacing: 2px;">SISTEMA SATELITAL DE ENLACE</div>
-                    <div style="font-size: 20px; font-weight: bold; color: white; margin: 5px 0;">ESPACIO AÉREO / TERRESTRE</div>
+                    <div style="font-size: 11px; color: #ddd; letter-spacing: 2px;">SISTEMA SATELITAL DE ENLACE</div>
+                    <div style="font-size: 20px; font-weight: bold; color: white; margin: 5px 0;">ESTADO SAN ANDREAS</div>
                     <div style="color: var(--theme-color); font-size: 13px; font-family: monospace; line-height: 1.8;">
                         <span style="color:var(--admin-blue)">⬤</span> 3 Unidades Terrestres Desplegadas<br>
                         <span style="color:var(--alert-amber)">▲</span> 3 Unidades Aéreas en Curso
@@ -442,7 +437,7 @@
         </div>
 
         <div id="seccionHangar">
-            <h2 class="section-title"><span>✈️</span> FLOTA AÉREA NACIONAL</h2>
+            <h2 class="section-title"><span>✈️</span> FLOTA AÉREA NACIONAL (IMÁGENES LOCALES)</h2>
             <div id="listaHangarAereo" class="hangar-grid-new" style="margin-bottom: 50px;"></div>
             <h2 class="section-title"><span>🚁</span> SISTEMA DE VEHÍCULOS TERRESTRES</h2>
             <div id="listaHangarTerrestre" class="hangar-grid-new"></div>
@@ -484,16 +479,20 @@
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
+    // FLOTA AÉREA CON TUS IMÁGENES LOCALES
+    // Asegúrate de que los archivos .jpg estén en la misma carpeta que este HTML
     const FLOTA_AEREA = [
-        { id: "F-22 Raptor", cant: 5, img: "https://upload.wikimedia.org/wikipedia/commons/1/1e/F-22_Raptor_edit1.jpg" },
-        { id: "F-16 Falcon", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/c/c9/F-16_Fighting_Falcon_-_061122-F-6911G-011.jpg" },
-        { id: "Avión Justiciero", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/5/5e/AC-130H_Spectre_%281%29.jpg" },
+        { id: "F-22 Raptor", cant: 5, img: "f22.jpg" },
+        { id: "F-16 Falcon", cant: 1, img: "f16.jpg" },
+        { id: "Avión Justiciero (AC-130)", cant: 1, img: "AC130.jpg" },
+        // Mantuve los enlaces online para C-130 y Cobra ya que no vi foto local para ellos en tu lista
         { id: "C-130 Hércules", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Lockheed_C-130_Hercules_in_flight.jpg" },
-        { id: "UH-60 Black Hawk", cant: 3, img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/UH-60_Black_Hawk_helicopter.jpg" },
-        { id: "CH-47 Chinook", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/3/36/CH-47_Chinook_helicopter_in_flight.jpg" },
+        { id: "UH-60 Black Hawk", cant: 3, img: "blackhawk.jpg" },
+        { id: "CH-47 Chinook", cant: 1, img: "chinook.jpg" },
         { id: "AH-1 Cobra", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/AH-1W_Super_Cobra_in_flight_2004.jpg" }
     ];
 
+    // FLOTA TERRESTRE (Mantuve los enlaces online ya que no me pasaste fotos de estos)
     const FLOTA_TERRESTRE = [
         { id: "Carros Ligeros Blindados", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/d/da/Mowag_Piranha_III_10.jpg" },
         { id: "Tanques Pesados", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Leopard_2_A5_der_Bundeswehr.jpg" },

@@ -96,7 +96,6 @@
         .perfil-item span { display: block; font-size: 11px; color: #888; margin-bottom: 5px; font-family: 'Share Tech Mono', monospace;}
         .perfil-item strong { color: white; font-size: 15px; text-transform: uppercase; }
         
-        /* ESTILOS DE ESPECIALIDADES / ETIQUETAS */
         .especialidades-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
         .esp-tag { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; font-family: 'Share Tech Mono', monospace; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
         .esp-piloto { background: rgba(77, 144, 242, 0.15); color: #4d90f2; border: 1px solid #4d90f2; }
@@ -132,26 +131,9 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        /* ESTILOS DEL MAPA GTA SA INTEGRADO Y REDIMENSIONABLE */
-        .map-wrapper { 
-            position: relative; 
-            height: 50vh; 
-            min-height: 300px;
-            resize: vertical; 
-            overflow: hidden; 
-            border-radius: 12px; 
-            border: 1px solid var(--glass-border); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        }
-        
-        ::-webkit-resizer {
-            border-color: transparent var(--theme-color) var(--theme-color) transparent;
-            border-style: solid;
-            border-width: 6px;
-        }
-
+        .map-wrapper { position: relative; height: 50vh; min-height: 300px; resize: vertical; overflow: hidden; border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        ::-webkit-resizer { border-color: transparent var(--theme-color) var(--theme-color) transparent; border-style: solid; border-width: 6px; }
         .map-bg { position: absolute; inset: 0; background: url('mapagtasa.jpg') center/cover no-repeat; opacity: 0.85; }
-        
         .map-unit { position: absolute; width: 14px; height: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; animation: pulseNode 2s infinite; z-index: 2; }
         .unit-ground { background: var(--admin-blue); border-radius: 50%; box-shadow: 0 0 15px var(--admin-blue); }
         .unit-air { background: var(--alert-amber); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); animation: floatAir 3s ease-in-out infinite, pulseAir 2s infinite; }
@@ -211,7 +193,6 @@
             <div class="perfil-body">
                 <div class="perfil-col-izq">
                     <div id="p_foto" class="perfil-foto-hd"></div>
-                    
                     <div style="margin-top: 10px; text-align: center; width: 100%;">
                         <div style="font-size: 10px; color: #888; margin-bottom: 15px; letter-spacing: 1px;">SEÑAL VITAL (EN LÍNEA)</div>
                         <div class="radar-realista" style="width: 130px; height: 130px;">
@@ -238,10 +219,29 @@
                         </div>
                     </div>
 
-                    <div class="perfil-especialidades glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); padding: 20px; background: rgba(0,0,0,0.4);">
+                    <div class="perfil-especialidades glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); padding: 15px 20px; background: rgba(0,0,0,0.4);">
                         <div style="font-size: 12px; color: #888; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 10px;">ESPECIALIDADES TÁCTICAS</div>
                         <div class="especialidades-container" id="p_especialidades"></div>
                     </div>
+
+                    <div class="perfil-calificaciones glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); padding: 15px 20px; background: rgba(0,0,0,0.4); margin-top: 5px;">
+                        <div style="font-size: 12px; color: #888; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 10px;">EVALUACIONES MILITARES</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+                            <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border);">
+                                <div style="font-size: 10px; color: #aaa; margin-bottom: 5px;">🎯 RENDIMIENTO TIRO</div>
+                                <div id="p_tiro" style="color: white; font-weight: bold; font-family: 'Share Tech Mono', monospace;">---</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border);">
+                                <div style="font-size: 10px; color: #aaa; margin-bottom: 5px;">🏃 CONDICIÓN FÍSICA</div>
+                                <div id="p_fisico" style="color: white; font-weight: bold; font-family: 'Share Tech Mono', monospace;">---</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border);">
+                                <div style="font-size: 10px; color: #aaa; margin-bottom: 5px;">🧠 EVAL. PSICOLÓGICA</div>
+                                <div id="p_psico" style="color: white; font-weight: bold; font-family: 'Share Tech Mono', monospace;">---</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -301,7 +301,7 @@
 
     <div class="main-content" id="main-content-area">
         
-        <div id="adminTools" class="glass-panel" style="display:none; padding: 30px; margin-bottom: 30px; border-color: var(--admin-blue);">
+        <div id="adminTools" class="glass-panel" style="display:none; padding: 30px; margin-bottom: 10px; border-color: var(--admin-blue);">
             <h3 style="color: var(--admin-blue); margin-top: 0; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px;">[ ACCESO CLASIFICADO - ADMINISTRADOR ]</h3>
             
             <p style="color: white; font-weight: bold; margin: 20px 0 10px; font-size: 14px;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
@@ -355,6 +355,29 @@
                     <button onclick="aplicarSancion()" class="btn-tactical" style="background: rgba(255,59,59,0.2); border-color: var(--danger-red); color: var(--danger-red);">SANCIONAR</button>
                     <button onclick="quitarSanciones()" class="btn-tactical" style="background: transparent; border-color: var(--theme-color); color: var(--theme-color);">LIMPIAR EXPEDIENTE</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="panelCalificaciones" class="glass-panel" style="display:none; padding: 20px 30px; margin-bottom: 30px; border-color: #4df24d;">
+            <h3 style="color: #4df24d; margin-top: 0; margin-bottom: 15px; font-size: 14px; letter-spacing: 2px;">[ ⚙️ EVALUACIÓN DE PERSONAL - RANGO: TTE. CORONEL+ ]</h3>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px;">
+                <select id="evalSoldado" class="auth-input" style="margin:0;"></select>
+                <select id="evalTiro" class="auth-input" style="margin:0;">
+                    <option value="Básico">Tiro: Básico</option>
+                    <option value="Calificado">Tiro: Calificado</option>
+                    <option value="Experto">Tiro: Experto</option>
+                </select>
+                <select id="evalFisico" class="auth-input" style="margin:0;">
+                    <option value="Regular">Físico: Regular</option>
+                    <option value="Buena">Físico: Buena</option>
+                    <option value="Excelente">Físico: Excelente</option>
+                </select>
+                <select id="evalPsico" class="auth-input" style="margin:0;">
+                    <option value="Observación">Psico: Observación</option>
+                    <option value="Apto">Psico: Apto</option>
+                    <option value="No apto">Psico: No apto</option>
+                </select>
+                <button onclick="guardarCalificacion()" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">EVALUAR</button>
             </div>
         </div>
 
@@ -488,7 +511,6 @@
 
         <div id="seccionDocumentos">
             <h2 class="section-title"><span>🗃️</span> INTELIGENCIA Y DOCUMENTOS CLASIFICADOS</h2>
-            
             <div class="glass-panel" id="panelSubirDoc" style="padding: 30px; border-color: var(--admin-blue); margin-bottom: 30px; display: none;">
                 <h4 style="margin-top:0; color:var(--admin-blue); font-size:16px;">SUBIR NUEVO REPORTE O LEY TÁCTICA</h4>
                 <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 15px; margin-bottom:15px;">
@@ -498,7 +520,6 @@
                 <textarea id="docContenido" class="auth-input" rows="5" placeholder="REDACCIÓN DEL CONTENIDO CLASIFICADO..."></textarea>
                 <button onclick="subirDocumento()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ALMACENAR EN LA RED SECRETA</button>
             </div>
-            
             <div id="listaDocumentos" style="display: grid; gap: 15px;"></div>
         </div>
 
@@ -574,7 +595,22 @@
         if (!n || !e || !p) return window.showToast("COMPLETE TODOS LOS CAMPOS PARA REGISTRO", "error");
         try {
             await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "usuarios", e), { nombre: n, rango: "Cabo 2°", division: "EJÉRCITO", especialidad: "Infantería", estado: "Online", fechaCreacion: new Date().toLocaleDateString('es-CL'), sanciones: [], licencias: {}, misionActiva: null, aeronave: null });
+            // VALORES POR DEFECTO PARA NUEVOS SOLDADOS
+            await setDoc(doc(db, "usuarios", e), { 
+                nombre: n, 
+                rango: "Cabo 2°", 
+                division: "EJÉRCITO", 
+                especialidad: "Infantería", 
+                calTiro: "Básico",
+                calFisico: "Regular",
+                calPsico: "Observación",
+                estado: "Online", 
+                fechaCreacion: new Date().toLocaleDateString('es-CL'), 
+                sanciones: [], 
+                licencias: {}, 
+                misionActiva: null, 
+                aeronave: null 
+            });
             registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`); window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
         } catch (error) { window.showToast("ERROR AL REGISTRAR: Verifica formato o clave.", "error"); }
     };
@@ -613,7 +649,7 @@
         if(tab === 'documentos') { targetId = 'seccionDocumentos'; btnId = 'btnDocumentos'; }
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
-        if(tab === 'reclutamiento') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
+        if(tab === 'reclutuamieto') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
         if(tab === 'mapa') { targetId = 'seccionMapa'; btnId = 'btnMapa'; }
         
         const targetEl = document.getElementById(targetId);
@@ -649,9 +685,13 @@
                     document.getElementById("panelAdminLicencias").style.display = "block";
                 }
 
-                // SI ES TENIENTE O SUPERIOR, PUEDE SUBIR DOCUMENTOS (CENSURAMOS PARA SUBTENIENTE HACIA ABAJO)
                 if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) > RANGOS.indexOf("Subteniente")) {
                     document.getElementById("panelSubirDoc").style.display = "block";
+                }
+
+                // SI ES TENIENTE CORONEL O SUPERIOR, MOSTRAR PANEL DE CALIFICACIONES
+                if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel")) {
+                    document.getElementById("panelCalificaciones").style.display = "block";
                 }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); if(window.isAdmin) cargarLogsVisual();
@@ -672,14 +712,15 @@
             const selS = document.getElementById("targetSoldier"); const selMis = document.getElementById("targetSoldadoMision"); 
             const selLic = document.getElementById("targetSoldadoLicencia"); const selSanc = document.getElementById("targetSoldadoSancion");
             const selR = document.getElementById("targetRank");
+            const selEval = document.getElementById("evalSoldado"); // NUEVO
 
             lPer.innerHTML = ""; lLic.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = ""; lMis.innerHTML = "";
             selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
             selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selSanc.innerHTML = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
+            selEval.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
             
             const myRankIndex = RANGOS.indexOf(window.currentUserRank);
             let allowedRanks = RANGOS;
-            
             if (window.currentUserRank !== "General en Jefe" && myRankIndex > 0) {
                 allowedRanks = RANGOS.slice(0, myRankIndex);
             } else if (myRankIndex === 0 && window.currentUserRank !== "General en Jefe") {
@@ -701,12 +742,18 @@
                     const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
                     const estadoSeguro = d.estado || "Offline";
                     const especialidadSegura = d.especialidad || "Infantería"; 
+
+                    // NUEVAS CALIFICACIONES
+                    const cTiro = d.calTiro || "Básico";
+                    const cFis = d.calFisico || "Regular";
+                    const cPsi = d.calPsico || "Observación";
                     
                     totalSoldadosCount++;
                     if (OFICIALES.includes(rangoSeguro)) totalOficialesCount++;
                     
                     selS.innerHTML += `<option value="${email}">${nombreSeguro}</option>`; selMis.innerHTML += `<option value="${email}">${nombreSeguro}</option>`; 
                     selLic.innerHTML += `<option value="${email}">${nombreSeguro}</option>`; selSanc.innerHTML += `<option value="${email}">${nombreSeguro}</option>`;
+                    selEval.innerHTML += `<option value="${email}">${nombreSeguro}</option>`;
 
                     let divColor = "var(--theme-color)"; 
                     if (divUpper === "FACH") divColor = "white"; 
@@ -718,8 +765,9 @@
                     const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
                     const fCrea = d.fechaCreacion || "01/01/2026";
 
+                    // Al hacer click enviamos las calificaciones
                     lPer.innerHTML += `
-                        <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}', '${especialidadSegura}')" 
+                        <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}', '${especialidadSegura}', '${cTiro}', '${cFis}', '${cPsi}')" 
                              style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
                             <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 8px; border: 2px solid var(--theme-color); box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
                             <div>
@@ -770,18 +818,23 @@
         } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
     }
 
-    // LÓGICA DE APERTURA DE PERFIL Y CENSURA
-    window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad) => {
+    // FUNCIONES DE COLORES PARA CALIFICACIONES
+    function getColorTiro(v) { return v==="Experto"?"#4df24d":v==="Calificado"?"#ffb400":"#aaa"; }
+    function getColorFisico(v) { return v==="Excelente"?"#4df24d":v==="Buena"?"#ffb400":"#aaa"; }
+    function getColorPsico(v) { return v==="Apto"?"#4df24d":v==="Observación"?"#ffb400":"#ff3b3b"; }
+
+    // APERTURA DE PERFIL
+    window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad, cTiro, cFis, cPsi) => {
         window.playClick(); 
-        
-        // MODO CLASIFICADO: Índices de rango menores o iguales a Subteniente (6) serán bloqueados de ver otros perfiles
         const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && email !== window.currentUserEmail;
 
-        // Limpieza de censuras de un perfil anterior
         document.getElementById("p_id").classList.remove("censurado-bar");
         document.getElementById("p_unidad").classList.remove("censurado-bar");
         document.getElementById("p_creacion").classList.remove("censurado-bar");
         document.getElementById("p_mision").classList.remove("censurado-bar");
+        document.getElementById("p_tiro").classList.remove("censurado-bar");
+        document.getElementById("p_fisico").classList.remove("censurado-bar");
+        document.getElementById("p_psico").classList.remove("censurado-bar");
         document.getElementById("p_foto").classList.remove("censurado-blur");
         let selloExistente = document.getElementById("sello_clasificado");
         if (selloExistente) selloExistente.remove();
@@ -791,7 +844,6 @@
         document.getElementById("p_division").innerText = division || 'EJÉRCITO';
 
         if (isRestricted) {
-            // CENSURA APLICADA
             document.getElementById("p_unidad").innerText = "█████████";
             document.getElementById("p_unidad").classList.add("censurado-bar");
             
@@ -807,10 +859,22 @@
 
             document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`;
             
+            // Censurar Calificaciones
+            document.getElementById("p_tiro").innerText = "████";
+            document.getElementById("p_tiro").style.color = "#050a0f";
+            document.getElementById("p_tiro").classList.add("censurado-bar");
+
+            document.getElementById("p_fisico").innerText = "████";
+            document.getElementById("p_fisico").style.color = "#050a0f";
+            document.getElementById("p_fisico").classList.add("censurado-bar");
+
+            document.getElementById("p_psico").innerText = "████";
+            document.getElementById("p_psico").style.color = "#050a0f";
+            document.getElementById("p_psico").classList.add("censurado-bar");
+
             document.getElementById("p_foto").classList.add("censurado-blur");
             document.getElementById("p_foto").parentElement.insertAdjacentHTML('beforeend', '<div id="sello_clasificado" class="sello-clasificado">ACCESO RESTRINGIDO</div>');
         } else {
-            // VISTA DESPEJADA PARA OFICIALES
             document.getElementById("p_unidad").innerText = unidad;
             document.getElementById("p_creacion").innerText = fCreacion;
             document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
@@ -834,12 +898,43 @@
             else if(especialidad === "Fuerzas especiales") { claseColor = "esp-fuerzas"; icono = "⚡"; }
 
             document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
+
+            // Asignar Calificaciones y Colores
+            document.getElementById("p_tiro").innerText = cTiro.toUpperCase();
+            document.getElementById("p_tiro").style.color = getColorTiro(cTiro);
+
+            document.getElementById("p_fisico").innerText = cFis.toUpperCase();
+            document.getElementById("p_fisico").style.color = getColorFisico(cFis);
+
+            document.getElementById("p_psico").innerText = cPsi.toUpperCase();
+            document.getElementById("p_psico").style.color = getColorPsico(cPsi);
         }
 
         document.getElementById("perfilModal").style.display = "flex";
     };
     
     window.cerrarPerfil = () => { window.playClick(); document.getElementById("perfilModal").style.display = "none"; };
+
+    window.guardarCalificacion = async () => {
+        window.playClick();
+        const email = document.getElementById("evalSoldado").value;
+        const tiro = document.getElementById("evalTiro").value;
+        const fisico = document.getElementById("evalFisico").value;
+        const psico = document.getElementById("evalPsico").value;
+
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO PARA EVALUAR", "error");
+
+        if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel")) {
+            try {
+                await updateDoc(doc(db, "usuarios", email), { calTiro: tiro, calFisico: fisico, calPsico: psico });
+                registrarLog("EVALUACIÓN DE PERSONAL", `Actualizó calificaciones de ${email}: Tiro [${tiro}], Físico [${fisico}], Psicológico [${psico}].`);
+                window.showToast("CALIFICACIONES ACTUALIZADAS", "success");
+                cargarDatos();
+            } catch(e) { window.showToast("ERROR AL GUARDAR", "error"); }
+        } else {
+            window.showToast("ACCESO DENEGADO. Rango insuficiente.", "error");
+        }
+    };
 
     window.actualizarLicencia = async () => {
         window.playClick();
@@ -914,14 +1009,12 @@
         FLOTA_AEREA.forEach(v => { hAereo.innerHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerr.innerHTML += generarCard(v); });
     }
 
-    // CARGA DE DOCUMENTOS CON SISTEMA DE CENSURA PARA RANGOS BAJOS
     async function cargarDocumentos() {
         const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
         const snap = await getDocs(q); 
         const lDoc = document.getElementById("listaDocumentos"); 
         lDoc.innerHTML = "";
         
-        // Determina si el usuario que lee es Subteniente o inferior
         const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente");
 
         snap.forEach(docSnap => {
@@ -929,7 +1022,6 @@
             const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
             
             if (isRestricted) {
-                // DOCUMENTO CENSURADO
                 lDoc.innerHTML += `
                 <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid var(--danger-red); position: relative; overflow: hidden;">
                     <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
@@ -943,7 +1035,6 @@
                     <div class="sello-clasificado" style="font-size: 16px; top: 50%; opacity: 0.9;">INFO. CLASIFICADA</div>
                 </div>`;
             } else {
-                // DOCUMENTO LEGIBLE (PARA OFICIALES)
                 lDoc.innerHTML += `
                 <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};">
                     <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">

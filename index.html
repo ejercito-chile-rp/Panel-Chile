@@ -193,11 +193,11 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Salarios y rangos según instrucción [cite: 2026-02-21]
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-    const hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
-    hoverSound.volume = 0.1;
+    // Se expone el sonido globalmente para que las tarjetas de personal lo puedan usar
+    window.hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
+    window.hoverSound.volume = 0.1;
 
     window.switchTab = (tab) => {
         document.getElementById("seccionPersonal").style.display = tab === 'personal' ? 'block' : 'none';
@@ -212,7 +212,14 @@
             if (snap.exists()) {
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("userName").innerText = snap.data().nombre;
-                document.getElementById("userRank").innerText = snap.data().rango;
+                const rangoUsuario = snap.data().rango;
+                document.getElementById("userRank").innerText = rangoUsuario;
+                
+                // Mostrar siempre el panel de admin si es General en Jefe
+                if (rangoUsuario === "General en Jefe") {
+                    document.getElementById("adminTools").style.display = "block";
+                }
+                
                 cargarDatos();
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
@@ -236,17 +243,25 @@
             const email = docSnap.id;
             selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
-            // Lista Personal RP
+            // Lógica de colores según la rama de la división
+            let divColor = "var(--tactical-green)"; // Por defecto verde para Ejército
+            const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
+            
+            if (divUpper === "FACH") divColor = "white";
+            else if (divUpper === "BOE") divColor = "var(--danger-red)";
+            else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
+
+            // Lista Personal RP (actualizada con color dinámico y sonido hover)
             lPer.innerHTML += `
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--dim-green); padding: 15px; display: flex; gap: 15px; align-items: center;">
+                <div onmouseenter="window.hoverSound.play()" style="background: rgba(255,255,255,0.03); border: 1px solid var(--dim-green); padding: 15px; display: flex; gap: 15px; align-items: center; transition: 0.2s; cursor: pointer;" onmouseover="this.style.background='var(--dim-green)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
                     <div style="font-size: 24px;">👤</div>
                     <div>
                         <div style="font-weight:bold; color:white;">${d.nombre}</div>
-                        <div style="font-size:10px; color:var(--tactical-green)">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
+                        <div style="font-size:10px; color:${divColor}">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
                     </div>
                 </div>`;
 
-            // Sección Fach con Aeronaves [cite: 2026-02-21]
+            // Sección Fach con Aeronaves
             if (d.division === "FACH") {
                 let cat = "cadete";
                 if (d.rango.includes("General") || d.rango === "Coronel") cat = "comandante";
@@ -256,7 +271,7 @@
 
                 const item = document.createElement('div');
                 item.className = "pilot-card-mini";
-                item.onmouseenter = () => hoverSound.play();
+                item.onmouseenter = () => window.hoverSound.play();
                 item.onclick = () => verPiloto(d.nombre, d.rango, cat, avion);
                 item.innerHTML = `
                     <div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>

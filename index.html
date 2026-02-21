@@ -28,14 +28,13 @@
             overflow-x: hidden;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
         .main-container {
             padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* --- BARRA DE ESTADÍSTICAS SUPERIOR --- */
+        /* --- DASHBOARD SUPERIOR --- */
         .stats-banner {
             display: flex;
             gap: 15px;
@@ -76,7 +75,7 @@
             border-top: 2px solid var(--tactical-green); border-left: 2px solid var(--tactical-green);
         }
 
-        /* --- REJILLA DE TARJETAS (ESTILO IMAGEN 4) --- */
+        /* --- REJILLA DE TARJETAS (SIN FOTO) --- */
         .grid-tropas {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -95,9 +94,29 @@
 
         .tarjeta-tactica:hover {
             background: var(--dim-green);
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-5px) translateX(5px);
             border-color: var(--tactical-green);
             box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        /* ICONO CSS EN LUGAR DE FOTO */
+        .icon-tactical {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--tactical-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: rgba(77, 242, 77, 0.1);
+            flex-shrink: 0;
+        }
+
+        .icon-tactical::after {
+            content: "▲";
+            font-size: 20px;
+            color: var(--tactical-green);
+            text-shadow: 0 0 5px var(--tactical-green);
         }
 
         .card-header {
@@ -113,7 +132,6 @@
         .card-rank { color: #aaa; text-transform: uppercase; }
 
         .card-body { display: flex; gap: 15px; align-items: flex-start; }
-        .insignia-mini { width: 50px; height: 50px; filter: drop-shadow(0 0 5px var(--tactical-green)); }
 
         .card-info b { font-size: 18px; color: white; display: block; margin-bottom: 10px; }
         .info-row { font-size: 11px; display: grid; grid-template-columns: 80px 1fr; margin-bottom: 4px; }
@@ -127,7 +145,7 @@
             letter-spacing: 1px;
         }
 
-        /* --- FORMULARIOS Y BOTONES --- */
+        /* --- FORMULARIOS --- */
         input, select, button {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid var(--dim-green);
@@ -139,13 +157,7 @@
             outline: none;
         }
 
-        button { 
-            border: 1px solid var(--tactical-green); 
-            cursor: pointer; 
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
+        button { border: 1px solid var(--tactical-green); cursor: pointer; font-weight: bold; transition: 0.3s; }
         button:hover { background: var(--tactical-green); color: black; }
 
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
@@ -171,7 +183,7 @@
 
     <div id="loginBox" class="box" style="max-width: 500px; margin: 100px auto;">
         <h2 style="text-align: center; letter-spacing: 5px;">ACCESS_TERMINAL</h2>
-        <input id="regNombre" type="text" placeholder="ID_OPERATIVO (NOMBRE)">
+        <input id="regNombre" type="text" placeholder="ID_OPERATIVO">
         <input id="email" type="email" placeholder="CORREO_ENCRIPTADO">
         <input id="password" type="password" placeholder="ACCESS_CODE">
         <select id="division">
@@ -192,24 +204,11 @@
     </div>
 
     <div id="panelPrincipal">
-        
         <div class="stats-banner">
-            <div class="stat-card">
-                <div class="stat-num" id="countTotal">0</div>
-                <div class="stat-label">Efectivos<br>Totales</div>
-            </div>
-            <div class="stat-card alto-mando">
-                <div class="stat-num" id="countMando">0</div>
-                <div class="stat-label">Alto<br>Mando</div>
-            </div>
-            <div class="stat-card operativos">
-                <div class="stat-num" id="countOps">0</div>
-                <div class="stat-label">Operativos<br>Activos</div>
-            </div>
-            <div class="stat-card reclutas">
-                <div class="stat-num" id="countRec">0</div>
-                <div class="stat-label">Nuevos<br>Reclutas</div>
-            </div>
+            <div class="stat-card"><div class="stat-num" id="countTotal">0</div><div class="stat-label">Efectivos<br>Totales</div></div>
+            <div class="stat-card alto-mando"><div class="stat-num" id="countMando">0</div><div class="stat-label">Alto<br>Mando</div></div>
+            <div class="stat-card operativos"><div class="stat-num" id="countOps">0</div><div class="stat-label">Operativos<br>Activos</div></div>
+            <div class="stat-card reclutas"><div class="stat-num" id="countRec">0</div><div class="stat-label">Nuevos<br>Reclutas</div></div>
         </div>
 
         <div class="box">
@@ -217,55 +216,32 @@
                 <h3 id="welcome">USUARIO: IDENTIFICANDO...</h3>
                 <button id="btnLogout" style="width: auto; padding: 5px 15px;">SALIR</button>
             </div>
-            <p style="font-size: 12px;">RANGO: <span id="rank" style="color:white"></span> | UNIDAD: <span id="div" style="color:white"></span></p>
         </div>
 
         <div id="adminPanel" class="box" style="border-color: var(--danger-red);">
-            <h3 style="color: var(--danger-red);">GEOFENCING & COMMAND ADMIN</h3>
+            <h3 style="color: var(--danger-red);">COMMAND ADMIN</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <input id="targetEmail" placeholder="CORREO DEL SOLDADO">
                 <select id="newRankAdmin"></select>
-                <input id="manualDays" type="number" placeholder="+ DÍAS SERVICIO">
-                <button id="btnAscender">APLICAR RANGO</button>
+                <input id="manualDays" type="number" placeholder="+ DÍAS">
+                <button id="btnAscender">APLICAR CAMBIOS</button>
             </div>
         </div>
 
         <div class="box">
             <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <h3>REGISTRO TÁCTICO DE PERSONAL</h3>
-                <input type="text" id="searchBar" placeholder="🔍 FILTRAR POR NOMBRE..." onkeyup="filtrarSoldados()" style="width: 250px; margin: 0;">
+                <h3>REGISTRO TÁCTICO</h3>
+                <input type="text" id="searchBar" placeholder="🔍 BUSCAR..." onkeyup="filtrarSoldados()" style="width: 250px; margin: 0;">
             </div>
-            <div id="lista" class="grid-tropas">
-                </div>
+            <div id="lista" class="grid-tropas"></div>
         </div>
-
-        <div id="logPanel" class="box">
-            <h4 style="color: var(--gold); margin: 0 0 10px 0;">ÚLTIMA ACTIVIDAD DEL SISTEMA</h4>
-            <div id="logContent" style="font-size: 11px;">Sincronizando logs satelitales...</div>
-        </div>
-
-    </div>
-</div>
-
-<div id="modalExpediente" class="modal">
-    <div class="modal-content">
-        <h2 id="expNombre" style="margin-top: 0;"></h2>
-        <div style="border: 1px solid var(--dim-green); padding: 15px; margin-bottom: 15px;">
-            <p id="expRangoDiv"></p>
-            <p id="expSueldo" style="color: var(--gold); font-size: 20px;"></p>
-            <p id="expAntiguedad"></p>
-            <p id="expUltimaCon"></p>
-        </div>
-        <h4>CONDECORACIONES</h4>
-        <div id="expMedallas"></div>
-        <button onclick="cerrarModal()" style="margin-top: 20px;">CERRAR ARCHIVO</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
@@ -280,34 +256,19 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- SONIDO ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     window.playHoverSound = () => {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.05);
     };
 
     const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
-    
-    const SUELDOS = {
-        "Recluta": "$3.500", "Cabo 2°": "$3.800", "Cabo 1°": "$3.800", "Sargento 2°": "$4.000",
-        "Sargento 1°": "$4.300", "Suboficial": "$4.600", "Suboficial Mayor": "$5.000",
-        "Subteniente": "$5.300", "Teniente": "$5.700", "Capitán": "$6.200", "Mayor": "$6.800",
-        "Teniente Coronel": "$7.500", "Coronel": "$8.500", "General de Brigada": "$9.500",
-        "General de División": "$11.000", "General en Jefe": "$13.000"
-    };
-
-    const sel = document.getElementById("newRankAdmin");
-    RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
     async function cargarDatos() {
         const qs = await getDocs(collection(db, "usuarios"));
@@ -323,21 +284,20 @@
             else counts.Ops++;
 
             const status = (new Date() - new Date(x.ultimaConexion)) / 60000 < 10 ? "online" : "offline";
-            const idMilitar = `ID-${Math.floor(Math.random() * 900 + 100)}`; // Simulado para estética
+            const colorDivision = x.division === 'Ejercito' ? '#4df24d' : (x.division === 'FACH' ? '#fff' : (x.division === 'Armada' ? '#00f2ff' : '#ff3b3b'));
 
             h += `
             <div class="tarjeta-tactica" onmouseenter="playHoverSound()" onclick="verExpediente('${x.email}')">
                 <div class="card-header">
                     <span class="card-rank">${r}</span>
-                    <span class="card-id">${idMilitar}</span>
+                    <span class="card-id">#${x.email.split('@')[0].toUpperCase()}</span>
                 </div>
                 <div class="card-body">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2592/2592201.png" class="insignia-mini">
+                    <div class="icon-tactical" style="border-color: ${colorDivision}; color: ${colorDivision};"></div>
                     <div class="card-info">
                         <b>${x.nombre}</b>
-                        <div class="info-row"><span class="info-label">Estado</span><span class="info-val">Operativo</span></div>
-                        <div class="info-row"><span class="info-label">Especialidad</span><span class="info-val">${x.especialidad || 'Fusilero'}</span></div>
-                        <div class="info-row"><span class="info-label">Unidad</span><span class="info-val">${x.division}</span></div>
+                        <div class="info-row"><span class="info-label">Especialidad</span><span class="info-val">${x.especialidad || 'FUSILERO'}</span></div>
+                        <div class="info-row"><span class="info-label">Unidad</span><span class="info-val" style="color:${colorDivision}">${x.division}</span></div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -353,43 +313,6 @@
         document.getElementById("countRec").innerText = counts.Rec;
     }
 
-    window.verExpediente = async (email) => {
-        const snap = await getDoc(doc(db, "usuarios", email));
-        if (snap.exists()) {
-            const x = snap.data();
-            document.getElementById("expNombre").innerText = x.nombre;
-            document.getElementById("expRangoDiv").innerText = `${x.rango} | ${x.division}`;
-            document.getElementById("expSueldo").innerText = `ASIGNACIÓN: ${SUELDOS[x.rango] || "$3.500"} USD/H`;
-            document.getElementById("modalExpediente").style.display = "block";
-        }
-    };
-
-    window.cerrarModal = () => document.getElementById("modalExpediente").style.display = "none";
-
-    // Lógica Firebase (Igual a la anterior pero adaptada al nuevo UI)
-    document.getElementById("btnReg").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        const nom = document.getElementById("regNombre").value;
-        const div = document.getElementById("division").value;
-        const esp = document.getElementById("especialidad").value;
-        if(!nom || !email || !pass) return alert("DATOS INCOMPLETOS");
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            const hoy = new Date().toISOString();
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, especialidad: esp, medallas: [], fechaIngreso: hoy, ultimaConexion: hoy });
-            alert("SOLDADO REGISTRADO"); location.reload();
-        } catch(e) { alert(e.message); }
-    };
-
-    document.getElementById("btnLogin").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("ERROR DE ACCESO"); }
-    };
-
-    document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
-
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "usuarios", user.email));
@@ -398,25 +321,38 @@
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("panelPrincipal").style.display = "block";
                 document.getElementById("welcome").innerText = "OPERATIVO: " + d.nombre.toUpperCase();
-                document.getElementById("rank").innerText = d.rango;
-                document.getElementById("div").innerText = d.division;
-                
-                const jerarquia = ["capitán", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
-                if (jerarquia.includes(d.rango.toLowerCase())) {
-                    document.getElementById("adminPanel").style.display = "block";
-                    document.getElementById("logPanel").style.display = "block";
-                }
+                const jerarquia = ["capitán", "mayor", "coronel", "general de brigada", "general de división", "general en jefe"];
+                if (jerarquia.includes(d.rango.toLowerCase())) document.getElementById("adminPanel").style.display = "block";
                 cargarDatos();
             }
         }
     });
 
+    // (Lógica de registro y login igual a la anterior...)
+    document.getElementById("btnReg").onclick = async () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        const nom = document.getElementById("regNombre").value;
+        const div = document.getElementById("division").value;
+        const esp = document.getElementById("especialidad").value;
+        try {
+            await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, especialidad: esp, ultimaConexion: new Date().toISOString() });
+            location.reload();
+        } catch(e) { alert(e.message); }
+    };
+
+    document.getElementById("btnLogin").onclick = async () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("ERROR"); }
+    };
+    document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
+
     window.filtrarSoldados = function() {
         let input = document.getElementById('searchBar').value.toLowerCase();
         let tarjetas = document.getElementsByClassName('tarjeta-tactica');
-        for (let t of tarjetas) {
-            t.style.display = t.innerText.toLowerCase().includes(input) ? "block" : "none";
-        }
+        for (let t of tarjetas) t.style.display = t.innerText.toLowerCase().includes(input) ? "block" : "none";
     };
 </script>
 </body>

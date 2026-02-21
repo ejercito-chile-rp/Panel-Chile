@@ -26,12 +26,10 @@
 
         @keyframes red-pulse { 0% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; } 50% { box-shadow: inset 0 0 150px var(--theme-color); background: #2a0000; } 100% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; } }
 
-        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
         ::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 4px; }
 
-        /* SIDEBAR */
         .sidebar { width: 260px; background: rgba(5, 10, 5, 0.9); border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; padding: 20px 0; z-index: 10; transition: border-color 0.5s; backdrop-filter: blur(10px); }
         .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
         .menu-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.3s; border-left: 3px solid transparent; color: var(--theme-color); position: relative; overflow: hidden; }
@@ -40,11 +38,9 @@
         .btn-alert { color: var(--theme-color); border-left-color: transparent; font-weight: bold; background: rgba(0,0,0,0.3); border-top: 1px dashed var(--theme-dim); border-bottom: 1px dashed var(--theme-dim); margin-top: 10px;}
         .menu-hidden { display: none !important; }
 
-        /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); z-index: 5; position: relative;}
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionChat { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias { display: none; }
         
-        /* FACH & PILOTS */
         .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
         .pilot-container { border: 1px solid var(--theme-dim); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; }
         .pilot-card-mini { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; margin-bottom: 10px; display: grid; grid-template-columns: 50px 1fr 40px; align-items: center; gap: 10px; transition: all 0.3s ease; cursor: pointer; }
@@ -52,23 +48,19 @@
         .icon-box { width: 45px; height: 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--theme-color); display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .flight-display { border: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 
-        /* COMPONENTES GLOBALES */
         .auth-input { background: rgba(0,0,0,0.8); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 12px; width: 100%; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; outline: none; }
         .auth-input:focus { box-shadow: 0 0 10px var(--theme-dim); background: rgba(0,20,0,0.9); }
         .btn-tactical { background: var(--theme-dim); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 10px 20px; font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
         .btn-tactical:hover { background: var(--theme-color); color: black; }
 
-        /* LOGIN */
         #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 3000; display: flex; justify-content: center; align-items: center; }
         #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(2, 6, 2, 0.85); backdrop-filter: blur(5px); }
         .login-box { position: relative; width: 400px; border: 1px solid var(--theme-color); padding: 40px; text-align: center; background: rgba(0,20,0,0.6); backdrop-filter: blur(10px); box-shadow: 0 0 30px var(--theme-dim); }
         
-        /* MODAL CUSTOM (Para Password Admin y Perfiles) */
         .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .modal-body { width: 400px; background: #050a05; border: 1px solid var(--theme-color); box-shadow: 0 0 30px var(--theme-dim); display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; padding: 25px; text-align: center; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TOAST NOTIFICACIONES A LA IZQUIERDA */
         #toastContainer { position: fixed; left: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: rgba(0,0,0,0.9); border-left: 5px solid; color: white; padding: 15px 20px; box-shadow: 0 0 15px rgba(0,0,0,0.5); font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 10px; animation: slideRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 300px; }
         .toast-error { border-color: var(--danger-red); box-shadow: 0 0 15px rgba(255,59,59,0.3); }
@@ -76,7 +68,6 @@
         @keyframes slideRight { from { transform: translateX(-150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateX(-50px); } }
 
-        /* HANGAR Y LICENCIAS */
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .hangar-card-new { background: #020602; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s; }
         .hangar-card-new:hover { box-shadow: 0 10px 25px var(--theme-dim); transform: translateY(-5px); border-color: var(--theme-color); z-index: 2; }
@@ -87,19 +78,6 @@
         .lic-suspendida { color: var(--alert-amber); border-color: var(--alert-amber); background: rgba(255,180,0,0.1); }
         .lic-revocada { color: var(--danger-red); border-color: var(--danger-red); background: rgba(255,59,59,0.1); }
         .lic-ninguna { color: #555; border-color: #333; }
-
-        /* CHAT MILITAR */
-        .chat-container { display: flex; height: 75vh; border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.5); }
-        .chat-sidebar { width: 200px; border-right: 1px solid var(--theme-dim); background: rgba(255,255,255,0.02); }
-        .chat-channel { padding: 15px; cursor: pointer; color: #888; font-weight: bold; border-bottom: 1px solid var(--theme-dim); transition: 0.3s; }
-        .chat-channel:hover { background: var(--theme-dim); color: var(--theme-color); }
-        .chat-channel.active { background: var(--theme-dim); color: white; border-left: 3px solid var(--theme-color); }
-        .chat-main { flex: 1; display: flex; flex-direction: column; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { background: rgba(255,255,255,0.05); padding: 10px 15px; border-left: 2px solid var(--theme-color); width: fit-content; max-width: 80%; }
-        .chat-msg-self { background: var(--theme-dim); align-self: flex-end; border-left: none; border-right: 2px solid var(--theme-color); }
-        .chat-input-area { padding: 15px; border-top: 1px solid var(--theme-dim); display: flex; gap: 10px; background: #020602; }
-
     </style>
 </head>
 <body class="defcon-5">
@@ -147,7 +125,6 @@
         <div class="menu-category">COMANDO CENTRAL</div>
         <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
         <div class="menu-item" id="btnLicencias" onclick="switchTab('licencias')" onmouseenter="playHover()"><span>🪪</span> Licencias</div>
-        <div class="menu-item" id="btnChat" onclick="switchTab('chat')" onmouseenter="playHover()"><span>📡</span> Comunicaciones</div>
         <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Sección Fach</div>
         <div class="menu-item" id="btnHangar" onclick="switchTab('hangar')" onmouseenter="playHover()"><span>🛠️</span> Hangar / Flota</div>
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
@@ -168,6 +145,7 @@
         
         <div id="adminTools">
             <h3 style="color: var(--admin-blue); margin-top: 0; border-bottom: 1px solid; padding-bottom: 5px;">[ ACCESO CLASIFICADO - NIVEL GENERAL ]</h3>
+            
             <p style="color: var(--theme-color); font-weight: bold; margin: 15px 0 10px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
                 <select id="targetSoldier" class="auth-input"></select>
@@ -190,6 +168,22 @@
                     <button onclick="finalizarMision()" class="btn-tactical" style="background: transparent;">FINALIZAR</button>
                 </div>
             </div>
+
+            <div style="border-top: 1px dashed var(--danger-red); padding-top: 15px;">
+                <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 10px 0;">⚖️ SISTEMA DE SANCIONES DISCIPLINARIAS</p>
+                <div style="display: grid; grid-template-columns: 1fr 2fr 1fr auto; gap: 10px;">
+                    <select id="targetSoldadoSancion" class="auth-input"></select>
+                    <select id="targetSancion" class="auth-input">
+                        <option value="Falta leve">Falta leve</option>
+                        <option value="Falta grave">Falta grave</option>
+                        <option value="Suspensión">Suspensión</option>
+                        <option value="Expulsión">Expulsión</option>
+                    </select>
+                    <input type="text" id="motivoSancion" class="auth-input" placeholder="MOTIVO DE INFRACCIÓN">
+                    <input type="text" id="duracionSancion" class="auth-input" placeholder="DURACIÓN (Ej: 2 días)">
+                    <button onclick="aplicarSancion()" class="btn-tactical" style="background: var(--danger-red); color: white; border-color: var(--danger-red);">SANCIONAR</button>
+                </div>
+            </div>
         </div>
 
         <div id="seccionPersonal">
@@ -200,7 +194,7 @@
         <div id="seccionLicencias">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA DE LICENCIAS</h2>
             <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin-bottom: 20px; display: none;" id="panelAdminLicencias">
-                <h4 style="margin-top:0; color:var(--admin-blue);">OTORGAR / MODIFICAR LICENCIAS</h4>
+                <h4 style="margin-top:0; color:var(--admin-blue);">OTORGAR / MODIFICAR LICENCIAS (PANEL ADMIN)</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
                     <select id="targetSoldadoLicencia" class="auth-input"></select>
                     <select id="tipoLicencia" class="auth-input">
@@ -218,26 +212,6 @@
                 </div>
             </div>
             <div id="listaUsuariosLicencias" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
-        </div>
-
-        <div id="seccionChat">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">COMUNICACIONES INTERNAS</h2>
-            <div class="chat-container">
-                <div class="chat-sidebar">
-                    <div class="chat-channel active" id="btnCanalGeneral" onclick="cambiarCanalChat('General')"># GENERAL</div>
-                    <div class="chat-channel" id="btnCanalOficiales" onclick="cambiarCanalChat('Oficiales')"># OFICIALES</div>
-                    <div class="chat-channel" id="btnCanalComando" onclick="cambiarCanalChat('Comando')"># COMANDO</div>
-                </div>
-                <div class="chat-main">
-                    <div style="background: var(--theme-dim); padding: 10px; font-weight: bold; text-align: center; font-size: 14px; letter-spacing: 2px;" id="chatTitleHeader">CANAL: GENERAL</div>
-                    <div class="chat-messages" id="chatMessagesBox">
-                        </div>
-                    <div class="chat-input-area">
-                        <input type="text" id="chatInputMsg" class="auth-input" style="margin: 0; flex: 1;" placeholder="ESCRIBA SU MENSAJE AQUÍ..." onkeypress="if(event.key === 'Enter') enviarMensajeChat()">
-                        <button onclick="enviarMensajeChat()" class="btn-tactical" style="background: var(--theme-color); color: black;">ENVIAR</button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div id="seccionFach">
@@ -290,7 +264,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, limit, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, limit, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4", authDomain: "panel-chile.firebaseapp.com", projectId: "panel-chile", storageBucket: "panel-chile.firebasestorage.app", messagingSenderId: "124864601883", appId: "1:124864601883:web:839163be2060253f68bdbe" };
     const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
@@ -303,14 +277,19 @@
         { id: "F-16 Falcon", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/c/c9/F-16_Fighting_Falcon_-_061122-F-6911G-011.jpg" },
         { id: "Avión Justiciero", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/5/5e/AC-130H_Spectre_%281%29.jpg" },
         { id: "C-130 Hércules", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Lockheed_C-130_Hercules_in_flight.jpg" },
-        { id: "UH-60 Black Hawk", cant: 3, img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/UH-60_Black_Hawk_helicopter.jpg" }
+        { id: "UH-60 Black Hawk", cant: 3, img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/UH-60_Black_Hawk_helicopter.jpg" },
+        { id: "CH-47 Chinook", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/3/36/CH-47_Chinook_helicopter_in_flight.jpg" },
+        { id: "AH-1 Cobra", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/AH-1W_Super_Cobra_in_flight_2004.jpg" }
     ];
 
     const FLOTA_TERRESTRE = [
         { id: "Carros Ligeros Blindados", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/d/da/Mowag_Piranha_III_10.jpg" },
         { id: "Tanques Pesados", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Leopard_2_A5_der_Bundeswehr.jpg" },
         { id: "Tanquetas Blindadas", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/M113_Armored_Personnel_Carrier.jpg" },
-        { id: "Humvee Táctico", cant: 7, img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/M1114_Up-Armored_Humvee_in_Iraq.jpg" }
+        { id: "Blindados de Transporte", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Stryker_ICV.jpg" },
+        { id: "Vehículo de Recon. Toyota", cant: 4, img: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Toyota_Hilux_technicals_of_the_Free_Syrian_Army.jpg" },
+        { id: "Humvee Táctico", cant: 7, img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/M1114_Up-Armored_Humvee_in_Iraq.jpg" },
+        { id: "Lanza misiles", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/6/64/M142_HIMARS_firing_in_Afghanistan.jpg" }
     ];
 
     window.currentUserEmail = null; window.currentUserName = "Desconocido"; window.currentUserRank = ""; window.isAdmin = false;
@@ -320,7 +299,6 @@
     window.playHover = () => { sndHover.currentTime = 0; sndHover.play().catch(()=>{}); };
     window.playClick = () => { sndClick.currentTime = 0; sndClick.play().catch(()=>{}); };
 
-    // SISTEMA DE NOTIFICACIONES TOAST (Reemplaza los alerts feos)
     window.showToast = (msg, type = "error") => {
         const container = document.getElementById("toastContainer");
         const toast = document.createElement("div");
@@ -331,7 +309,6 @@
         setTimeout(() => { toast.style.animation = "fadeOut 0.5s forwards"; setTimeout(() => toast.remove(), 500); }, 3500);
     };
 
-    // CICLO DEFCON CON RESTRICCIÓN
     let currentDefcon = 5;
     window.cicloDefcon = () => {
         if (!window.isAdmin) {
@@ -347,7 +324,6 @@
         else { sndAlert.pause(); sndAlert.currentTime = 0; registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`); }
     };
 
-    // MODAL ADMIN CUSTOM
     window.abrirAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "flex"; document.getElementById("adminPassInput").value = ""; document.getElementById("adminPassInput").focus(); };
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
     window.verificarAdminAuth = () => {
@@ -364,7 +340,7 @@
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionChat"].forEach(id => document.getElementById(id).style.display = 'none');
+        ["seccionPersonal", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias"].forEach(id => document.getElementById(id).style.display = 'none');
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
         
         let targetId = "seccionPersonal"; let btnId = "btnPersonal";
@@ -374,13 +350,11 @@
         if(tab === 'documentos') { targetId = 'seccionDocumentos'; btnId = 'btnDocumentos'; }
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
-        if(tab === 'chat') { targetId = 'seccionChat'; btnId = 'btnChat'; cargarChat('General'); } // Iniciar chat en General por defecto
         
         document.getElementById(targetId).style.display = 'block';
         document.getElementById(btnId).classList.add('active');
     };
 
-    // CARGA DE USUARIO Y PERMISOS
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             sndStartup.play().catch(()=>{});
@@ -414,17 +388,18 @@
     window.updateMyStatus = async () => { if(!window.currentUserEmail) return; await updateDoc(doc(db, "usuarios", window.currentUserEmail), { estado: document.getElementById("myStatus").value }); cargarDatos(); };
     async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); if(window.isAdmin) cargarLogs(); } catch(e) {} }
 
-    // CARGA DE DATOS PRINCIPALES Y LICENCIAS
     async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
         const lPer = document.getElementById("listaSoldados"); const lLic = document.getElementById("listaUsuariosLicencias");
         const lCom = document.getElementById("listaComandante"); const lIns = document.getElementById("listaInstructor"); const lCad = document.getElementById("listaCadete");
         const lMis = document.getElementById("listaMisiones");
-        const selS = document.getElementById("targetSoldier"); const selMis = document.getElementById("targetSoldadoMision"); const selLic = document.getElementById("targetSoldadoLicencia");
+        const selS = document.getElementById("targetSoldier"); const selMis = document.getElementById("targetSoldadoMision"); 
+        const selLic = document.getElementById("targetSoldadoLicencia"); const selSanc = document.getElementById("targetSoldadoSancion");
         const selR = document.getElementById("targetRank");
 
         lPer.innerHTML = ""; lLic.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = ""; lMis.innerHTML = "";
-        selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
+        selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
+        selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selSanc.innerHTML = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
         selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
         
         windowUsersData = {};
@@ -433,24 +408,25 @@
             const d = docSnap.data(); const email = docSnap.id;
             windowUsersData[email] = d;
             
-            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`; selMis.innerHTML += `<option value="${email}">${d.nombre}</option>`; selLic.innerHTML += `<option value="${email}">${d.nombre}</option>`;
+            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`; selMis.innerHTML += `<option value="${email}">${d.nombre}</option>`; 
+            selLic.innerHTML += `<option value="${email}">${d.nombre}</option>`; selSanc.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
             let divColor = "var(--theme-color)"; const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
             if (divUpper === "FACH") divColor = "white"; else if (divUpper === "BOE") divColor = "var(--danger-red)"; else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
             let iconEstado = d.estado === "Online" ? "🟢" : (d.estado === "En misión" ? "🟡" : "🔴");
+            const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:10px; color:var(--danger-red); margin-top:5px; font-weight:bold;">⚠️ TIENE ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
             
-            // TARJETA PERSONAL
             lPer.innerHTML += `
                 <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--theme-dim); padding: 15px; display: flex; gap: 15px; align-items: center;">
                     <div style="width: 50px; height: 50px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 5px; border: 1px solid var(--theme-color);"></div>
                     <div>
                         <div style="font-weight:bold; color:white; font-size:16px;">${iconEstado} ${d.nombre.toUpperCase()}</div>
                         <div style="font-size:11px; color:${divColor}; margin-top:3px; letter-spacing:1px;">${d.rango.toUpperCase()} // ${divUpper}</div>
+                        ${alertaSancion}
                     </div>
                 </div>`;
 
-            // TARJETA LICENCIAS
             const lic = d.licencias || {};
             const getLicBadge = (tipo, val) => {
                 if(!val || val === "Ninguna") return '';
@@ -465,7 +441,6 @@
                     <div>${licHTML}</div>
                 </div>`;
 
-            // FACH
             if (d.division === "FACH") {
                 let cat = (d.rango.includes("General") || d.rango === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango) ? "instructor" : "cadete");
                 const item = document.createElement('div'); item.className = "pilot-card-mini";
@@ -485,7 +460,6 @@
         });
     }
 
-    // ACTUALIZAR LICENCIA
     window.actualizarLicencia = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldadoLicencia").value; const tipoLic = document.getElementById("tipoLicencia").value; const estadoLic = document.getElementById("estadoLicencia").value;
@@ -498,72 +472,28 @@
         catch(e) { window.showToast("ERROR AL ACTUALIZAR LICENCIA.", "error"); }
     };
 
-    // SISTEMA DE CHAT EN VIVO (NUEVO)
-    let currentChatCanal = "General";
-    let unsubscribeChat = null;
-
-    window.cambiarCanalChat = (canal) => {
-        // Restricción de canales
-        if (canal === "Oficiales" || canal === "Comando") {
-            if (!window.isAdmin && !OFICIALES.includes(window.currentUserRank)) {
-                window.showToast("ACCESO DENEGADO: Canal de comunicaciones encriptado solo para Oficiales/Comando.", "error");
-                return;
-            }
-        }
-        
+    window.aplicarSancion = async () => {
         window.playClick();
-        currentChatCanal = canal;
+        const email = document.getElementById("targetSoldadoSancion").value; 
+        const tipo = document.getElementById("targetSancion").value; 
+        const motivo = document.getElementById("motivoSancion").value; 
+        const duracion = document.getElementById("duracionSancion").value;
         
-        // Estilos de botones
-        document.querySelectorAll('.chat-channel').forEach(c => c.classList.remove('active'));
-        document.getElementById('btnCanal' + canal).classList.add('active');
-        document.getElementById('chatTitleHeader').innerText = "CONEXIÓN ESTABLECIDA - CANAL: " + canal.toUpperCase();
-        
-        cargarChat(canal);
-    };
+        if(!email || !motivo || !duracion) return window.showToast("COMPLETE TODOS LOS CAMPOS DE SANCIÓN", "error");
 
-    function cargarChat(canal) {
-        if(unsubscribeChat) unsubscribeChat();
-        const q = query(collection(db, "chat"), where("canal", "==", canal), orderBy("timestamp", "asc"));
-        
-        unsubscribeChat = onSnapshot(q, (snapshot) => {
-            const box = document.getElementById("chatMessagesBox");
-            box.innerHTML = "";
-            snapshot.forEach(doc => {
-                const d = doc.data();
-                const isMe = d.autor === window.currentUserName;
-                const msgClass = isMe ? "chat-msg chat-msg-self" : "chat-msg";
-                const autorColor = isMe ? "var(--theme-color)" : "var(--admin-blue)";
-                
-                box.innerHTML += `
-                    <div class="${msgClass}">
-                        <div style="font-size: 10px; color: ${autorColor}; margin-bottom: 3px; font-weight: bold;">${d.autor}</div>
-                        <div style="color: white; font-size: 13px; line-height: 1.4;">${d.mensaje}</div>
-                    </div>
-                `;
-            });
-            box.scrollTop = box.scrollHeight;
-        });
-    }
-
-    window.enviarMensajeChat = async () => {
-        const input = document.getElementById("chatInputMsg");
-        const msg = input.value.trim();
-        if(!msg) return;
-        
-        input.value = "";
-        window.playClick();
-        
+        const nuevaSancion = { tipo: tipo, motivo: motivo, duracion: duracion, fecha: new Date().toLocaleDateString('es-CL'), sancionador: window.currentUserName };
         try {
-            await addDoc(collection(db, "chat"), {
-                canal: currentChatCanal, mensaje: msg, autor: window.currentUserName, timestamp: serverTimestamp()
-            });
-        } catch (e) {
-            window.showToast("ERROR DE CONEXIÓN EN EL CANAL.", "error");
+            await updateDoc(doc(db, "usuarios", email), { sanciones: arrayUnion(nuevaSancion) });
+            registrarLog("SANCIÓN APLICADA", `Sancionó a ${email} (${tipo}) por: ${motivo}`);
+            window.showToast("SANCIÓN APLICADA A EXPEDIENTE", "success"); 
+            document.getElementById("motivoSancion").value = ""; 
+            document.getElementById("duracionSancion").value = ""; 
+            cargarDatos();
+        } catch(error) { 
+            window.showToast("ERROR AL APLICAR SANCIÓN", "error"); 
         }
     };
 
-    // HANGAR
     function cargarHangar() {
         const hAereo = document.getElementById("listaHangarAereo"); hAereo.innerHTML = "";
         const hTerr = document.getElementById("listaHangarTerrestre"); hTerr.innerHTML = "";
@@ -579,7 +509,6 @@
         FLOTA_TERRESTRE.forEach(v => { hTerr.innerHTML += generarCard(v); });
     }
 
-    // DOCUMENTOS, MISIONES, ADMIN TOOLS
     async function cargarDocumentos() {
         const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20));
         const snap = await getDocs(q);

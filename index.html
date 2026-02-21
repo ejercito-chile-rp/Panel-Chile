@@ -109,7 +109,7 @@
         /* ESTILOS DE MODO CLASIFICADO (CENSURA) */
         .censurado-bar { background-color: #050a0f !important; color: #050a0f !important; position: relative; overflow: hidden; border-color: #050a0f !important; user-select: none; border-radius: 4px; display: inline-block;}
         .censurado-bar::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px); pointer-events: none; }
-        .censurado-blur { filter: blur(12px) grayscale(100%) contrast(1.2) !important; }
+        .censurado-blur { filter: blur(12px) grayscale(100%) contrast(1.2) !important; user-select: none;}
         .sello-clasificado { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%) rotate(-20deg); color: var(--danger-red); border: 4px solid var(--danger-red); padding: 5px 15px; font-size: 20px; font-weight: bold; letter-spacing: 4px; pointer-events: none; z-index: 10; text-shadow: 0 0 10px rgba(255,59,59,0.5); background: rgba(0,0,0,0.8); box-shadow: 0 0 15px rgba(255,0,0,0.3), inset 0 0 10px rgba(255,0,0,0.2); font-family: 'Share Tech Mono', monospace; white-space: nowrap; }
 
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
@@ -211,6 +211,7 @@
             <div class="perfil-body">
                 <div class="perfil-col-izq">
                     <div id="p_foto" class="perfil-foto-hd"></div>
+                    
                     <div style="margin-top: 10px; text-align: center; width: 100%;">
                         <div style="font-size: 10px; color: #888; margin-bottom: 15px; letter-spacing: 1px;">SEÑAL VITAL (EN LÍNEA)</div>
                         <div class="radar-realista" style="width: 130px; height: 130px;">
@@ -239,8 +240,7 @@
 
                     <div class="perfil-especialidades glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); padding: 20px; background: rgba(0,0,0,0.4);">
                         <div style="font-size: 12px; color: #888; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 10px;">ESPECIALIDADES TÁCTICAS</div>
-                        <div class="especialidades-container" id="p_especialidades">
-                            </div>
+                        <div class="especialidades-container" id="p_especialidades"></div>
                     </div>
                 </div>
             </div>
@@ -285,10 +285,10 @@
         <div class="menu-item" id="btnHangar" onclick="switchTab('hangar')" onmouseenter="playHover()"><span>🛠️</span> Hangar / Flota</div>
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
         <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Control Aéreo</div>
+        <div class="menu-item" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
         
         <div class="menu-category menu-hidden" id="menuOficialesTitle">COMANDO SUPERIOR</div>
         <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
-        <div class="menu-item menu-hidden" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
 
         <div class="menu-category">SISTEMA</div>
         <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
@@ -488,7 +488,8 @@
 
         <div id="seccionDocumentos">
             <h2 class="section-title"><span>🗃️</span> INTELIGENCIA Y DOCUMENTOS CLASIFICADOS</h2>
-            <div class="glass-panel" style="padding: 30px; border-color: var(--admin-blue); margin-bottom: 30px;">
+            
+            <div class="glass-panel" id="panelSubirDoc" style="padding: 30px; border-color: var(--admin-blue); margin-bottom: 30px; display: none;">
                 <h4 style="margin-top:0; color:var(--admin-blue); font-size:16px;">SUBIR NUEVO REPORTE O LEY TÁCTICA</h4>
                 <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 15px; margin-bottom:15px;">
                     <select id="docTipo" class="auth-input" style="margin:0;"><option value="REPORTE">REPORTE</option><option value="ORDEN">ORDEN TÁCTICA</option></select>
@@ -497,6 +498,7 @@
                 <textarea id="docContenido" class="auth-input" rows="5" placeholder="REDACCIÓN DEL CONTENIDO CLASIFICADO..."></textarea>
                 <button onclick="subirDocumento()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ALMACENAR EN LA RED SECRETA</button>
             </div>
+            
             <div id="listaDocumentos" style="display: grid; gap: 15px;"></div>
         </div>
 
@@ -643,9 +645,13 @@
                 
                 if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
                     document.getElementById("menuOficialesTitle").classList.remove("menu-hidden");
-                    document.getElementById("btnDocumentos").classList.remove("menu-hidden");
                     document.getElementById("btnReclutamiento").classList.remove("menu-hidden"); 
                     document.getElementById("panelAdminLicencias").style.display = "block";
+                }
+
+                // SI ES TENIENTE O SUPERIOR, PUEDE SUBIR DOCUMENTOS (CENSURAMOS PARA SUBTENIENTE HACIA ABAJO)
+                if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) > RANGOS.indexOf("Subteniente")) {
+                    document.getElementById("panelSubirDoc").style.display = "block";
                 }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); if(window.isAdmin) cargarLogsVisual();
@@ -768,12 +774,10 @@
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad) => {
         window.playClick(); 
         
-        // Determinar si el usuario actual sufre de restricción de inteligencia
-        // "De Subteniente hacia abajo" => Índices <= al de Subteniente (6)
-        // Nota: Nunca censuramos al soldado si está viendo su PROPIO perfil
+        // MODO CLASIFICADO: Índices de rango menores o iguales a Subteniente (6) serán bloqueados de ver otros perfiles
         const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && email !== window.currentUserEmail;
 
-        // Limpieza previa (remover censura de apertura anterior)
+        // Limpieza de censuras de un perfil anterior
         document.getElementById("p_id").classList.remove("censurado-bar");
         document.getElementById("p_unidad").classList.remove("censurado-bar");
         document.getElementById("p_creacion").classList.remove("censurado-bar");
@@ -782,13 +786,12 @@
         let selloExistente = document.getElementById("sello_clasificado");
         if (selloExistente) selloExistente.remove();
 
-        // Asignación de datos básicos visibles
         document.getElementById("p_nombre").innerText = nombre;
         document.getElementById("p_rango").innerText = rango;
         document.getElementById("p_division").innerText = division || 'EJÉRCITO';
 
         if (isRestricted) {
-            // APLICACIÓN DE MODO CLASIFICADO (CENSURA)
+            // CENSURA APLICADA
             document.getElementById("p_unidad").innerText = "█████████";
             document.getElementById("p_unidad").classList.add("censurado-bar");
             
@@ -805,11 +808,9 @@
             document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`;
             
             document.getElementById("p_foto").classList.add("censurado-blur");
-            
-            // Añadir el sello rojo atravesado en la foto
             document.getElementById("p_foto").parentElement.insertAdjacentHTML('beforeend', '<div id="sello_clasificado" class="sello-clasificado">ACCESO RESTRINGIDO</div>');
         } else {
-            // APLICACIÓN NORMAL (SIN CENSURA)
+            // VISTA DESPEJADA PARA OFICIALES
             document.getElementById("p_unidad").innerText = unidad;
             document.getElementById("p_creacion").innerText = fCreacion;
             document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
@@ -913,11 +914,46 @@
         FLOTA_AEREA.forEach(v => { hAereo.innerHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerr.innerHTML += generarCard(v); });
     }
 
+    // CARGA DE DOCUMENTOS CON SISTEMA DE CENSURA PARA RANGOS BAJOS
     async function cargarDocumentos() {
-        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); const snap = await getDocs(q); const lDoc = document.getElementById("listaDocumentos"); lDoc.innerHTML = "";
+        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
+        const snap = await getDocs(q); 
+        const lDoc = document.getElementById("listaDocumentos"); 
+        lDoc.innerHTML = "";
+        
+        // Determina si el usuario que lee es Subteniente o inferior
+        const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente");
+
         snap.forEach(docSnap => {
-            const d = docSnap.data(); const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
-            lDoc.innerHTML += `<div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};"><div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;"><span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span><span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span></div><div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div><div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);">${d.contenido}</div></div>`;
+            const d = docSnap.data(); 
+            const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
+            
+            if (isRestricted) {
+                // DOCUMENTO CENSURADO
+                lDoc.innerHTML += `
+                <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid var(--danger-red); position: relative; overflow: hidden;">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
+                        <span style="color:var(--danger-red); font-weight:bold; font-size:14px; letter-spacing:1px;">[ ACCESO DENEGADO ]</span>
+                        <span class="censurado-bar">██/██/████ | AUTOR: ██████</span>
+                    </div>
+                    <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;" class="censurado-bar">██████████████████████</div>
+                    <div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);" class="censurado-blur">
+                        ████████ ██████ ███████████ ███ █████████ ████ ███████ █████ ████████ ███████ ██████████.
+                    </div>
+                    <div class="sello-clasificado" style="font-size: 16px; top: 50%; opacity: 0.9;">INFO. CLASIFICADA</div>
+                </div>`;
+            } else {
+                // DOCUMENTO LEGIBLE (PARA OFICIALES)
+                lDoc.innerHTML += `
+                <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
+                        <span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span>
+                        <span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span>
+                    </div>
+                    <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div>
+                    <div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);">${d.contenido}</div>
+                </div>`;
+            }
         });
     }
 

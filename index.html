@@ -28,160 +28,89 @@
             overflow-x: hidden;
         }
 
-        .main-container {
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .main-container { padding: 20px; max-width: 1400px; margin: 0 auto; }
 
-        /* --- DASHBOARD SUPERIOR --- */
-        .stats-banner {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
+        /* DASHBOARD SUPERIOR */
+        .stats-banner { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .stat-card {
-            background: rgba(0, 20, 0, 0.6);
-            border: 1px solid var(--dim-green);
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            min-width: 180px;
-            border-left: 4px solid var(--tactical-green);
+            background: rgba(0, 20, 0, 0.6); border: 1px solid var(--dim-green);
+            padding: 10px 20px; display: flex; align-items: center; gap: 15px;
+            min-width: 180px; border-left: 4px solid var(--tactical-green);
         }
-
         .stat-card.alto-mando { border-left-color: var(--danger-red); }
         .stat-card.operativos { border-left-color: var(--tactical-green); }
         .stat-card.reclutas { border-left-color: var(--tech-blue); }
-
         .stat-num { font-size: 24px; font-weight: bold; color: white; }
-        .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-label { font-size: 10px; text-transform: uppercase; }
 
-        /* --- CAJAS DE INTERFAZ --- */
+        /* CAJAS DE INTERFAZ */
         .box {
-            background: var(--glass-bg);
-            border: 1px solid var(--dim-green);
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            position: relative;
+            background: var(--glass-bg); border: 1px solid var(--dim-green);
+            padding: 30px; margin-bottom: 30px; position: relative;
         }
-
         .box::before {
             content: ""; position: absolute; top: 0; left: 0; width: 10px; height: 10px;
             border-top: 2px solid var(--tactical-green); border-left: 2px solid var(--tactical-green);
         }
 
-        /* --- REJILLA DE TARJETAS (SIN FOTO) --- */
+        /* REJILLA DE TARJETAS */
         .grid-tropas {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
         }
-
         .tarjeta-tactica {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(77, 242, 77, 0.1);
-            padding: 20px;
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            cursor: pointer;
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(77, 242, 77, 0.1);
+            padding: 20px; position: relative; transition: all 0.3s ease; cursor: pointer;
         }
-
         .tarjeta-tactica:hover {
-            background: var(--dim-green);
-            transform: translateY(-5px) translateX(5px);
-            border-color: var(--tactical-green);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            background: var(--dim-green); transform: translateY(-5px); border-color: var(--tactical-green);
         }
 
-        /* ICONO CSS EN LUGAR DE FOTO */
+        /* ICONO CSS */
         .icon-tactical {
-            width: 50px;
-            height: 50px;
-            border: 2px solid var(--tactical-green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background: rgba(77, 242, 77, 0.1);
-            flex-shrink: 0;
+            width: 50px; height: 50px; border: 2px solid var(--tactical-green);
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(77, 242, 77, 0.1); flex-shrink: 0;
         }
+        .icon-tactical::after { content: "▲"; font-size: 20px; color: var(--tactical-green); }
 
-        .icon-tactical::after {
-            content: "▲";
-            font-size: 20px;
-            color: var(--tactical-green);
-            text-shadow: 0 0 5px var(--tactical-green);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(77, 242, 77, 0.2);
-            padding-bottom: 5px;
-        }
-
-        .card-id { color: var(--tech-blue); font-weight: bold; }
-        .card-rank { color: #aaa; text-transform: uppercase; }
-
-        .card-body { display: flex; gap: 15px; align-items: flex-start; }
-
-        .card-info b { font-size: 18px; color: white; display: block; margin-bottom: 10px; }
-        .info-row { font-size: 11px; display: grid; grid-template-columns: 80px 1fr; margin-bottom: 4px; }
+        .card-header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 15px; border-bottom: 1px solid rgba(77, 242, 77, 0.2); }
+        .card-body { display: flex; gap: 15px; }
+        .card-info b { font-size: 18px; color: white; display: block; }
+        .info-row { font-size: 11px; display: grid; grid-template-columns: 80px 1fr; margin-top: 4px; }
         .info-label { color: #666; }
         .info-val { color: var(--tactical-green); text-transform: uppercase; }
 
-        .card-footer {
-            margin-top: 15px;
-            text-align: right;
-            font-size: 10px;
-            letter-spacing: 1px;
-        }
-
-        /* --- FORMULARIOS --- */
+        /* FORMULARIOS */
         input, select, button {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--dim-green);
-            color: var(--tactical-green);
-            padding: 12px;
-            margin: 8px 0;
-            width: 100%;
-            font-family: inherit;
-            outline: none;
+            background: rgba(0, 0, 0, 0.7); border: 1px solid var(--dim-green);
+            color: var(--tactical-green); padding: 12px; margin: 8px 0; width: 100%;
+            font-family: inherit; outline: none;
         }
-
-        button { border: 1px solid var(--tactical-green); cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button { border: 1px solid var(--tactical-green); cursor: pointer; font-weight: bold; }
         button:hover { background: var(--tactical-green); color: black; }
 
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .online { background: var(--tactical-green); box-shadow: 0 0 8px var(--tactical-green); }
         .offline { background: var(--danger-red); }
 
-        #adminPanel, #logPanel, #panelPrincipal { display: none; }
-
-        /* MODAL */
+        /* MODAL PERFIL */
         .modal {
             display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
         }
         .modal-content {
             background: #050a05; border: 1px solid var(--tactical-green);
-            margin: 10% auto; padding: 30px; width: 90%; max-width: 500px;
+            margin: 5% auto; padding: 40px; width: 90%; max-width: 450px; text-align: center;
         }
+
+        #adminPanel, #panelPrincipal { display: none; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
 
-    <div id="loginBox" class="box" style="max-width: 500px; margin: 100px auto;">
+    <div id="loginBox" class="box" style="max-width: 450px; margin: 80px auto;">
         <h2 style="text-align: center; letter-spacing: 5px;">ACCESS_TERMINAL</h2>
         <input id="regNombre" type="text" placeholder="ID_OPERATIVO">
         <input id="email" type="email" placeholder="CORREO_ENCRIPTADO">
@@ -213,7 +142,7 @@
 
         <div class="box">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 id="welcome">USUARIO: IDENTIFICANDO...</h3>
+                <h3 id="welcome">CARGANDO...</h3>
                 <button id="btnLogout" style="width: auto; padding: 5px 15px;">SALIR</button>
             </div>
         </div>
@@ -222,8 +151,9 @@
             <h3 style="color: var(--danger-red);">COMMAND ADMIN</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <input id="targetEmail" placeholder="CORREO DEL SOLDADO">
-                <select id="newRankAdmin"></select>
-                <input id="manualDays" type="number" placeholder="+ DÍAS">
+                <select id="newRankAdmin">
+                    </select>
+                <input id="manualDays" type="number" placeholder="+ DÍAS ANTIGÜEDAD">
                 <button id="btnAscender">APLICAR CAMBIOS</button>
             </div>
         </div>
@@ -235,6 +165,23 @@
             </div>
             <div id="lista" class="grid-tropas"></div>
         </div>
+    </div>
+</div>
+
+<div id="modalExpediente" class="modal">
+    <div class="modal-content">
+        <div id="perfilIcon" class="icon-tactical" style="margin: 0 auto 20px; width: 80px; height: 80px;"></div>
+        <h2 id="expNombre" style="margin: 0;"></h2>
+        <p id="expRangoDiv" style="color: var(--alert-amber); margin-bottom: 20px;"></p>
+        
+        <div style="background: rgba(255,255,255,0.05); padding: 15px; border: 1px solid var(--dim-green); text-align: left;">
+            <div class="info-row"><span class="info-label">ESTADO:</span> <span class="info-val">ACTIVO</span></div>
+            <div class="info-row"><span class="info-label">ANTIGÜEDAD:</span> <span id="expDias" class="info-val"></span></div>
+            <div class="info-row"><span class="info-label">SUELDO:</span> <span id="expSueldo" class="info-val" style="color: var(--gold)"></span></div>
+            <div class="info-row"><span class="info-label">CONEXIÓN:</span> <span id="expConexion" class="info-val" style="font-size: 9px;"></span></div>
+        </div>
+        
+        <button onclick="cerrarModal()" style="margin-top: 25px;">CERRAR EXPEDIENTE</button>
     </div>
 </div>
 
@@ -256,6 +203,14 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const RANGOS = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
+    const SUELDOS = { "Recluta": "$3.500", "Cabo 2°": "$3.800", "Cabo 1°": "$4.000", "Sargento 2°": "$4.500", "Sargento 1°": "$5.000", "Suboficial": "$5.500", "Suboficial Mayor": "$6.200", "Subteniente": "$7.000", "Teniente": "$8.000", "Capitán": "$9.500", "Mayor": "$11.000", "Teniente Coronel": "$13.000", "Coronel": "$15.500", "General de Brigada": "$18.000", "General de División": "$22.000", "General en Jefe": "$30.000" };
+
+    // CARGAR RANGOS EN ADMIN (Corregido)
+    const selectAdmin = document.getElementById("newRankAdmin");
+    RANGOS.forEach(r => { let opt = document.createElement("option"); opt.value = r; opt.textContent = r; selectAdmin.appendChild(opt); });
+
+    // SONIDO
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     window.playHoverSound = () => {
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -268,8 +223,33 @@
         osc.start(); osc.stop(audioCtx.currentTime + 0.05);
     };
 
-    const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
+    // MOSTRAR PERFIL (Corregido)
+    window.verExpediente = async (email) => {
+        const snap = await getDoc(doc(db, "usuarios", email));
+        if (snap.exists()) {
+            const x = snap.data();
+            const fechaIngreso = new Date(x.fechaIngreso);
+            const hoy = new Date();
+            const diasReales = Math.floor((hoy - fechaIngreso) / (1000 * 60 * 60 * 24));
+            const diasTotales = diasReales + (parseInt(x.antiguedadManual) || 0);
 
+            document.getElementById("expNombre").innerText = x.nombre.toUpperCase();
+            document.getElementById("expRangoDiv").innerText = `${x.rango} | ${x.division.toUpperCase()}`;
+            document.getElementById("expDias").innerText = `${diasTotales} DÍAS EN SERVICIO`;
+            document.getElementById("expSueldo").innerText = `${SUELDOS[x.rango] || "$3.500"} USD/H`;
+            document.getElementById("expConexion").innerText = new Date(x.ultimaConexion).toLocaleString();
+            
+            const color = x.division === 'Ejercito' ? '#4df24d' : (x.division === 'FACH' ? '#fff' : (x.division === 'Armada' ? '#00f2ff' : '#ff3b3b'));
+            document.getElementById("perfilIcon").style.borderColor = color;
+            document.getElementById("perfilIcon").style.color = color;
+            
+            document.getElementById("modalExpediente").style.display = "block";
+        }
+    };
+
+    window.cerrarModal = () => document.getElementById("modalExpediente").style.display = "none";
+
+    // CARGAR DATOS
     async function cargarDatos() {
         const qs = await getDocs(collection(db, "usuarios"));
         let h = "";
@@ -279,33 +259,29 @@
             const x = d.data();
             counts.Total++;
             const r = x.rango || "Recluta";
-            if (r.includes("General") || r.includes("Coronel")) counts.Mando++;
+            if (["General en Jefe", "General de División", "General de Brigada", "Coronel"].includes(r)) counts.Mando++;
             else if (r === "Recluta") counts.Rec++;
             else counts.Ops++;
 
-            const status = (new Date() - new Date(x.ultimaConexion)) / 60000 < 10 ? "online" : "offline";
-            const colorDivision = x.division === 'Ejercito' ? '#4df24d' : (x.division === 'FACH' ? '#fff' : (x.division === 'Armada' ? '#00f2ff' : '#ff3b3b'));
+            const status = (new Date() - new Date(x.ultimaConexion)) / 60000 < 15 ? "online" : "offline";
+            const color = x.division === 'Ejercito' ? '#4df24d' : (x.division === 'FACH' ? '#fff' : (x.division === 'Armada' ? '#00f2ff' : '#ff3b3b'));
 
             h += `
             <div class="tarjeta-tactica" onmouseenter="playHoverSound()" onclick="verExpediente('${x.email}')">
-                <div class="card-header">
-                    <span class="card-rank">${r}</span>
-                    <span class="card-id">#${x.email.split('@')[0].toUpperCase()}</span>
-                </div>
+                <div class="card-header"><span>${r.toUpperCase()}</span><span>#${x.email.split('@')[0].toUpperCase()}</span></div>
                 <div class="card-body">
-                    <div class="icon-tactical" style="border-color: ${colorDivision}; color: ${colorDivision};"></div>
+                    <div class="icon-tactical" style="border-color: ${color}; color: ${color};"></div>
                     <div class="card-info">
                         <b>${x.nombre}</b>
-                        <div class="info-row"><span class="info-label">Especialidad</span><span class="info-val">${x.especialidad || 'FUSILERO'}</span></div>
-                        <div class="info-row"><span class="info-label">Unidad</span><span class="info-val" style="color:${colorDivision}">${x.division}</span></div>
+                        <div class="info-row"><span class="info-label">ESPEC.</span><span class="info-val">${x.especialidad || 'FUSILERO'}</span></div>
+                        <div class="info-row"><span class="info-label">UNIDAD</span><span class="info-val" style="color:${color}">${x.division}</span></div>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div style="margin-top:10px; font-size:10px; text-align:right;">
                     <span class="status-dot ${status}"></span> ${status.toUpperCase()}
                 </div>
             </div>`;
         });
-
         document.getElementById("lista").innerHTML = h;
         document.getElementById("countTotal").innerText = counts.Total;
         document.getElementById("countMando").innerText = counts.Mando;
@@ -313,6 +289,7 @@
         document.getElementById("countRec").innerText = counts.Rec;
     }
 
+    // AUTH
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "usuarios", user.email));
@@ -321,38 +298,46 @@
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("panelPrincipal").style.display = "block";
                 document.getElementById("welcome").innerText = "OPERATIVO: " + d.nombre.toUpperCase();
-                const jerarquia = ["capitán", "mayor", "coronel", "general de brigada", "general de división", "general en jefe"];
-                if (jerarquia.includes(d.rango.toLowerCase())) document.getElementById("adminPanel").style.display = "block";
+                if (["Capitán", "Mayor", "Coronel", "General de Brigada", "General de División", "General en Jefe"].includes(d.rango)) {
+                    document.getElementById("adminPanel").style.display = "block";
+                }
+                updateDoc(doc(db, "usuarios", user.email), { ultimaConexion: new Date().toISOString() });
                 cargarDatos();
             }
         }
     });
 
-    // (Lógica de registro y login igual a la anterior...)
     document.getElementById("btnReg").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        const nom = document.getElementById("regNombre").value;
-        const div = document.getElementById("division").value;
-        const esp = document.getElementById("especialidad").value;
+        const email = document.getElementById("email").value, pass = document.getElementById("password").value;
+        const nom = document.getElementById("regNombre").value, div = document.getElementById("division").value, esp = document.getElementById("especialidad").value;
+        if(!nom || !email || !pass) return alert("DATOS INCOMPLETOS");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, especialidad: esp, ultimaConexion: new Date().toISOString() });
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, especialidad: esp, fechaIngreso: new Date().toISOString(), antiguedadManual: 0, ultimaConexion: new Date().toISOString() });
             location.reload();
         } catch(e) { alert(e.message); }
     };
 
     document.getElementById("btnLogin").onclick = async () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("ERROR"); }
+        const email = document.getElementById("email").value, pass = document.getElementById("password").value;
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert("DATOS INCORRECTOS"); }
     };
+
+    document.getElementById("btnAscender").onclick = async () => {
+        const email = document.getElementById("targetEmail").value, nuevoR = document.getElementById("newRankAdmin").value, dias = document.getElementById("manualDays").value;
+        if(!email) return alert("INGRESA EL CORREO");
+        try {
+            await updateDoc(doc(db, "usuarios", email), { rango: nuevoR, antiguedadManual: parseInt(dias) || 0 });
+            alert("EXPEDIENTE ACTUALIZADO"); cargarDatos();
+        } catch(e) { alert("ERROR AL ACTUALIZAR"); }
+    };
+
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
 
-    window.filtrarSoldados = function() {
+    window.filtrarSoldados = () => {
         let input = document.getElementById('searchBar').value.toLowerCase();
-        let tarjetas = document.getElementsByClassName('tarjeta-tactica');
-        for (let t of tarjetas) t.style.display = t.innerText.toLowerCase().includes(input) ? "block" : "none";
+        let cards = document.getElementsByClassName('tarjeta-tactica');
+        for (let c of cards) c.style.display = c.innerText.toLowerCase().includes(input) ? "block" : "none";
     };
 </script>
 </body>

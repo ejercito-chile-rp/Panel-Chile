@@ -8,9 +8,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Jura:wght@400;600;700&family=Share+Tech+Mono&display=swap');
 
         :root { 
-            --theme-color: #00e5ff; /* Cyan más elegante y moderno */
+            --theme-color: #00e5ff; 
             --theme-dim: rgba(0, 229, 255, 0.15);
-            --army-dark: #070b11; /* Azul marino ultra oscuro en vez de negro puro */
+            --army-dark: #070b11; 
             --glass-bg: rgba(15, 22, 35, 0.6);
             --glass-border: rgba(255, 255, 255, 0.08);
             --alert-amber: #ffb400;
@@ -18,7 +18,6 @@
             --admin-blue: #4d90f2;
         }
 
-        /* DEFCON DYNAMIC COLORS */
         body.defcon-5 { --theme-color: #00e5ff; --theme-dim: rgba(0, 229, 255, 0.15); } 
         body.defcon-4 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } 
         body.defcon-3 { --theme-color: #f2e24d; --theme-dim: rgba(242, 226, 77, 0.15); } 
@@ -35,7 +34,6 @@
 
         @keyframes red-pulse { 0% { box-shadow: inset 0 0 0px var(--theme-color); } 50% { box-shadow: inset 0 0 120px rgba(255, 59, 59, 0.3); } 100% { box-shadow: inset 0 0 0px var(--theme-color); } }
 
-        /* ANIMACIONES Y SCROLL */
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -46,7 +44,6 @@
         ::-webkit-scrollbar-thumb { background: var(--theme-dim); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--theme-color); }
 
-        /* CLASES GLASSMORPHISM (ELEGANCIA) */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
@@ -61,7 +58,6 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
-        /* SIDEBAR */
         .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(20px); border-radius: 0 15px 15px 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5);}
         .menu-category { font-size: 11px; color: #888; padding: 10px 25px; letter-spacing: 2px; font-weight: 700; margin-top: 10px;}
         .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
@@ -71,29 +67,24 @@
         .btn-alert:hover { color: var(--danger-red); background: rgba(255, 59, 59, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
 
-        /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative;}
         #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
 
-        /* BOTONES E INPUTS */
         .auth-input { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: white; padding: 14px; width: 100%; margin-bottom: 15px; font-family: 'Share Tech Mono', monospace; box-sizing: border-box; outline: none; border-radius: 8px; transition: 0.3s; }
         .auth-input:focus { border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); background: rgba(0,0,0,0.6); }
         .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px);}
         .btn-tactical:hover { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 20px var(--theme-dim); transform: translateY(-2px); }
 
-        /* LOGIN */
         #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 3000; display: flex; justify-content: center; align-items: center; }
         #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
         .login-box { position: relative; width: 420px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
 
-        /* MODALES */
         .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.4s ease-out; }
 
-        /* PERFIL COMPLETO */
         .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; overflow: hidden; border-radius: 15px;}
         .perfil-header { background: rgba(0,0,0,0.5); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; border-bottom: 1px solid var(--theme-color); }
         .perfil-body { display: grid; grid-template-columns: 280px 1fr; gap: 0; background: rgba(10, 15, 25, 0.9); }
@@ -107,21 +98,18 @@
         .historial-content { padding: 15px; overflow-y: auto; max-height: 200px; font-size: 13px; display: flex; flex-direction: column; gap: 10px; font-family: 'Share Tech Mono', monospace; }
         .historial-log { border-left: 2px solid var(--theme-color); padding-left: 12px; color: #ccc; background: rgba(255,255,255,0.02); padding-top: 5px; padding-bottom: 5px;}
 
-        /* HANGAR Y VEHÍCULOS */
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         .hangar-card-new { display: flex; flex-direction: column; overflow: hidden; }
         .hangar-img { height: 190px; background-size: cover; background-position: center; border-bottom: 2px solid var(--theme-dim); transition: transform 0.7s; }
         .hangar-card-new:hover .hangar-img { transform: scale(1.05); }
         .img-wrapper { overflow: hidden; border-radius: 12px 12px 0 0; }
 
-        /* TOAST NOTIFICACIONES */
         #toastContainer { position: fixed; left: 25px; bottom: 25px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
         .toast { background: rgba(10, 15, 25, 0.95); border-left: 4px solid; color: white; padding: 18px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 350px; backdrop-filter: blur(10px);}
         .toast-error { border-color: var(--danger-red); }
         .toast-success { border-color: var(--theme-color); }
         @keyframes slideRight { from { transform: translateX(-150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* RADAR ANIMADO */
         .radar-realista { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 229, 255, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #050a0f; overflow: hidden; box-shadow: 0 0 25px var(--theme-dim), inset 0 0 25px var(--theme-dim); margin: auto; }
         .radar-realista::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--theme-dim); }
         .radar-realista::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--theme-dim); }
@@ -130,7 +118,6 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        /* MAPA TÁCTICO MILITAR */
         .map-wrapper { position: relative; height: 65vh; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .map-bg { position: absolute; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Chile_relief_location_map.jpg/800px-Chile_relief_location_map.jpg') center/cover no-repeat; opacity: 0.4; filter: grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.6) contrast(1.2); }
         .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; }
@@ -236,9 +223,17 @@
             <div class="login-photo-circle"></div>
             <h3 style="letter-spacing: 3px; margin-top: 0; color: white; font-size: 24px;">COMANDO TÁCTICO</h3>
             <p style="color: var(--theme-color); font-size: 12px; margin-top: -10px; margin-bottom: 30px; letter-spacing: 1px;">FUERZAS ARMADAS DE CHILE</p>
+            
+            <input type="text" id="regNombre" class="auth-input" placeholder="NOMBRE Y APELLIDO (MILITAR)" style="text-align: center; display:none;">
             <input type="email" id="userEmail" class="auth-input" placeholder="CORREO ENCRIPTADO" style="text-align: center;">
             <input type="password" id="userPass" class="auth-input" placeholder="CLAVE DE ACCESO" style="text-align: center;">
-            <button onclick="login()" class="btn-tactical" style="width: 100%; margin-top: 10px; background: var(--theme-color); color: #000;">INICIAR CONEXIÓN</button>
+            
+            <button id="btnLoginAction" onclick="login()" class="btn-tactical" style="width: 100%; margin-top: 10px; background: var(--theme-color); color: #000;">INICIAR CONEXIÓN</button>
+            <button id="btnRegisterAction" onclick="register()" class="btn-tactical" style="width: 100%; margin-top: 10px; background: var(--admin-blue); color: #000; display:none; border-color:var(--admin-blue);">CREAR EXPEDIENTE</button>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #aaa; cursor: pointer; transition: 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#aaa'" onclick="toggleAuthMode()" id="authModeToggle">
+                ¿No tienes credenciales? Solicita registro aquí.
+            </div>
         </div>
     </div>
 
@@ -472,7 +467,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, limit, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4", authDomain: "panel-chile.firebaseapp.com", projectId: "panel-chile", storageBucket: "panel-chile.firebasestorage.app", messagingSenderId: "124864601883", appId: "1:124864601883:web:839163be2060253f68bdbe" };
@@ -519,44 +514,73 @@
         setTimeout(() => { toast.style.animation = "fadeOut 0.5s forwards"; setTimeout(() => toast.remove(), 500); }, 3500);
     };
 
-    let currentDefcon = 5;
-    
-    window.abrirDefconAuth = () => {
-        window.playClick(); document.getElementById("modalDefconAuth").style.display = "flex"; 
-        document.getElementById("defconPassInput").value = ""; 
-        document.getElementById("spanCurrentDefcon").innerText = currentDefcon;
-        document.getElementById("defconPassInput").focus(); 
+    // ALTERNAR ENTRE LOGIN Y REGISTRO
+    let isLoginMode = true;
+    window.toggleAuthMode = () => {
+        window.playClick();
+        isLoginMode = !isLoginMode;
+        document.getElementById("regNombre").style.display = isLoginMode ? "none" : "block";
+        document.getElementById("btnLoginAction").style.display = isLoginMode ? "block" : "none";
+        document.getElementById("btnRegisterAction").style.display = isLoginMode ? "none" : "block";
+        document.getElementById("authModeToggle").innerHTML = isLoginMode ? "¿No tienes credenciales? Solicita registro aquí." : "Ya poseo credenciales. Iniciar conexión.";
     };
+
+    // FUNCIONES DE ACCESO
+    window.login = async () => { 
+        window.playClick(); 
+        const e = document.getElementById("userEmail").value; 
+        const p = document.getElementById("userPass").value; 
+        try { 
+            await signInWithEmailAndPassword(auth, e, p); 
+            registrarLog("INGRESO SISTEMA", `El correo ${e} inició conexión táctica.`); 
+        } catch { window.showToast("CREDENCIALES INVÁLIDAS", "error"); } 
+    };
+
+    window.register = async () => {
+        window.playClick();
+        const n = document.getElementById("regNombre").value.trim();
+        const e = document.getElementById("userEmail").value.trim();
+        const p = document.getElementById("userPass").value;
+        if (!n || !e || !p) return window.showToast("COMPLETE TODOS LOS CAMPOS PARA REGISTRO", "error");
+        
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, e, p);
+            await setDoc(doc(db, "usuarios", e), {
+                nombre: n,
+                rango: "Cabo 2°",
+                division: "EJÉRCITO",
+                estado: "Online",
+                fechaCreacion: new Date().toLocaleDateString('es-CL'),
+                sanciones: [],
+                licencias: {},
+                misionActiva: null,
+                aeronave: null
+            });
+            registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`);
+            window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
+        } catch (error) {
+            window.showToast("ERROR AL REGISTRAR: Verifica formato de correo o clave (min 6 caracteres).", "error");
+        }
+    };
+
+    let currentDefcon = 5;
+    window.abrirDefconAuth = () => { window.playClick(); document.getElementById("modalDefconAuth").style.display = "flex"; document.getElementById("defconPassInput").value = ""; document.getElementById("spanCurrentDefcon").innerText = currentDefcon; document.getElementById("defconPassInput").focus(); };
     window.cerrarDefconAuth = () => { window.playClick(); document.getElementById("modalDefconAuth").style.display = "none"; };
     
     window.verificarDefconAuth = () => {
         window.playClick();
-        if(document.getElementById("defconPassInput").value === "2629") {
-            document.getElementById("modalDefconAuth").style.display = "none";
-            ejecutarCambioDefcon();
-        } else { window.showToast("CÓDIGO DEFCON INVÁLIDO.", "error"); }
+        if(document.getElementById("defconPassInput").value === "2629") { document.getElementById("modalDefconAuth").style.display = "none"; ejecutarCambioDefcon(); } else { window.showToast("CÓDIGO DEFCON INVÁLIDO.", "error"); }
     };
 
     function ejecutarCambioDefcon() {
         currentDefcon--; if (currentDefcon < 1) currentDefcon = 5;
-        document.body.className = document.body.className.replace(/defcon-\d/g, '').trim();
-        document.body.classList.add(`defcon-${currentDefcon}`);
-        document.getElementById('btnDefcon').innerHTML = `<span>🚨</span> ESTADO: DEFCON ${currentDefcon}`;
-        if (currentDefcon === 1) { sndAlert.play(); registrarLog("ALERTA DEFCON", "Nivel máximo activado (DEFCON 1)."); } 
-        else { sndAlert.pause(); sndAlert.currentTime = 0; registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`); }
-        window.showToast(`ESTADO DEFCON ACTUALIZADO A NIVEL ${currentDefcon}`, "success");
+        document.body.className = document.body.className.replace(/defcon-\d/g, '').trim(); document.body.classList.add(`defcon-${currentDefcon}`); document.getElementById('btnDefcon').innerHTML = `<span>🚨</span> NIVEL DEFCON ${currentDefcon}`;
+        if (currentDefcon === 1) { sndAlert.play(); registrarLog("ALERTA DEFCON", "Nivel máximo activado (DEFCON 1)."); } else { sndAlert.pause(); sndAlert.currentTime = 0; registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`); } window.showToast(`ESTADO DEFCON ACTUALIZADO A NIVEL ${currentDefcon}`, "success");
     }
 
     window.abrirAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "flex"; document.getElementById("adminPassInput").value = ""; document.getElementById("adminPassInput").focus(); };
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
-    window.verificarAdminAuth = () => {
-        window.playClick();
-        if(document.getElementById("adminPassInput").value === "CHILE2026") {
-            document.getElementById("modalAdminAuth").style.display = "none";
-            document.getElementById("adminTools").style.display = "block";
-            window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success");
-        } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); }
-    };
+    window.verificarAdminAuth = () => { window.playClick(); if(document.getElementById("adminPassInput").value === "CHILE2026") { document.getElementById("modalAdminAuth").style.display = "none"; document.getElementById("adminTools").style.display = "block"; window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success"); } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); } };
 
     window.switchTab = (tab) => {
         window.playClick();
@@ -616,20 +640,8 @@
     });
 
     window.updateMyStatus = async () => { if(!window.currentUserEmail) return; await updateDoc(doc(db, "usuarios", window.currentUserEmail), { estado: document.getElementById("myStatus").value }); cargarDatos(); };
-    
-    async function registrarLog(accion, detalle) { 
-        try { 
-            await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); 
-            cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); 
-        } catch(e) {} 
-    }
-
-    async function cargarLogsBase() {
-        const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100));
-        const snap = await getDocs(q);
-        window.cachedLogs = [];
-        snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); });
-    }
+    async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); } catch(e) {} }
+    async function cargarLogsBase() { const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100)); const snap = await getDocs(q); window.cachedLogs = []; snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); }); }
 
     async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
@@ -717,7 +729,6 @@
         document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
     }
 
-    // PERFIL MILITAR
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw) => {
         window.playClick(); 
         document.getElementById("p_nombre").innerText = nombre;
@@ -751,7 +762,6 @@
     };
     window.cerrarPerfil = () => { window.playClick(); document.getElementById("perfilModal").style.display = "none"; };
 
-    // LICENCIAS
     window.actualizarLicencia = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldadoLicencia").value; const tipoLic = document.getElementById("tipoLicencia").value; const estadoLic = document.getElementById("estadoLicencia").value;
@@ -764,7 +774,6 @@
         catch(e) { window.showToast("ERROR AL ACTUALIZAR LICENCIA.", "error"); }
     };
 
-    // SANCIONES (AGREGADO BOTÓN DE QUITAR)
     window.aplicarSancion = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldadoSancion").value; const tipo = document.getElementById("targetSancion").value; const motivo = document.getElementById("motivoSancion").value; const duracion = document.getElementById("duracionSancion").value;
@@ -774,8 +783,7 @@
         try {
             await updateDoc(doc(db, "usuarios", email), { sanciones: arrayUnion(nuevaSancion) });
             registrarLog("SANCIÓN APLICADA", `Sancionó a ${email} (${tipo}) por: ${motivo}`);
-            window.showToast("SANCIÓN APLICADA A EXPEDIENTE", "success"); 
-            document.getElementById("motivoSancion").value = ""; document.getElementById("duracionSancion").value = ""; cargarDatos();
+            window.showToast("SANCIÓN APLICADA A EXPEDIENTE", "success"); document.getElementById("motivoSancion").value = ""; document.getElementById("duracionSancion").value = ""; cargarDatos();
         } catch(error) { window.showToast("ERROR AL APLICAR SANCIÓN", "error"); }
     };
 
@@ -783,95 +791,55 @@
         window.playClick();
         const email = document.getElementById("targetSoldadoSancion").value;
         if(!email) return window.showToast("SELECCIONE UN SOLDADO DE LA LISTA", "error");
-        try {
-            await updateDoc(doc(db, "usuarios", email), { sanciones: [] });
-            registrarLog("SANCIÓN REMOVIDA", `Limpió el expediente de sanciones disciplinarias de ${email}.`);
-            window.showToast("EXPEDIENTE LIMPIADO SATISFACTORIAMENTE", "success");
-            cargarDatos();
-        } catch(e) { window.showToast("ERROR AL LIMPIAR EXPEDIENTE", "error"); }
+        try { await updateDoc(doc(db, "usuarios", email), { sanciones: [] }); registrarLog("SANCIÓN REMOVIDA", `Limpió el expediente de sanciones disciplinarias de ${email}.`); window.showToast("EXPEDIENTE LIMPIADO SATISFACTORIAMENTE", "success"); cargarDatos(); } 
+        catch(e) { window.showToast("ERROR AL LIMPIAR EXPEDIENTE", "error"); }
     };
 
-    // RECLUTAMIENTO
     window.registrarPostulante = async () => {
         window.playClick();
-        const nombre = document.getElementById("recNombre").value;
-        const division = document.getElementById("recDivision").value;
-        const notas = document.getElementById("recNotas").value;
-        
+        const nombre = document.getElementById("recNombre").value; const division = document.getElementById("recDivision").value; const notas = document.getElementById("recNotas").value;
         if(!nombre) return window.showToast("EL NOMBRE DEL POSTULANTE ES OBLIGATORIO.", "error");
 
         try {
-            await addDoc(collection(db, "reclutamiento"), {
-                nombre: nombre, division: division, notas: notas, estado: "Pendiente",
-                fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
-            });
-            window.showToast("POSTULANTE REGISTRADO EN LA BASE DE DATOS.", "success");
-            document.getElementById("recNombre").value = ""; document.getElementById("recNotas").value = "";
-            cargarReclutamiento();
+            await addDoc(collection(db, "reclutamiento"), { nombre: nombre, division: division, notas: notas, estado: "Pendiente", fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() });
+            window.showToast("POSTULANTE REGISTRADO EN LA BASE DE DATOS.", "success"); document.getElementById("recNombre").value = ""; document.getElementById("recNotas").value = ""; cargarReclutamiento();
         } catch(e) { window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error"); }
     };
 
     async function cargarReclutamiento() {
         const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
-        const snap = await getDocs(q);
-        const list = document.getElementById("listaPostulantes");
-        list.innerHTML = ""; let count = 0;
+        const snap = await getDocs(q); const list = document.getElementById("listaPostulantes"); list.innerHTML = ""; let count = 0;
 
         snap.forEach(docSnap => {
-            const d = docSnap.data();
-            if(d.estado !== "Pendiente") return;
-            count++;
+            const d = docSnap.data(); if(d.estado !== "Pendiente") return; count++;
             list.innerHTML += `
                 <div class="glass-panel slide-up" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="color:white; font-weight:bold; font-size:18px; letter-spacing:1px;">${d.nombre}</div>
-                        <div style="color:var(--admin-blue); font-size:12px; font-family:'Share Tech Mono'; margin:5px 0;">División de Interés: ${d.division}</div>
-                        <div style="color:#aaa; font-size:13px; max-width: 500px; line-height:1.5;">${d.notas || 'Sin observaciones'}</div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">APROBAR</button>
-                        <button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button>
-                    </div>
-                </div>
-            `;
+                    <div><div style="color:white; font-weight:bold; font-size:18px; letter-spacing:1px;">${d.nombre}</div><div style="color:var(--admin-blue); font-size:12px; font-family:'Share Tech Mono'; margin:5px 0;">División de Interés: ${d.division}</div><div style="color:#aaa; font-size:13px; max-width: 500px; line-height:1.5;">${d.notas || 'Sin observaciones'}</div></div>
+                    <div style="display: flex; gap: 10px;"><button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">APROBAR</button><button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button></div>
+                </div>`;
         });
         if (count === 0) list.innerHTML = "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>";
     }
 
-    window.evaluarPostulante = async (id, estado, nombre) => {
-        window.playClick();
-        try {
-            await updateDoc(doc(db, "reclutamiento", id), { estado: estado });
-            registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`);
-            window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error');
-            cargarReclutamiento();
-        } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); }
-    };
+    window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
 
     function cargarHangar() {
-        const hAereo = document.getElementById("listaHangarAereo"); hAereo.innerHTML = "";
-        const hTerr = document.getElementById("listaHangarTerrestre"); hTerr.innerHTML = "";
+        const hAereo = document.getElementById("listaHangarAereo"); hAereo.innerHTML = ""; const hTerr = document.getElementById("listaHangarTerrestre"); hTerr.innerHTML = "";
         const generarCard = (v) => `
             <div class="hangar-card-new glass-panel slide-up">
                 <div class="img-wrapper"><div class="hangar-img" style="background-image: url('${v.img}');"></div></div>
                 <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border);">
-                    <div style="color: #fff; font-weight: bold; font-size: 16px; letter-spacing:1px;">${v.id}</div>
-                    <div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 6px 12px; border-radius: 4px; font-family:'Share Tech Mono';">CANT: ${v.cant}</div>
+                    <div style="color: #fff; font-weight: bold; font-size: 16px; letter-spacing:1px;">${v.id}</div><div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 6px 12px; border-radius: 4px; font-family:'Share Tech Mono';">CANT: ${v.cant}</div>
                 </div>
             </div>`;
-        FLOTA_AEREA.forEach(v => { hAereo.innerHTML += generarCard(v); });
-        FLOTA_TERRESTRE.forEach(v => { hTerr.innerHTML += generarCard(v); });
+        FLOTA_AEREA.forEach(v => { hAereo.innerHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerr.innerHTML += generarCard(v); });
     }
 
     async function cargarDocumentos() {
-        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20));
-        const snap = await getDocs(q);
-        const lDoc = document.getElementById("listaDocumentos"); lDoc.innerHTML = "";
+        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); const snap = await getDocs(q); const lDoc = document.getElementById("listaDocumentos"); lDoc.innerHTML = "";
         snap.forEach(docSnap => {
             const d = docSnap.data(); const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
-            lDoc.innerHTML += `<div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};">
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;"><span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span><span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span></div>
-                <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div><div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);">${d.contenido}</div></div>`;
+            lDoc.innerHTML += `<div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};"><div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;"><span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span><span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span></div><div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div><div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);">${d.contenido}</div></div>`;
         });
     }
 
@@ -880,7 +848,6 @@
     window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
     window.procesarCambiosAdmin = async () => { window.playClick(); const email = document.getElementById("targetSoldier").value; const rango = document.getElementById("targetRank").value; const avion = document.getElementById("targetAeronave").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { rango: rango, aeronave: avion === "SIN ASIGNAR" ? null : avion }); registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango} y aeronave ${avion}.`); window.showToast("BASE DE DATOS ACTUALIZADA", "success"); cargarDatos(); };
     async function cargarLogsVisual() { const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = ""; window.cachedLogs.forEach(d => { lCont.innerHTML += `<div style="font-size: 13px; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: #bbb; font-family:'Share Tech Mono';"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}</div>`; }); }
-    window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició sesión.`); } catch { window.showToast("ACCESO DENEGADO", "error"); } };
     window.logout = () => signOut(auth).then(() => location.reload());
 </script>
 </body>

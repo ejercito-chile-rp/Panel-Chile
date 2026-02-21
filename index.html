@@ -88,8 +88,8 @@
         .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; overflow: hidden; border-radius: 15px;}
         .perfil-header { background: rgba(0,0,0,0.5); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; border-bottom: 1px solid var(--theme-color); }
         .perfil-body { display: grid; grid-template-columns: 280px 1fr; gap: 0; background: rgba(10, 15, 25, 0.9); }
-        .perfil-col-izq { padding: 30px; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.01); }
-        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+        .perfil-col-izq { padding: 30px; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.01); position: relative; }
+        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: filter 0.3s;}
         .perfil-col-der { padding: 30px; display: flex; flex-direction: column; gap: 20px; }
         .perfil-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .perfil-item { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; }
@@ -105,6 +105,12 @@
         .esp-infanteria { background: rgba(77, 242, 77, 0.15); color: #4df24d; border: 1px solid #4df24d; }
         .esp-fuerzas { background: rgba(150, 50, 255, 0.15); color: #b666ff; border: 1px solid #b666ff; }
         .esp-default { background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid #aaa; }
+
+        /* ESTILOS DE MODO CLASIFICADO (CENSURA) */
+        .censurado-bar { background-color: #050a0f !important; color: #050a0f !important; position: relative; overflow: hidden; border-color: #050a0f !important; user-select: none; border-radius: 4px; display: inline-block;}
+        .censurado-bar::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px); pointer-events: none; }
+        .censurado-blur { filter: blur(12px) grayscale(100%) contrast(1.2) !important; }
+        .sello-clasificado { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%) rotate(-20deg); color: var(--danger-red); border: 4px solid var(--danger-red); padding: 5px 15px; font-size: 20px; font-weight: bold; letter-spacing: 4px; pointer-events: none; z-index: 10; text-shadow: 0 0 10px rgba(255,59,59,0.5); background: rgba(0,0,0,0.8); box-shadow: 0 0 15px rgba(255,0,0,0.3), inset 0 0 10px rgba(255,0,0,0.2); font-family: 'Share Tech Mono', monospace; white-space: nowrap; }
 
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         .hangar-card-new { display: flex; flex-direction: column; overflow: hidden; }
@@ -204,7 +210,7 @@
             </div>
             <div class="perfil-body">
                 <div class="perfil-col-izq">
-                    <div class="perfil-foto-hd"></div>
+                    <div id="p_foto" class="perfil-foto-hd"></div>
                     <div style="margin-top: 10px; text-align: center; width: 100%;">
                         <div style="font-size: 10px; color: #888; margin-bottom: 15px; letter-spacing: 1px;">SEÑAL VITAL (EN LÍNEA)</div>
                         <div class="radar-realista" style="width: 130px; height: 130px;">
@@ -218,7 +224,7 @@
                 <div class="perfil-col-der">
                     <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
                         <h2 id="p_nombre" style="margin: 0; color: white; font-size: 32px; letter-spacing: 1px;">NOMBRE SOLDADO</h2>
-                        <div style="color: var(--theme-color); font-size: 13px; font-family: 'Share Tech Mono'; margin-top:5px;" id="p_id">CHL-XXXXXX-000</div>
+                        <div style="color: var(--theme-color); font-size: 13px; font-family: 'Share Tech Mono'; margin-top:5px;"><span id="p_id">CHL-XXXXXX-000</span></div>
                     </div>
                     
                     <div class="perfil-data-grid">
@@ -566,7 +572,6 @@
         if (!n || !e || !p) return window.showToast("COMPLETE TODOS LOS CAMPOS PARA REGISTRO", "error");
         try {
             await createUserWithEmailAndPassword(auth, e, p);
-            // ASIGNAMOS UNA ESPECIALIDAD POR DEFECTO EN EL REGISTRO
             await setDoc(doc(db, "usuarios", e), { nombre: n, rango: "Cabo 2°", division: "EJÉRCITO", especialidad: "Infantería", estado: "Online", fechaCreacion: new Date().toLocaleDateString('es-CL'), sanciones: [], licencias: {}, misionActiva: null, aeronave: null });
             registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`); window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
         } catch (error) { window.showToast("ERROR AL REGISTRAR: Verifica formato o clave.", "error"); }
@@ -666,7 +671,6 @@
             selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
             selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selSanc.innerHTML = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
             
-            // SISTEMA DE BLOQUEO POR RANGO (Visual)
             const myRankIndex = RANGOS.indexOf(window.currentUserRank);
             let allowedRanks = RANGOS;
             
@@ -690,7 +694,7 @@
                     const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
                     const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
                     const estadoSeguro = d.estado || "Offline";
-                    const especialidadSegura = d.especialidad || "Infantería"; // NUEVO
+                    const especialidadSegura = d.especialidad || "Infantería"; 
                     
                     totalSoldadosCount++;
                     if (OFICIALES.includes(rangoSeguro)) totalOficialesCount++;
@@ -708,7 +712,6 @@
                     const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
                     const fCrea = d.fechaCreacion || "01/01/2026";
 
-                    // Al hacer click, pasamos la especialidad también
                     lPer.innerHTML += `
                         <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}', '${especialidadSegura}')" 
                              style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
@@ -752,51 +755,85 @@
                                 <div style="color: #ddd; margin-top: 15px; font-size: 15px; line-height:1.6;">> OBJETIVO TÁCTICO:<br><span style="color:white; font-weight:bold;">${d.misionActiva.detalle || 'Sin detalles'}</span></div>
                             </div>`;
                     }
-                } catch (errLoop) {
-                    console.error("Error aislando perfil roto:", errLoop);
-                }
+                } catch (errLoop) { console.error("Error aislando perfil:", errLoop); }
             });
             
             document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
             document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
             document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
-        } catch(errorGlobal) {
-            console.error("Error global cargando DB:", errorGlobal);
-        }
+        } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
     }
 
-    // MODIFICADO PARA RECIBIR LA ESPECIALIDAD Y PINTAR LA ETIQUETA
+    // LÓGICA DE APERTURA DE PERFIL Y CENSURA
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad) => {
         window.playClick(); 
+        
+        // Determinar si el usuario actual sufre de restricción de inteligencia
+        // "De Subteniente hacia abajo" => Índices <= al de Subteniente (6)
+        // Nota: Nunca censuramos al soldado si está viendo su PROPIO perfil
+        const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && email !== window.currentUserEmail;
+
+        // Limpieza previa (remover censura de apertura anterior)
+        document.getElementById("p_id").classList.remove("censurado-bar");
+        document.getElementById("p_unidad").classList.remove("censurado-bar");
+        document.getElementById("p_creacion").classList.remove("censurado-bar");
+        document.getElementById("p_mision").classList.remove("censurado-bar");
+        document.getElementById("p_foto").classList.remove("censurado-blur");
+        let selloExistente = document.getElementById("sello_clasificado");
+        if (selloExistente) selloExistente.remove();
+
+        // Asignación de datos básicos visibles
         document.getElementById("p_nombre").innerText = nombre;
         document.getElementById("p_rango").innerText = rango;
         document.getElementById("p_division").innerText = division || 'EJÉRCITO';
-        document.getElementById("p_unidad").innerText = unidad;
-        document.getElementById("p_creacion").innerText = fCreacion;
-        document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
-        
-        let misionTexto = "DISPONIBLE EN BASE"; let mColor = "var(--theme-color)";
-        if (objMisionRaw !== 'null' && objMisionRaw !== 'undefined') { 
-            try { 
-                const m = JSON.parse(decodeURIComponent(objMisionRaw)); 
-                misionTexto = `[EN OPERACIÓN: ${m.tipo.toUpperCase()}] ${m.detalle}`; mColor = "var(--alert-amber)";
-            } catch(e) {} 
+
+        if (isRestricted) {
+            // APLICACIÓN DE MODO CLASIFICADO (CENSURA)
+            document.getElementById("p_unidad").innerText = "█████████";
+            document.getElementById("p_unidad").classList.add("censurado-bar");
+            
+            document.getElementById("p_creacion").innerText = "██/██/████";
+            document.getElementById("p_creacion").classList.add("censurado-bar");
+            
+            document.getElementById("p_id").innerText = "CHL-██████-███";
+            document.getElementById("p_id").classList.add("censurado-bar");
+            
+            document.getElementById("p_mision").innerText = "[ INFO. CLASIFICADA ]";
+            document.getElementById("p_mision").style.color = "var(--danger-red)";
+            document.getElementById("p_mision").classList.add("censurado-bar");
+
+            document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`;
+            
+            document.getElementById("p_foto").classList.add("censurado-blur");
+            
+            // Añadir el sello rojo atravesado en la foto
+            document.getElementById("p_foto").parentElement.insertAdjacentHTML('beforeend', '<div id="sello_clasificado" class="sello-clasificado">ACCESO RESTRINGIDO</div>');
+        } else {
+            // APLICACIÓN NORMAL (SIN CENSURA)
+            document.getElementById("p_unidad").innerText = unidad;
+            document.getElementById("p_creacion").innerText = fCreacion;
+            document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
+            
+            let misionTexto = "DISPONIBLE EN BASE"; let mColor = "var(--theme-color)";
+            if (objMisionRaw !== 'null' && objMisionRaw !== 'undefined') { 
+                try { 
+                    const m = JSON.parse(decodeURIComponent(objMisionRaw)); 
+                    misionTexto = `[EN OPERACIÓN: ${m.tipo.toUpperCase()}] ${m.detalle}`; mColor = "var(--alert-amber)";
+                } catch(e) {} 
+            }
+            document.getElementById("p_mision").innerText = misionTexto;
+            document.getElementById("p_mision").style.color = mColor;
+
+            let claseColor = "esp-default";
+            let icono = "🎖️";
+            if(especialidad === "Piloto") { claseColor = "esp-piloto"; icono = "✈️"; }
+            else if(especialidad === "Francotirador") { claseColor = "esp-francotirador"; icono = "🎯"; }
+            else if(especialidad === "Artillería de apoyo") { claseColor = "esp-artilleria"; icono = "💥"; }
+            else if(especialidad === "Infantería") { claseColor = "esp-infanteria"; icono = "🪖"; }
+            else if(especialidad === "Fuerzas especiales") { claseColor = "esp-fuerzas"; icono = "⚡"; }
+
+            document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
         }
-        document.getElementById("p_mision").innerText = misionTexto;
-        document.getElementById("p_mision").style.color = mColor;
-
-        // SISTEMA VISUAL DE ESPECIALIDADES
-        const contenedorEsp = document.getElementById("p_especialidades");
-        let claseColor = "esp-default";
-        let icono = "🎖️";
-
-        if(especialidad === "Piloto") { claseColor = "esp-piloto"; icono = "✈️"; }
-        else if(especialidad === "Francotirador") { claseColor = "esp-francotirador"; icono = "🎯"; }
-        else if(especialidad === "Artillería de apoyo") { claseColor = "esp-artilleria"; icono = "💥"; }
-        else if(especialidad === "Infantería") { claseColor = "esp-infanteria"; icono = "🪖"; }
-        else if(especialidad === "Fuerzas especiales") { claseColor = "esp-fuerzas"; icono = "⚡"; }
-
-        contenedorEsp.innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
 
         document.getElementById("perfilModal").style.display = "flex";
     };
@@ -888,7 +925,6 @@
     window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
     window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
     
-    // SISTEMA DE BLOQUEO POR RANGO EN SERVIDOR (CON ESPECIALIDAD AÑADIDA)
     window.procesarCambiosAdmin = async () => { 
         window.playClick(); 
         const email = document.getElementById("targetSoldier").value; 
@@ -910,7 +946,7 @@
             rango: rango, 
             division: division, 
             aeronave: avion === "SIN ASIGNAR" ? null : avion,
-            especialidad: especialidad // NUEVO
+            especialidad: especialidad
         }); 
         
         registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango}, división ${division}, especialidad ${especialidad}.`); 

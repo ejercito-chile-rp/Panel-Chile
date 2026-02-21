@@ -499,7 +499,6 @@
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-    // FLOTA AÉREA ACTUALIZADA
     const FLOTA_AEREA = [
         { id: "F-22 Raptor", cant: 5, img: "f22.jpg" },
         { id: "F-16 Falcon", cant: 1, img: "f16.jpg" },
@@ -509,7 +508,6 @@
         { id: "AH-1 Cobra", cant: 1, img: "ah1.jpg" }
     ];
 
-    // FLOTA TERRESTRE ACTUALIZADA CON IMÁGENES LOCALES Y VEHÍCULOS SOLICITADOS
     const FLOTA_TERRESTRE = [
         { id: "Carros Ligeros Blindados", cant: 2, img: "carros.jpg" },
         { id: "Leopard 2A4", cant: 2, img: "tanque.jpeg" },
@@ -641,90 +639,118 @@
     async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); } catch(e) {} }
     async function cargarLogsBase() { const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100)); const snap = await getDocs(q); window.cachedLogs = []; snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); }); }
 
+    // ====== MEJORA: FUNCIÓN A PRUEBA DE ERRORES ======
     async function cargarDatos() {
-        const snap = await getDocs(collection(db, "usuarios"));
-        const lPer = document.getElementById("listaSoldados"); const lLic = document.getElementById("listaUsuariosLicencias");
-        const lCom = document.getElementById("listaComandante"); const lIns = document.getElementById("listaInstructor"); const lCad = document.getElementById("listaCadete");
-        const lMis = document.getElementById("listaMisiones");
-        const selS = document.getElementById("targetSoldier"); const selMis = document.getElementById("targetSoldadoMision"); 
-        const selLic = document.getElementById("targetSoldadoLicencia"); const selSanc = document.getElementById("targetSoldadoSancion");
-        const selR = document.getElementById("targetRank");
+        try {
+            const snap = await getDocs(collection(db, "usuarios"));
+            const lPer = document.getElementById("listaSoldados"); const lLic = document.getElementById("listaUsuariosLicencias");
+            const lCom = document.getElementById("listaComandante"); const lIns = document.getElementById("listaInstructor"); const lCad = document.getElementById("listaCadete");
+            const lMis = document.getElementById("listaMisiones");
+            const selS = document.getElementById("targetSoldier"); const selMis = document.getElementById("targetSoldadoMision"); 
+            const selLic = document.getElementById("targetSoldadoLicencia"); const selSanc = document.getElementById("targetSoldadoSancion");
+            const selR = document.getElementById("targetRank");
 
-        lPer.innerHTML = ""; lLic.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = ""; lMis.innerHTML = "";
-        selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
-        selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selSanc.innerHTML = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
-        selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
-        
-        windowUsersData = {};
-        let totalSoldadosCount = 0; let totalOficialesCount = 0; let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
-
-        snap.forEach(docSnap => {
-            const d = docSnap.data(); const email = docSnap.id;
-            windowUsersData[email] = d;
+            lPer.innerHTML = ""; lLic.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = ""; lMis.innerHTML = "";
+            selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
+            selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selSanc.innerHTML = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
             
-            totalSoldadosCount++;
-            if (OFICIALES.includes(d.rango)) totalOficialesCount++;
+            // --- NUEVO: SISTEMA DE BLOQUEO POR RANGO (Visual) ---
+            const myRankIndex = RANGOS.indexOf(window.currentUserRank);
+            let allowedRanks = RANGOS;
             
-            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`; selMis.innerHTML += `<option value="${email}">${d.nombre}</option>`; 
-            selLic.innerHTML += `<option value="${email}">${d.nombre}</option>`; selSanc.innerHTML += `<option value="${email}">${d.nombre}</option>`;
-
-            let divColor = "var(--theme-color)"; const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
-            if (divUpper === "FACH") divColor = "white"; else if (divUpper === "BOE") divColor = "var(--danger-red)"; else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
-
-            let iconEstado = d.estado === "Online" ? "🟢" : (d.estado === "En misión" ? "🟡" : "🔴");
-            const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:11px; color:var(--danger-red); margin-top:5px; font-weight:bold; background:rgba(255,59,59,0.1); padding:2px 6px; border-radius:3px; display:inline-block;">⚠️ ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
-            const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
-            const fCrea = d.fechaCreacion || "01/01/2026";
-            const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
-
-            lPer.innerHTML += `
-                <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${d.nombre}', '${d.rango}', '${d.division}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}')" 
-                     style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
-                    <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 8px; border: 2px solid var(--theme-color); box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
-                    <div>
-                        <div style="font-weight:bold; color:white; font-size:18px; letter-spacing:1px;">${iconEstado} ${d.nombre.toUpperCase()}</div>
-                        <div style="font-size:12px; color:${divColor}; margin-top:3px; letter-spacing:1px; font-family:'Share Tech Mono';">${d.rango.toUpperCase()} // ${divUpper}</div>
-                        ${alertaSancion}
-                    </div>
-                </div>`;
-
-            const lic = d.licencias || {};
-            const getLicBadge = (tipo, val) => {
-                if(!val || val === "Ninguna") return '';
-                const cssClass = val === 'Activa' ? 'lic-activa' : (val === 'Suspendida' ? 'lic-suspendida' : 'lic-revocada');
-                return `<span class="licencia-badge ${cssClass}">${tipo.toUpperCase()}: ${val.toUpperCase()}</span>`;
-            };
-            const licHTML = (lic.piloto || lic.comando || lic.armamento) ? (getLicBadge("Piloto", lic.piloto) + getLicBadge("Comando", lic.comando) + getLicBadge("Armamento", lic.armamento)) : `<span class="licencia-badge lic-ninguna">SIN LICENCIAS ASIGNADAS</span>`;
-
-            lLic.innerHTML += `
-                <div class="glass-panel slide-up" style="padding: 20px;">
-                    <div style="margin-bottom:15px; border-bottom:1px solid var(--glass-border); padding-bottom:10px;"><strong style="color:white; font-size:18px; letter-spacing:1px;">${d.nombre}</strong> <span style="font-size:11px; color:var(--theme-color); font-family:'Share Tech Mono';">[${d.rango}]</span></div>
-                    <div>${licHTML}</div>
-                </div>`;
-
-            if (d.division === "FACH") {
-                let cat = (d.rango.includes("General") || d.rango === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango) ? "instructor" : "cadete");
-                const item = document.createElement('div'); item.className = "pilot-card-mini slide-up glass-panel";
-                item.style.border = "1px solid var(--glass-border)";
-                item.onclick = () => { document.getElementById("vPilot").innerText = d.nombre; document.getElementById("vUnit").innerText = aeronaveSafe; window.playClick(); };
-                item.innerHTML = `<div class="icon-box" style="border-radius:6px; font-size:24px; background:rgba(0,0,0,0.5);">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
-                                  <div><div style="color:var(--admin-blue); font-size:11px; font-weight:bold; font-family:'Share Tech Mono'; letter-spacing:1px;">[${aeronaveSafe}]</div><div style="font-size:14px; color:white; font-weight:bold;">${d.nombre}</div></div>`;
-                if (cat === "comandante") lCom.appendChild(item); else if (cat === "instructor") lIns.appendChild(item); else lCad.appendChild(item);
+            // Si no es General en Jefe, solo mostramos los rangos menores al suyo
+            if (window.currentUserRank !== "General en Jefe" && myRankIndex > 0) {
+                allowedRanks = RANGOS.slice(0, myRankIndex);
+            } else if (myRankIndex === 0 && window.currentUserRank !== "General en Jefe") {
+                allowedRanks = [RANGOS[0]]; // fallback si por error un cabo abre esto
             }
+            selR.innerHTML = allowedRanks.map(r => `<option value="${r}">${r}</option>`).join("");
+            
+            windowUsersData = {};
+            let totalSoldadosCount = 0; let totalOficialesCount = 0; let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
 
-            if(d.misionActiva) {
-                let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--theme-color)");
-                lMis.innerHTML += `
-                    <div class="glass-panel slide-up" style="border-left: 4px solid ${mColor}; padding: 25px;">
-                        <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px;"><strong style="color: ${mColor}; font-size:22px; letter-spacing:1px;">OP: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 11px; color: white; background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px;">ASIGNADO: ${d.nombre}</span></div>
-                        <div style="color: #ddd; margin-top: 15px; font-size: 15px; line-height:1.6;">> OBJETIVO TÁCTICO:<br><span style="color:white; font-weight:bold;">${d.misionActiva.detalle}</span></div>
-                    </div>`;
-            }
-        });
-        
-        document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
-        document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
-        document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
+            snap.forEach(docSnap => {
+                try {
+                    const d = docSnap.data(); const email = docSnap.id;
+                    windowUsersData[email] = d;
+                    
+                    // --- NUEVO: Validaciones de seguridad por si hay datos vacíos en la base de datos ---
+                    const nombreSeguro = d.nombre ? d.nombre.toUpperCase() : "SOLDADO DESCONOCIDO";
+                    const rangoSeguro = d.rango ? d.rango : "Cabo 2°";
+                    const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
+                    const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
+                    const estadoSeguro = d.estado || "Offline";
+                    
+                    totalSoldadosCount++;
+                    if (OFICIALES.includes(rangoSeguro)) totalOficialesCount++;
+                    
+                    selS.innerHTML += `<option value="${email}">${nombreSeguro}</option>`; selMis.innerHTML += `<option value="${email}">${nombreSeguro}</option>`; 
+                    selLic.innerHTML += `<option value="${email}">${nombreSeguro}</option>`; selSanc.innerHTML += `<option value="${email}">${nombreSeguro}</option>`;
+
+                    let divColor = "var(--theme-color)"; 
+                    if (divUpper === "FACH") divColor = "white"; 
+                    else if (divUpper === "BOE") divColor = "var(--danger-red)"; 
+                    else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
+
+                    let iconEstado = estadoSeguro === "Online" ? "🟢" : (estadoSeguro === "En misión" ? "🟡" : "🔴");
+                    const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:11px; color:var(--danger-red); margin-top:5px; font-weight:bold; background:rgba(255,59,59,0.1); padding:2px 6px; border-radius:3px; display:inline-block;">⚠️ ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
+                    const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
+                    const fCrea = d.fechaCreacion || "01/01/2026";
+
+                    lPer.innerHTML += `
+                        <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}')" 
+                             style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
+                            <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 8px; border: 2px solid var(--theme-color); box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
+                            <div>
+                                <div style="font-weight:bold; color:white; font-size:18px; letter-spacing:1px;">${iconEstado} ${nombreSeguro}</div>
+                                <div style="font-size:12px; color:${divColor}; margin-top:3px; letter-spacing:1px; font-family:'Share Tech Mono';">${rangoSeguro.toUpperCase()} // ${divUpper}</div>
+                                ${alertaSancion}
+                            </div>
+                        </div>`;
+
+                    const lic = d.licencias || {};
+                    const getLicBadge = (tipo, val) => {
+                        if(!val || val === "Ninguna") return '';
+                        const cssClass = val === 'Activa' ? 'lic-activa' : (val === 'Suspendida' ? 'lic-suspendida' : 'lic-revocada');
+                        return `<span class="licencia-badge ${cssClass}">${tipo.toUpperCase()}: ${val.toUpperCase()}</span>`;
+                    };
+                    const licHTML = (lic.piloto || lic.comando || lic.armamento) ? (getLicBadge("Piloto", lic.piloto) + getLicBadge("Comando", lic.comando) + getLicBadge("Armamento", lic.armamento)) : `<span class="licencia-badge lic-ninguna">SIN LICENCIAS ASIGNADAS</span>`;
+
+                    lLic.innerHTML += `
+                        <div class="glass-panel slide-up" style="padding: 20px;">
+                            <div style="margin-bottom:15px; border-bottom:1px solid var(--glass-border); padding-bottom:10px;"><strong style="color:white; font-size:18px; letter-spacing:1px;">${nombreSeguro}</strong> <span style="font-size:11px; color:var(--theme-color); font-family:'Share Tech Mono';">[${rangoSeguro}]</span></div>
+                            <div>${licHTML}</div>
+                        </div>`;
+
+                    if (divUpper === "FACH") {
+                        let cat = (rangoSeguro.includes("General") || rangoSeguro === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(rangoSeguro) ? "instructor" : "cadete");
+                        const item = document.createElement('div'); item.className = "pilot-card-mini slide-up glass-panel";
+                        item.style.border = "1px solid var(--glass-border)";
+                        item.onclick = () => { document.getElementById("vPilot").innerText = nombreSeguro; document.getElementById("vUnit").innerText = aeronaveSafe; window.playClick(); };
+                        item.innerHTML = `<div class="icon-box" style="border-radius:6px; font-size:24px; background:rgba(0,0,0,0.5);">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
+                                          <div><div style="color:var(--admin-blue); font-size:11px; font-weight:bold; font-family:'Share Tech Mono'; letter-spacing:1px;">[${aeronaveSafe}]</div><div style="font-size:14px; color:white; font-weight:bold;">${nombreSeguro}</div></div>`;
+                        if (cat === "comandante") lCom.appendChild(item); else if (cat === "instructor") lIns.appendChild(item); else lCad.appendChild(item);
+                    }
+
+                    if(d.misionActiva && d.misionActiva.tipo) {
+                        let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--theme-color)");
+                        lMis.innerHTML += `
+                            <div class="glass-panel slide-up" style="border-left: 4px solid ${mColor}; padding: 25px;">
+                                <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px;"><strong style="color: ${mColor}; font-size:22px; letter-spacing:1px;">OP: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 11px; color: white; background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px;">ASIGNADO: ${nombreSeguro}</span></div>
+                                <div style="color: #ddd; margin-top: 15px; font-size: 15px; line-height:1.6;">> OBJETIVO TÁCTICO:<br><span style="color:white; font-weight:bold;">${d.misionActiva.detalle || 'Sin detalles'}</span></div>
+                            </div>`;
+                    }
+                } catch (errLoop) {
+                    console.error("Error aislando perfil roto:", errLoop);
+                }
+            });
+            
+            document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
+            document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
+            document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
+        } catch(errorGlobal) {
+            console.error("Error global cargando DB:", errorGlobal);
+        }
     }
 
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw) => {
@@ -845,6 +871,7 @@
     window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
     window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
     
+    // ====== MEJORA: SISTEMA DE BLOQUEO POR RANGO EN SERVIDOR ======
     window.procesarCambiosAdmin = async () => { 
         window.playClick(); 
         const email = document.getElementById("targetSoldier").value; 
@@ -853,6 +880,14 @@
         const avion = document.getElementById("targetAeronave").value; 
         
         if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
+        
+        // Bloqueo estricto por si logran saltar el bloqueo visual
+        const myRankIndex = RANGOS.indexOf(window.currentUserRank);
+        const targetRankIndex = RANGOS.indexOf(rango);
+
+        if (window.currentUserRank !== "General en Jefe" && targetRankIndex >= myRankIndex) {
+            return window.showToast(`BLOQUEO: Tu rango (${window.currentUserRank}) solo permite ascender hasta ${RANGOS[myRankIndex - 1] || 'ningún rango'}.`, "error");
+        }
         
         await updateDoc(doc(db, "usuarios", email), { 
             rango: rango, 

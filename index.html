@@ -8,8 +8,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
         :root { 
-            --tactical-green: #4df24d; 
-            --dim-green: rgba(77, 242, 77, 0.15);
+            /* COLORES BASE DINÁMICOS (Cambian con el DEFCON) */
+            --theme-color: #4df24d; 
+            --theme-dim: rgba(77, 242, 77, 0.15);
+            
+            /* COLORES FIJOS */
             --army-dark: #020602;
             --alert-amber: #ffb400;
             --danger-red: #ff3b3b;
@@ -17,116 +20,135 @@
             --maint-gray: #888888;
         }
 
+        /* NIVELES DEFCON (Controlan el color de toda la UI) */
+        body.defcon-5 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } /* Verde - Normal */
+        body.defcon-4 { --theme-color: #4db8f2; --theme-dim: rgba(77, 184, 242, 0.15); } /* Azul - Precaución */
+        body.defcon-3 { --theme-color: #f2e24d; --theme-dim: rgba(242, 226, 77, 0.15); } /* Amarillo - Alerta Media */
+        body.defcon-2 { --theme-color: #f28a4d; --theme-dim: rgba(242, 138, 77, 0.15); } /* Naranja - Alerta Alta */
+        body.defcon-1 { --theme-color: #ff3b3b; --theme-dim: rgba(255, 59, 59, 0.15); animation: red-pulse 1.5s infinite; } /* Rojo - Combate Inminente */
+
         body {
-            background: var(--army-dark); color: var(--tactical-green);
+            background: var(--army-dark); color: var(--theme-color);
             font-family: 'Share Tech Mono', monospace;
             margin: 0; display: flex; height: 100vh; overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
         }
 
-        body.red-alert-active { animation: red-pulse 1.5s infinite; }
         @keyframes red-pulse {
-            0% { box-shadow: inset 0 0 0px var(--danger-red); background: #020602; }
-            50% { box-shadow: inset 0 0 150px var(--danger-red); background: #2a0000; }
-            100% { box-shadow: inset 0 0 0px var(--danger-red); background: #020602; }
+            0% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; }
+            50% { box-shadow: inset 0 0 150px var(--theme-color); background: #2a0000; }
+            100% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; }
         }
 
         /* SIDEBAR */
-        .sidebar { width: 260px; background: rgba(5, 10, 5, 0.9); border-right: 1px solid var(--dim-green); display: flex; flex-direction: column; padding: 20px 0; z-index: 10; overflow-y: auto; }
+        .sidebar { width: 260px; background: rgba(5, 10, 5, 0.9); border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; padding: 20px 0; z-index: 10; transition: border-color 0.5s; }
         .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
-        .menu-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; border-left: 3px solid transparent; color: var(--tactical-green); }
-        .menu-item:hover { background: var(--dim-green); border-left-color: var(--tactical-green); }
-        .menu-item.active { background: rgba(0, 242, 255, 0.1); border-left-color: var(--admin-blue); color: #fff; }
-        .btn-alert { color: var(--danger-red); border-left-color: transparent; font-weight: bold; }
-        .btn-alert:hover { background: rgba(255, 59, 59, 0.2); border-left-color: var(--danger-red); }
+        .menu-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; border-left: 3px solid transparent; color: var(--theme-color); }
+        .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); }
+        .menu-item.active { background: var(--theme-dim); border-left-color: var(--theme-color); color: #fff; }
+        .btn-alert { color: var(--theme-color); border-left-color: transparent; font-weight: bold; background: rgba(0,0,0,0.3); border-top: 1px dashed var(--theme-dim); border-bottom: 1px dashed var(--theme-dim); margin-top: 10px;}
+        .btn-alert:hover { background: var(--theme-dim); border-left-color: var(--theme-color); }
         .menu-hidden { display: none !important; }
 
         /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); z-index: 5; position: relative;}
         
         /* SECCIONES OCULTAS */
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionVehiculos, #seccionEstadisticas, #seccionDefcon { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs { display: none; }
         
         /* FACH & PILOTS */
         .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
-        .pilot-container { border: 1px solid var(--dim-green); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; }
-        .sub-header { font-size: 11px; color: var(--alert-amber); padding: 10px 0; border-bottom: 1px solid var(--dim-green); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
-        .pilot-card-mini { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(77, 242, 77, 0.1); padding: 12px; margin-bottom: 10px; display: grid; grid-template-columns: 50px 1fr 40px; align-items: center; gap: 10px; transition: 0.3s; }
-        .pilot-card-mini:hover { background: var(--dim-green); border-color: var(--admin-blue); cursor: pointer; transform: translateX(5px); }
-        .icon-box { width: 45px; height: 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--admin-blue); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .pilot-container { border: 1px solid var(--theme-dim); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; transition: border-color 0.5s; }
+        .sub-header { font-size: 11px; color: var(--alert-amber); padding: 10px 0; border-bottom: 1px solid var(--theme-dim); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
+        .pilot-card-mini { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; margin-bottom: 10px; display: grid; grid-template-columns: 50px 1fr 40px; align-items: center; gap: 10px; transition: 0.3s; }
+        .pilot-card-mini:hover { background: var(--theme-dim); border-color: var(--theme-color); cursor: pointer; transform: translateX(5px); }
+        .icon-box { width: 45px; height: 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--theme-color); display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-        .mini-radar { width: 35px; height: 35px; border: 1px solid var(--tactical-green); border-radius: 50%; position: relative; opacity: 0.6; overflow: hidden; background: radial-gradient(circle, rgba(77,242,77,0.2) 0%, transparent 70%); }
-        .mini-radar::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px dashed var(--tactical-green); opacity: 0.3; }
-        .mini-radar::after { content: ''; position: absolute; width: 50%; height: 50%; background: linear-gradient(90deg, transparent, rgba(77,242,77,0.8)); top: 0; left: 50%; transform-origin: bottom left; animation: scan 2s linear infinite; }
+        .mini-radar { width: 35px; height: 35px; border: 1px solid var(--theme-color); border-radius: 50%; position: relative; opacity: 0.6; overflow: hidden; background: radial-gradient(circle, var(--theme-dim) 0%, transparent 70%); }
+        .mini-radar::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px dashed var(--theme-color); opacity: 0.3; }
+        .mini-radar::after { content: ''; position: absolute; width: 50%; height: 50%; background: linear-gradient(90deg, transparent, var(--theme-color)); top: 0; left: 50%; transform-origin: bottom left; animation: scan 2s linear infinite; }
         @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .flight-display { border: 1px solid var(--dim-green); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.5s ease; }
+        .flight-display { border: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.5s ease; }
         .main-icon-display { font-size: 130px; z-index: 2; transition: all 0.5s ease; }
 
         /* PANEL ADMIN */
         #adminTools { display: none; border: 1px solid var(--admin-blue); padding: 20px; margin-bottom: 30px; background: rgba(0, 242, 255, 0.05); }
-        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; }
+        .auth-input { background: #000; border: 1px solid var(--theme-color); color: var(--theme-color); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: border-color 0.5s, color 0.5s; }
         
         /* LOGIN Y TERMINAL */
         #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .terminal-text { border-right: 2px solid var(--tactical-green); white-space: nowrap; overflow: hidden; font-size: 14px; margin-bottom: 20px; animation: typing 2s steps(40, end), blink-caret .75s step-end infinite; }
+        .terminal-text { border-right: 2px solid var(--theme-color); white-space: nowrap; overflow: hidden; font-size: 14px; margin-bottom: 20px; animation: typing 2s steps(40, end), blink-caret .75s step-end infinite; }
         @keyframes typing { from { width: 0 } to { width: 280px } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--tactical-green); } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--theme-color); } }
 
         /* CARNET MILITAR (MODAL) */
         #carnetModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .carnet-body { width: 400px; background: #050a05; border: 2px solid var(--tactical-green); box-shadow: 0 0 20px rgba(77, 242, 77, 0.4); display: flex; flex-direction: column; }
-        .carnet-header { background: var(--tactical-green); color: black; padding: 10px; text-align: center; font-weight: bold; letter-spacing: 2px; }
+        .carnet-body { width: 400px; background: #050a05; border: 2px solid var(--theme-color); box-shadow: 0 0 20px var(--theme-dim); display: flex; flex-direction: column; transition: border-color 0.5s, box-shadow 0.5s; }
+        .carnet-header { background: var(--theme-color); color: black; padding: 10px; text-align: center; font-weight: bold; letter-spacing: 2px; transition: background 0.5s; }
         .carnet-content { padding: 20px; display: grid; grid-template-columns: 100px 1fr; gap: 20px; }
-        .carnet-photo { width: 100px; height: 120px; border: 1px solid var(--tactical-green); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; }
+        .carnet-photo { width: 100px; height: 120px; border: 1px solid var(--theme-color); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; }
         .carnet-data { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
         .carnet-data strong { color: white; }
-        .carnet-barcode { text-align: center; font-size: 30px; font-family: monospace; color: var(--tactical-green); margin-bottom: 10px; letter-spacing: 5px; }
+        .carnet-barcode { text-align: center; font-size: 30px; font-family: monospace; color: var(--theme-color); margin-bottom: 10px; letter-spacing: 5px; }
         .carnet-close { margin: 10px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 5px; cursor: pointer; text-align: center; }
         .carnet-close:hover { background: var(--danger-red); color: black; }
 
-        /* MISIONES, DOCUMENTOS, HANGAR Y LOGS */
+        /* REDISEÑO HANGAR (ESTILO VEHÍCULOS) */
+        .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .hangar-card-new { 
+            background: #020602; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            display: flex; flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .hangar-card-new:hover { box-shadow: 0 0 15px var(--theme-dim); transform: translateY(-2px); }
+        .hangar-img {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            border-bottom: 2px solid var(--theme-color); /* Línea verde (o del color del defcon) separadora */
+            transition: border-color 0.5s;
+        }
+        .hangar-info {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hangar-text-group { display: flex; flex-direction: column; }
+        .hangar-title {
+            color: #fff;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        .hangar-sub {
+            color: var(--theme-color);
+            font-size: 10px;
+            margin-top: 4px;
+            letter-spacing: 1px;
+            transition: color 0.5s;
+        }
+        .hangar-cant {
+            background: var(--admin-blue);
+            color: #000;
+            font-weight: bold;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+        }
+
+        /* OTRAS SECCIONES */
         .mission-card { border: 1px solid var(--alert-amber); background: rgba(255, 180, 0, 0.05); padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--alert-amber); }
-        .doc-card { border: 1px solid var(--dim-green); background: rgba(255,255,255,0.03); padding: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
-        
-        .hangar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .hangar-card { border: 1px solid; padding: 15px; background: rgba(0,0,0,0.6); text-align: center; transition: 0.3s; }
-        .status-Disponible { border-color: var(--tactical-green); color: var(--tactical-green); box-shadow: inset 0 0 15px rgba(77,242,77,0.1); }
-        .status-Mision { border-color: var(--alert-amber); color: var(--alert-amber); box-shadow: inset 0 0 15px rgba(255,180,0,0.1); }
-        .status-Dañado { border-color: var(--danger-red); color: var(--danger-red); box-shadow: inset 0 0 15px rgba(255,59,59,0.1); }
-        .status-Mantenimiento { border-color: var(--maint-gray); color: var(--maint-gray); box-shadow: inset 0 0 15px rgba(136,136,136,0.1); }
-
-        .log-entry { font-size: 12px; border-bottom: 1px solid var(--dim-green); padding: 8px 0; color: #aaa; }
+        .doc-card { border: 1px solid var(--theme-dim); background: rgba(255,255,255,0.03); padding: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .log-entry { font-size: 12px; border-bottom: 1px solid var(--theme-dim); padding: 8px 0; color: #aaa; }
         .log-entry strong { color: var(--admin-blue); }
-        .log-entry span.log-date { color: var(--tactical-green); margin-right: 10px; }
-
-        /* NUEVOS ESTILOS: VEHÍCULOS, DEFCON, ESTADÍSTICAS */
-        .vehiculo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .vehiculo-card { border: 1px solid var(--dim-green); background: #050a05; position: relative; overflow: hidden; transition: 0.3s; }
-        .vehiculo-card:hover { border-color: var(--admin-blue); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
-        .vehiculo-img { width: 100%; height: 180px; background-size: cover; background-position: center; border-bottom: 2px solid var(--tactical-green); transition: transform 0.5s; }
-        .vehiculo-card:hover .vehiculo-img { transform: scale(1.05); }
-        .vehiculo-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; background: linear-gradient(to top, rgba(0,10,0,1) 80%, rgba(0,10,0,0.5)); }
-        .v-badge { background: var(--admin-blue); color: black; padding: 5px 10px; font-weight: bold; border-radius: 3px; }
-
-        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
-        .stat-card { border: 1px solid var(--admin-blue); background: rgba(0, 242, 255, 0.05); padding: 30px 20px; text-align: center; border-radius: 5px; }
-        .stat-icon { font-size: 40px; margin-bottom: 10px; }
-        .stat-number { font-size: 50px; color: white; font-weight: bold; margin: 10px 0; text-shadow: 0 0 15px var(--admin-blue); letter-spacing: 2px; }
-
-        .defcon-container { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .defcon-btn { padding: 25px; font-size: 20px; font-weight: bold; border: 2px solid; background: rgba(0,0,0,0.8); cursor: pointer; transition: 0.3s; color: white; text-align: left; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-family: inherit; }
-        .defcon-btn span { font-size: 14px; opacity: 0.8; font-weight: normal; }
-        .defcon-5 { border-color: #007bff; color: #007bff; } .defcon-5:hover, .defcon-5.active { background: rgba(0, 123, 255, 0.2); box-shadow: inset 0 0 30px #007bff; color: white; }
-        .defcon-4 { border-color: #28a745; color: #28a745; } .defcon-4:hover, .defcon-4.active { background: rgba(40, 167, 69, 0.2); box-shadow: inset 0 0 30px #28a745; color: white; }
-        .defcon-3 { border-color: #ffc107; color: #ffc107; } .defcon-3:hover, .defcon-3.active { background: rgba(255, 193, 7, 0.2); box-shadow: inset 0 0 30px #ffc107; color: white; }
-        .defcon-2 { border-color: #fd7e14; color: #fd7e14; } .defcon-2:hover, .defcon-2.active { background: rgba(253, 126, 20, 0.2); box-shadow: inset 0 0 30px #fd7e14; color: white; }
-        .defcon-1 { border-color: #dc3545; color: #dc3545; } .defcon-1:hover, .defcon-1.active { background: rgba(220, 53, 69, 0.2); box-shadow: inset 0 0 30px #dc3545; color: white; animation: shake 0.5s infinite; }
-        
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        .log-entry span.log-date { color: var(--theme-color); margin-right: 10px; }
     </style>
 </head>
-<body>
+<body class="defcon-5">
 
     <audio id="sndHover" src="https://www.soundjay.com/buttons/sounds/button-28.mp3" preload="auto"></audio>
     <audio id="sndClick" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
@@ -135,12 +157,12 @@
 
     <div id="loginScreen">
         <div class="terminal-text">ESTABLECIENDO ENLACE SEGURO...</div>
-        <div style="width: 350px; border: 1px solid var(--tactical-green); padding: 40px; text-align: center; background: rgba(0,20,0,0.8);">
-            <h3 style="letter-spacing: 3px; margin-top: 0;">TERMINAL DE ACCESO</h3>
+        <div style="width: 350px; border: 1px solid var(--theme-color); padding: 40px; text-align: center; background: rgba(0,20,0,0.8);">
+            <h3 style="letter-spacing: 3px; margin-top: 0; color: var(--theme-color);">TERMINAL DE ACCESO</h3>
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Coat_of_arms_of_Chile.svg/100px-Coat_of_arms_of_Chile.svg.png" style="height: 60px; margin-bottom: 15px; filter: grayscale(1) sepia(1) hue-rotate(80deg) saturate(5);" alt="Escudo">
             <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL MILITAR">
             <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
-            <button onclick="login()" style="width: 100%; background: var(--dim-green); border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px; cursor: pointer; font-weight: bold; letter-spacing: 1px;">INICIAR ENLACE</button>
+            <button onclick="login()" style="width: 100%; background: var(--theme-dim); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 10px; cursor: pointer; font-weight: bold; letter-spacing: 1px; transition: all 0.3s;">INICIAR ENLACE</button>
         </div>
     </div>
 
@@ -154,7 +176,7 @@
                     <div><span style="color:#888;">RANGO:</span> <strong id="c_rango">---</strong></div>
                     <div><span style="color:#888;">DIVISIÓN:</span> <strong id="c_division">---</strong></div>
                     <div><span style="color:#888;">ID SECTOR:</span> <strong id="c_id">---</strong></div>
-                    <div style="margin-top: 5px; border-top: 1px dashed var(--dim-green); padding-top: 5px;">
+                    <div style="margin-top: 5px; border-top: 1px dashed var(--theme-dim); padding-top: 5px;">
                         <span style="color:#888;">OPERACIÓN:</span> <strong id="c_mision" style="color: var(--alert-amber);">NINGUNA</strong>
                     </div>
                 </div>
@@ -165,22 +187,19 @@
     </div>
 
     <div class="sidebar">
-        <div style="padding: 20px; border-bottom: 1px solid var(--dim-green); margin-bottom: 10px;">
+        <div style="padding: 20px; border-bottom: 1px solid var(--theme-dim); margin-bottom: 10px;">
             <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase;">...</div>
             <div id="userRank" style="font-size: 10px; color: var(--alert-amber); margin-bottom: 8px;">IDENTIFICANDO...</div>
-            <select id="myStatus" class="auth-input" style="padding: 5px; font-size: 10px; border-color: var(--dim-green);" onchange="updateMyStatus()">
+            <select id="myStatus" class="auth-input" style="padding: 5px; font-size: 10px; border-color: var(--theme-dim);" onchange="updateMyStatus()">
                 <option value="Offline">🔴 OFFLINE</option>
                 <option value="Online">🟢 ONLINE</option>
                 <option value="En misión">🟡 EN MISIÓN</option>
             </select>
         </div>
-
         <div class="menu-category">COMANDO CENTRAL</div>
         <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal RP</div>
-        <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
         <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Sección Fach</div>
         <div class="menu-item" id="btnHangar" onclick="switchTab('hangar')" onmouseenter="playHover()"><span>🛠️</span> Hangar Aéreo</div>
-        <div class="menu-item" id="btnVehiculos" onclick="switchTab('vehiculos')" onmouseenter="playHover()"><span>🚁</span> Vehículos Base</div>
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
         
         <div class="menu-category menu-hidden" id="menuOficialesTitle">OFICIALES</div>
@@ -189,8 +208,8 @@
         <div class="menu-category">SISTEMAS ESTRATÉGICOS</div>
         <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
-        <div class="menu-item" id="btnDefcon" onclick="switchTab('defcon')" onmouseenter="playHover()"><span style="color: var(--alert-amber);">☢️</span> Estado DEFCON</div>
-        <div class="menu-item btn-alert" onclick="toggleAlertaRoja()" onmouseenter="playHover()"><span>🚨</span> SIRENA EMERGENCIA</div>
+        
+        <div class="menu-item btn-alert" id="btnDefcon" onclick="cicloDefcon()" onmouseenter="playHover()"><span>🚨</span> ESTADO: DEFCON 5</div>
 
         <button onclick="logout()" style="margin: auto 20px 20px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 8px; cursor: pointer;">DESCONECTAR</button>
     </div>
@@ -199,17 +218,12 @@
         <div id="adminTools">
             <h3 style="color: var(--admin-blue); margin-top: 0; border-bottom: 1px solid; padding-bottom: 5px;">[ ACCESO CLASIFICADO - NIVEL GENERAL ]</h3>
             
-            <p style="color: var(--tactical-green); font-weight: bold; margin: 15px 0 10px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
+            <p style="color: var(--theme-color); font-weight: bold; margin: 15px 0 10px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
                 <select id="targetSoldier" class="auth-input"></select>
                 <select id="targetRank" class="auth-input"></select>
-                <select id="targetAeronave" class="auth-input">
-                    <option value="F-16">F-16 FALCON</option>
-                    <option value="F-22">F-22 RAPTOR</option>
-                    <option value="Black Hawk">BLACK HAWK</option>
-                    <option value="Chinook">CHINOOK</option>
-                    <option value="C-130 Hercules">C-130 HERCULES</option>
-                </select>
+                <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves">
+                    </select>
                 <button onclick="procesarCambiosAdmin()" style="background: var(--admin-blue); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">ACTUALIZAR</button>
             </div>
             
@@ -224,22 +238,7 @@
                     </select>
                     <input type="text" id="objMision" class="auth-input" placeholder="OBJETIVO (Ej: Patrullaje)">
                     <button onclick="asignarMision()" style="background: var(--alert-amber); color: black; border: none; padding: 0 15px; font-weight: bold; cursor: pointer;">DESPLEGAR</button>
-                    <button onclick="finalizarMision()" style="background: transparent; color: var(--tactical-green); border: 1px solid var(--tactical-green); padding: 0 15px; font-weight: bold; cursor: pointer;">FINALIZAR MISIÓN</button>
-                </div>
-            </div>
-
-            <div style="border-top: 1px dashed var(--danger-red); padding-top: 15px;">
-                <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 10px 0;">⚖️ SISTEMA DE SANCIONES DISCIPLINARIAS</p>
-                <div style="display: grid; grid-template-columns: 1fr 2fr 1fr auto; gap: 10px;">
-                    <select id="targetSancion" class="auth-input">
-                        <option value="Falta leve">Falta leve</option>
-                        <option value="Falta grave">Falta grave</option>
-                        <option value="Suspensión">Suspensión</option>
-                        <option value="Expulsión">Expulsión</option>
-                    </select>
-                    <input type="text" id="motivoSancion" class="auth-input" placeholder="MOTIVO DE INFRACCIÓN">
-                    <input type="text" id="duracionSancion" class="auth-input" placeholder="DURACIÓN (Ej: 2 días)">
-                    <button onclick="aplicarSancion()" style="background: var(--danger-red); color: white; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">SANCIONAR</button>
+                    <button onclick="finalizarMision()" style="background: transparent; color: var(--theme-color); border: 1px solid var(--theme-color); padding: 0 15px; font-weight: bold; cursor: pointer;">FINALIZAR</button>
                 </div>
             </div>
         </div>
@@ -249,40 +248,14 @@
             <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
         </div>
 
-        <div id="seccionEstadisticas">
-            <h2 style="margin-top: 0;">ESTADÍSTICAS MILITARES GENERALES</h2>
-            <div class="stat-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">🪖</div>
-                    <div style="color: var(--tactical-green);">TOTAL SOLDADOS</div>
-                    <div class="stat-number" id="statSoldados">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⭐</div>
-                    <div style="color: var(--alert-amber);">TOTAL OFICIALES</div>
-                    <div class="stat-number" id="statOficiales">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">✈️</div>
-                    <div style="color: var(--admin-blue);">TOTAL AERONAVES</div>
-                    <div class="stat-number" id="statAeronaves">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🚁</div>
-                    <div style="color: var(--maint-gray);">VEHÍCULOS TERRESTRES</div>
-                    <div class="stat-number" id="statVehiculos">20</div>
-                </div>
-            </div>
-        </div>
-
         <div id="seccionFach">
             <h2 style="margin-top: 0;">SISTEMA AERONÁUTICO - FACH</h2>
             <div class="fach-layout">
                 <div class="pilot-container">
                     <div class="sub-header">▶ CONTACTOS ID // ACTIVOS</div>
-                    <div style="font-size: 9px; color: #555; margin-bottom: 10px;">— PILOTO COMANDANTE —</div><div id="listaComandante"></div>
-                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— PILOTO INSTRUCTOR —</div><div id="listaInstructor"></div>
-                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— CADETE —</div><div id="listaCadete"></div>
+                    <div style="font-size: 9px; color: #888; margin-bottom: 10px;">— PILOTO COMANDANTE —</div><div id="listaComandante"></div>
+                    <div style="font-size: 9px; color: #888; margin: 20px 0 10px;">— PILOTO INSTRUCTOR —</div><div id="listaInstructor"></div>
+                    <div style="font-size: 9px; color: #888; margin: 20px 0 10px;">— CADETE —</div><div id="listaCadete"></div>
                 </div>
                 <div class="flight-display" id="mainDisplayFach">
                     <div class="main-icon-display" id="vIcon">📡</div>
@@ -295,8 +268,10 @@
         </div>
 
         <div id="seccionHangar">
-            <h2 style="margin-top: 0;">ESTADO DE FLOTA Y HANGAR</h2>
-            <div id="listaHangar" class="hangar-grid"></div>
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA AERONÁUTICO</h2>
+            <p style="font-size: 11px; margin-top: -5px; margin-bottom: 20px; color: #888;">> MONITOREO DE ACTIVOS TÁCTICOS Y TRANSPORTE AÉREO</p>
+            <div id="listaHangar" class="hangar-grid-new">
+                </div>
         </div>
 
         <div id="seccionMisiones">
@@ -318,36 +293,8 @@
 
         <div id="seccionLogs">
             <h2 style="margin-top: 0;">REGISTROS DEL SISTEMA (LOGS)</h2>
-            <div style="background: #000; border: 1px solid var(--dim-green); padding: 15px; height: 60vh; overflow-y: auto;" id="listaLogsContainer">
-            </div>
-        </div>
-
-        <div id="seccionVehiculos">
-            <h2 style="margin-top: 0;">SISTEMA DE VEHÍCULOS TERRESTRES</h2>
-            <p style="color: var(--maint-gray); font-size: 14px;">> MONITOREO DE ACTIVOS TÁCTICOS BLINDADOS Y TRANSPORTE</p>
-            <div id="listaVehiculos" class="vehiculo-grid"></div>
-        </div>
-
-        <div id="seccionDefcon">
-            <h2 style="margin-top: 0;">CONTROL DE NIVEL DE ALERTA (DEFCON)</h2>
-            <p style="color: var(--alert-amber); font-size: 14px;">> ADVERTENCIA: LOS CAMBIOS DE ESTADO SON REGISTRADOS EN EL LOG CENTRAL.</p>
-            <div class="defcon-container">
-                <button class="defcon-btn defcon-5 active" id="btnDefcon5" onclick="setDefcon(5)">
-                    DEFCON 5 <span>[ PREPARACIÓN NORMAL ] FADE OUT</span>
-                </button>
-                <button class="defcon-btn defcon-4" id="btnDefcon4" onclick="setDefcon(4)">
-                    DEFCON 4 <span>[ MEDIDAS DE INTELIGENCIA ] DOUBLE TAKE</span>
-                </button>
-                <button class="defcon-btn defcon-3" id="btnDefcon3" onclick="setDefcon(3)">
-                    DEFCON 3 <span>[ ALERTA INCREMENTADA ] ROUND HOUSE</span>
-                </button>
-                <button class="defcon-btn defcon-2" id="btnDefcon2" onclick="setDefcon(2)">
-                    DEFCON 2 <span>[ DESPLIEGUE INMINENTE ] FAST PACE</span>
-                </button>
-                <button class="defcon-btn defcon-1" id="btnDefcon1" onclick="setDefcon(1)">
-                    DEFCON 1 <span>[ GUERRA INMINENTE / ALERTA ROJA ] COCKED PISTOL</span>
-                </button>
-            </div>
+            <div style="background: #000; border: 1px solid var(--theme-dim); padding: 15px; height: 60vh; overflow-y: auto;" id="listaLogsContainer">
+                </div>
         </div>
 
     </div>
@@ -373,18 +320,15 @@
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-    // FLOTA POR DEFECTO PARA EL HANGAR
-    const AERONAVES_BASE = ["F-16", "F-22", "Black Hawk", "Chinook", "C-130 Hercules"];
-
-    // DATA DE VEHICULOS TERRESTRES
-    const VEHICULOS_BASE = [
-        { nombre: "Carros Ligeros Blindados", cantidad: 2, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/MOWAG_Piranha_IIIC.jpg/800px-MOWAG_Piranha_IIIC.jpg" },
-        { nombre: "Tanques Pesados (Leopard)", cantidad: 2, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Leopard_2_A4_M_of_the_Chilean_Army.jpg/800px-Leopard_2_A4_M_of_the_Chilean_Army.jpg" },
-        { nombre: "Tanquetas Blindadas (M113)", cantidad: 2, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/M113_APC_in_the_field.jpg/800px-M113_APC_in_the_field.jpg" },
-        { nombre: "Blindados de Transporte", cantidad: 2, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Stryker_ICV_in_Iraq.jpg/800px-Stryker_ICV_in_Iraq.jpg" },
-        { nombre: "Vehículo de Recon. Toyota", cantidad: 4, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Toyota_Hilux_military_technical.jpg/800px-Toyota_Hilux_military_technical.jpg" },
-        { nombre: "Humvee Táctico", cantidad: 7, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/M1114_Up-Armored_Humvee.jpg/800px-M1114_Up-Armored_Humvee.jpg" },
-        { nombre: "Lanza Misiles (MLRS)", cantidad: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/HIMARS_firing.jpg/800px-HIMARS_firing.jpg" }
+    // NUEVO FORMATO DE FLOTA AÉREA (Imágenes Reales y Cantidades solicitadas)
+    const FLOTA_AEREA = [
+        { id: "F-22 Raptor", nombre: "F-22 RAPTOR", cant: 5, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/F-22_Raptor_edit1_%28cropped%29.jpg/640px-F-22_Raptor_edit1_%28cropped%29.jpg" },
+        { id: "F-16 Falcon", nombre: "F-16 FALCON", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/640px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg" },
+        { id: "Avion Justiciero", nombre: "AVIÓN JUSTICIERO", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/AC-130U_Spooky_gunship_in_flight.jpg/640px-AC-130U_Spooky_gunship_in_flight.jpg" },
+        { id: "C-130 Hercules", nombre: "C-130 HÉRCULES", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/C-130_Hercules_in_flight.jpg/640px-C-130_Hercules_in_flight.jpg" },
+        { id: "UH-60 Black Hawk", nombre: "UH-60 BLACK HAWK", cant: 3, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/UH-60_Black_Hawk_helicopter.jpg/640px-UH-60_Black_Hawk_helicopter.jpg" },
+        { id: "CH-47 Chinook", nombre: "CH-47 CHINOOK", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Boeing_CH-47_Chinook_in_flight.jpg/640px-Boeing_CH-47_Chinook_in_flight.jpg" },
+        { id: "AH-1 Cobra", nombre: "AH-1 COBRA", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/AH-1_Cobra_in_flight.jpg/640px-AH-1_Cobra_in_flight.jpg" }
     ];
 
     window.currentUserEmail = null;
@@ -399,32 +343,34 @@
     window.playHover = () => { sndHover.currentTime = 0; sndHover.play().catch(()=>{}); };
     window.playClick = () => { sndClick.currentTime = 0; sndClick.play().catch(()=>{}); };
 
-    // ALERTA
-    let alertActive = false;
-    window.toggleAlertaRoja = () => {
-        alertActive = !alertActive; window.playClick();
-        if(alertActive) { document.body.classList.add('red-alert-active'); sndAlert.play(); registrarLog("ALERTA EMERGENCIA", "Activó la sirena de emergencia base."); } 
-        else { document.body.classList.remove('red-alert-active'); sndAlert.pause(); sndAlert.currentTime = 0; registrarLog("ALERTA EMERGENCIA", "Desactivó la sirena de emergencia base.");}
-    };
-
-    // CONTROL DEFCON
-    window.setDefcon = (level) => {
+    // CICLO DEFCON
+    let currentDefcon = 5;
+    window.cicloDefcon = () => {
         window.playClick();
-        document.querySelectorAll('.defcon-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btnDefcon' + level).classList.add('active');
+        currentDefcon--;
+        if (currentDefcon < 1) currentDefcon = 5;
         
-        if (level === 1) {
-            if(!alertActive) toggleAlertaRoja();
+        // Quitar clases anteriores del body y aplicar la nueva
+        document.body.className = document.body.className.replace(/defcon-\d/g, '').trim();
+        document.body.classList.add(`defcon-${currentDefcon}`);
+        
+        const btn = document.getElementById('btnDefcon');
+        btn.innerHTML = `<span>🚨</span> ESTADO: DEFCON ${currentDefcon}`;
+        
+        if (currentDefcon === 1) {
+            sndAlert.play();
+            registrarLog("ALERTA DEFCON", "Nivel máximo activado (DEFCON 1).");
         } else {
-            if(alertActive) toggleAlertaRoja(); 
+            sndAlert.pause();
+            sndAlert.currentTime = 0;
+            registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`);
         }
-        registrarLog("ESTADO DEFCON", `Nivel de alerta global cambiado a DEFCON ${level}`);
     };
 
     // TABS
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionVehiculos", "seccionEstadisticas", "seccionDefcon"].forEach(id => document.getElementById(id).style.display = 'none');
+        ["seccionPersonal", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs"].forEach(id => document.getElementById(id).style.display = 'none');
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
         
         let targetId = "seccionPersonal"; let btnId = "btnPersonal";
@@ -433,9 +379,6 @@
         if(tab === 'hangar') { targetId = 'seccionHangar'; btnId = 'btnHangar'; }
         if(tab === 'documentos') { targetId = 'seccionDocumentos'; btnId = 'btnDocumentos'; }
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
-        if(tab === 'vehiculos') { targetId = 'seccionVehiculos'; btnId = 'btnVehiculos'; cargarVehiculos(); }
-        if(tab === 'estadisticas') { targetId = 'seccionEstadisticas'; btnId = 'btnEstadisticas'; }
-        if(tab === 'defcon') { targetId = 'seccionDefcon'; btnId = 'btnDefcon'; }
         
         document.getElementById(targetId).style.display = 'block';
         document.getElementById(btnId).classList.add('active');
@@ -458,7 +401,10 @@
                 document.getElementById("userRank").innerText = window.currentUserRank;
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 
-                // Mostrar UI según permisos
+                // Rellenar Lista de naves para Admin
+                const selectNavesAdmin = document.getElementById("targetAeronave");
+                selectNavesAdmin.innerHTML = FLOTA_AEREA.map(n => `<option value="${n.id}">${n.nombre}</option>`).join("");
+
                 if (window.isAdmin) {
                     document.getElementById("adminTools").style.display = "block";
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
@@ -476,30 +422,25 @@
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
 
-    // ... (El resto del código JS se mantiene EXACTAMENTE igual en cuanto a base de datos, logic status, admin, misiones, etc.)
-    window.updateMyStatus = async () => { /* original code */ };
-    async function registrarLog(accion, detalle) { /* original code */ }
+    window.updateMyStatus = async () => {
+        if(!window.currentUserEmail) return;
+        const newStatus = document.getElementById("myStatus").value;
+        await updateDoc(doc(db, "usuarios", window.currentUserEmail), { estado: newStatus });
+        cargarDatos();
+    };
 
-    // RENDERIZAR VEHICULOS (NUEVA FUNCIÓN)
-    function cargarVehiculos() {
-        const vContainer = document.getElementById("listaVehiculos");
-        vContainer.innerHTML = "";
-        VEHICULOS_BASE.forEach(veh => {
-            vContainer.innerHTML += `
-                <div class="vehiculo-card">
-                    <div class="vehiculo-img" style="background-image: url('${veh.img}');"></div>
-                    <div class="vehiculo-info">
-                        <div>
-                            <div style="font-weight:bold; color:white; font-size:16px;">${veh.nombre.toUpperCase()}</div>
-                            <div style="font-size:11px; color:var(--tactical-green); margin-top:3px;">SISTEMA ACTIVO</div>
-                        </div>
-                        <div class="v-badge">CANT: ${veh.cantidad}</div>
-                    </div>
-                </div>`;
-        });
+    // REGISTRO DE LOGS CENTRAL
+    async function registrarLog(accion, detalle) {
+        try {
+            await addDoc(collection(db, "logs"), {
+                accion: accion, detalle: detalle, autor: window.currentUserName,
+                fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
+            });
+            if(window.isAdmin) cargarLogs();
+        } catch(e) { console.error("Error al registrar log", e); }
     }
 
-    // CARGAR DATA PRINCIPAL (MODIFICADA PARA ESTADISTICAS)
+    // CARGAR DATA PRINCIPAL
     async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
         const lPer = document.getElementById("listaSoldados"); const lCom = document.getElementById("listaComandante");
@@ -513,36 +454,28 @@
         selMis.innerHTML = '<option value="">ASIGNAR A SOLDADO...</option>';
         selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
 
-        let totalSoldados = 0;
-        let totalOficiales = 0;
-
         snap.forEach(docSnap => {
             const d = docSnap.data(); const email = docSnap.id;
             selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
             selMis.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
-            totalSoldados++;
-            if (OFICIALES.includes(d.rango)) totalOficiales++;
-
-            let divColor = "var(--tactical-green)"; 
+            let divColor = "var(--theme-color)"; 
             const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
             if (divUpper === "FACH") divColor = "white"; else if (divUpper === "BOE") divColor = "var(--danger-red)"; else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
             let iconEstado = d.estado === "Online" ? "🟢" : (d.estado === "En misión" ? "🟡" : "🔴");
-            const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:10px; color:var(--danger-red); margin-top:5px;">⚠️ TIENE ${d.sanciones.length} SANCION(ES)</div>` : '';
             const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
 
             // PERSONAL RP
             lPer.innerHTML += `
                 <div onmouseenter="playHover()" onclick="abrirCarnet('${d.nombre}', '${d.rango}', '${d.division}', '${email}', '${objMisionString}')" 
-                     style="background: rgba(255,255,255,0.03); border: 1px solid var(--dim-green); padding: 15px; display: flex; gap: 15px; align-items: center; transition: 0.2s; cursor: pointer;" 
-                     onmouseover="this.style.background='var(--dim-green)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                     style="background: rgba(255,255,255,0.03); border: 1px solid var(--theme-dim); padding: 15px; display: flex; gap: 15px; align-items: center; transition: 0.2s; cursor: pointer;" 
+                     onmouseover="this.style.background='var(--theme-dim)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
                     <div style="font-size: 24px;">👤</div>
                     <div>
                         <div style="font-weight:bold; color:white;">${iconEstado} ${d.nombre}</div>
                         <div style="font-size:10px; color:${divColor}">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
                         ${d.misionActiva ? `<div style="font-size:10px; color:var(--alert-amber); margin-top:3px;">🎯 MISIÓN: ${d.misionActiva.tipo}</div>` : ''}
-                        ${alertaSancion}
                     </div>
                 </div>`;
 
@@ -551,7 +484,13 @@
                 let cat = (d.rango.includes("General") || d.rango === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango) ? "instructor" : "cadete");
                 const avion = d.aeronave || "SIN ASIGNAR";
                 const item = document.createElement('div'); item.className = "pilot-card-mini";
-                item.onmouseenter = () => playHover(); item.onclick = () => window.verPiloto(d.nombre, d.rango, cat, avion);
+                item.onmouseenter = () => playHover(); 
+                item.onclick = () => {
+                    document.getElementById("vPilot").innerText = d.nombre;
+                    document.getElementById("vUnit").innerText = avion;
+                    document.getElementById("vRank").innerText = d.rango;
+                    window.playClick();
+                };
                 item.innerHTML = `<div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
                                   <div><div style="color:var(--admin-blue); font-size:10px; font-weight:bold;">[${avion}]</div><div style="font-size:12px; color:white;">${d.nombre}</div></div><div class="mini-radar"></div>`;
                 if (cat === "comandante") lCom.appendChild(item); else if (cat === "instructor") lIns.appendChild(item); else lCad.appendChild(item);
@@ -559,7 +498,7 @@
 
             // MISIONES
             if(d.misionActiva) {
-                let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--tactical-green)");
+                let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--theme-color)");
                 lMis.innerHTML += `
                     <div class="mission-card" style="border-left-color: ${mColor};">
                         <div style="display:flex; justify-content: space-between;"><strong style="color: ${mColor}; font-size:18px;">OPERACIÓN: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 10px; color: #888;">ASIGNADO A: ${d.nombre}</span></div>
@@ -567,57 +506,124 @@
                     </div>`;
             }
         });
-
-        // ACTUALIZAR ESTADÍSTICAS
-        document.getElementById("statSoldados").innerText = totalSoldados;
-        document.getElementById("statOficiales").innerText = totalOficiales;
-        document.getElementById("statAeronaves").innerText = AERONAVES_BASE.length;
-        // Total vehículos = suma del array VEHICULOS_BASE
-        const totalVeh = VEHICULOS_BASE.reduce((acc, current) => acc + current.cantidad, 0);
-        document.getElementById("statVehiculos").innerText = totalVeh;
-
         if(lMis.innerHTML === "") lMis.innerHTML = "<div style='color: #555; font-style: italic;'>No hay operaciones activas.</div>";
     }
 
-    // CARGAR HANGAR
-    async function cargarHangar() { /* Mantiene lógica original de Firebase y UI de Hangar */
-        const hContainer = document.getElementById("listaHangar"); hContainer.innerHTML = "";
-        const snap = await getDocs(collection(db, "hangar"));
-        let flota = {};
-        snap.forEach(doc => { flota[doc.id] = doc.data().estado; });
+    // CARGAR HANGAR (REDISEÑADO)
+    function cargarHangar() {
+        const hContainer = document.getElementById("listaHangar"); 
+        hContainer.innerHTML = "";
         
-        AERONAVES_BASE.forEach(nave => {
-            const estadoActual = flota[nave] || "Disponible";
-            const colorClass = estadoActual === "En misión" ? "status-Mision" : (estadoActual === "Dañado" ? "status-Dañado" : (estadoActual === "En mantenimiento" ? "status-Mantenimiento" : "status-Disponible"));
-            
-            const adminSelect = window.isAdmin ? `
-                <select onchange="cambiarEstadoHangar('${nave}', this.value)" style="width:100%; margin-top:10px; background:#000; color:white; border:1px solid #555; padding:5px;">
-                    <option value="Disponible" ${estadoActual==='Disponible'?'selected':''}>Disponible</option>
-                    <option value="En misión" ${estadoActual==='En misión'?'selected':''}>En misión</option>
-                    <option value="Dañado" ${estadoActual==='Dañado'?'selected':''}>Dañado</option>
-                    <option value="En mantenimiento" ${estadoActual==='En mantenimiento'?'selected':''}>En mantenimiento</option>
-                </select>` : '';
-
+        FLOTA_AEREA.forEach(nave => {
             hContainer.innerHTML += `
-                <div class="hangar-card ${colorClass}">
-                    <div style="font-size: 30px; margin-bottom:10px;">🛩️</div>
-                    <div style="font-weight:bold; font-size:18px; color:white;">${nave}</div>
-                    <div style="font-size:12px; margin-top:5px;">ESTADO: ${estadoActual.toUpperCase()}</div>
-                    ${adminSelect}
+                <div class="hangar-card-new">
+                    <div class="hangar-img" style="background-image: url('${nave.img}');"></div>
+                    <div class="hangar-info">
+                        <div class="hangar-text-group">
+                            <div class="hangar-title">${nave.nombre}</div>
+                            <div class="hangar-sub">SISTEMA ACTIVO</div>
+                        </div>
+                        <div class="hangar-cant">CANT: ${nave.cant}</div>
+                    </div>
                 </div>`;
         });
     }
 
-    // EL RESTO DEL CÓDIGO PERMANECE IGUAL
-    window.cambiarEstadoHangar = async (nave, nuevoEstado) => { /* original */ };
-    async function cargarDocumentos() { /* original */ }
-    window.subirDocumento = async () => { /* original */ };
-    async function cargarLogs() { /* original */ }
-    window.asignarMision = async () => { /* original */ };
-    window.finalizarMision = async () => { /* original */ };
-    window.procesarCambiosAdmin = async () => { /* original */ };
-    window.aplicarSancion = async () => { /* original */ };
-    window.abrirCarnet = (nombre, rango, division, idEmail, objMisionRaw) => { /* original */ };
+    // CARGAR DOCUMENTOS
+    async function cargarDocumentos() {
+        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20));
+        const snap = await getDocs(q);
+        const lDoc = document.getElementById("listaDocumentos"); lDoc.innerHTML = "";
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
+            lDoc.innerHTML += `
+                <div class="doc-card">
+                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa;">
+                        <span style="color:${color}; font-weight:bold;">[${d.tipo}]</span>
+                        <span>${d.fecha} | AUTOR: ${d.autor}</span>
+                    </div>
+                    <div style="color:white; font-weight:bold; font-size:14px; margin:5px 0;">${d.titulo.toUpperCase()}</div>
+                    <div style="color:var(--theme-color); font-size:12px;">${d.contenido}</div>
+                </div>`;
+        });
+    }
+
+    window.subirDocumento = async () => {
+        window.playClick();
+        const tipo = document.getElementById("docTipo").value;
+        const titulo = document.getElementById("docTitulo").value;
+        const cont = document.getElementById("docContenido").value;
+        if(!titulo || !cont) return alert("COMPLETE TODOS LOS CAMPOS");
+
+        await addDoc(collection(db, "documentos"), {
+            tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName,
+            fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
+        });
+        
+        registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`);
+        document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = "";
+        cargarDocumentos();
+        alert("DOCUMENTO ARCHIVADO EN LA RED SEGURA");
+    };
+
+    // CARGAR LOGS
+    async function cargarLogs() {
+        const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = "";
+        const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(50));
+        const snap = await getDocs(q);
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            lCont.innerHTML += `
+                <div class="log-entry">
+                    <span class="log-date">[${d.fechaFormato || 'Fecha Desconocida'}]</span>
+                    <strong>${d.autor}:</strong> [${d.accion}] - ${d.detalle}
+                </div>`;
+        });
+    }
+
+    // FUNCIONES ADMIN MISION Y CARNET
+    window.asignarMision = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoMision").value;
+        const tipo = document.getElementById("tipoMision").value;
+        const objetivo = document.getElementById("objMision").value;
+        if(!email || !objetivo) return alert("COMPLETE SOLDADO Y OBJETIVO");
+
+        await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" });
+        registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`);
+        document.getElementById("objMision").value = ""; alert("ÓRDENES DESPLEGADAS SATISFACTORIAMENTE"); cargarDatos();
+    };
+
+    window.finalizarMision = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoMision").value;
+        if(!email) return alert("SELECCIONE UN SOLDADO DE LA LISTA DE DESPLIEGUE");
+        
+        await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" });
+        registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`);
+        alert("SOLDADO RETIRADO DE OPERACIÓN ACTIVA"); cargarDatos();
+    };
+
+    window.procesarCambiosAdmin = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldier").value;
+        const rango = document.getElementById("targetRank").value;
+        const avion = document.getElementById("targetAeronave").value;
+        if(!email) return alert("SELECCIONE UN SOLDADO");
+        
+        await updateDoc(doc(db, "usuarios", email), { rango: rango, aeronave: avion });
+        registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango} y unidad ${avion}.`);
+        alert("BASE DE DATOS ACTUALIZADA CON ÉXITO"); cargarDatos();
+    };
+
+    window.abrirCarnet = (nombre, rango, division, idEmail, objMisionRaw) => {
+        window.playClick(); document.getElementById("c_nombre").innerText = nombre; document.getElementById("c_rango").innerText = rango; document.getElementById("c_division").innerText = division || 'EJÉRCITO';
+        document.getElementById("c_id").innerText = "CHL-" + idEmail.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*1000);
+        let misionTexto = "NINGUNA";
+        if (objMisionRaw !== 'null' && objMisionRaw !== 'undefined') { try { const m = JSON.parse(decodeURIComponent(objMisionRaw)); misionTexto = `[${m.tipo.toUpperCase()}] ${m.detalle}`; } catch(e) {} }
+        document.getElementById("c_mision").innerText = misionTexto; document.getElementById("carnetModal").style.display = "flex";
+    };
     window.cerrarCarnet = () => { window.playClick(); document.getElementById("carnetModal").style.display = "none"; };
     window.abrirAdminAuth = () => { window.playClick(); const code = prompt("CÓDIGO DE SEGURIDAD:"); if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block"; };
     window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició sesión.`); } catch { alert("ACCESO DENEGADO"); } };

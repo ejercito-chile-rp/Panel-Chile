@@ -18,6 +18,7 @@
             --admin-blue: #4d90f2;
         }
 
+        /* SISTEMA INMERSIVO DE COLORES POR ESTADO DEFCON */
         body.defcon-5 { --theme-color: #00e5ff; --theme-dim: rgba(0, 229, 255, 0.15); } 
         body.defcon-4 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } 
         body.defcon-3 { --theme-color: #f2e24d; --theme-dim: rgba(242, 226, 77, 0.15); } 
@@ -105,7 +106,6 @@
         .esp-fuerzas { background: rgba(150, 50, 255, 0.15); color: #b666ff; border: 1px solid #b666ff; }
         .esp-default { background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid #aaa; }
 
-        /* ESTILOS DE MODO CLASIFICADO (CENSURA) */
         .censurado-bar { background-color: #050a0f !important; color: #050a0f !important; position: relative; overflow: hidden; border-color: #050a0f !important; user-select: none; border-radius: 4px; display: inline-block;}
         .censurado-bar::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px); pointer-events: none; }
         .censurado-blur { filter: blur(12px) grayscale(100%) contrast(1.2) !important; user-select: none;}
@@ -168,18 +168,6 @@
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button onclick="verificarAdminAuth()" class="btn-tactical" style="flex: 1; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red);">AUTORIZAR</button>
                 <button onclick="cerrarAdminAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalDefconAuth" class="custom-modal">
-        <div class="modal-body glass-panel">
-            <h3 style="color: var(--alert-amber); margin-top: 0; letter-spacing: 2px;">PROTOCOLO DEFCON</h3>
-            <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">INGRESE CÓDIGO DE AUTORIZACIÓN (ESTADO ACTUAL: <span id="spanCurrentDefcon">5</span>)</p>
-            <input type="password" id="defconPassInput" class="auth-input" placeholder="CÓDIGO SECRETO" style="text-align: center; border-color: var(--alert-amber);">
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button onclick="verificarDefconAuth()" class="btn-tactical" style="flex: 1; background: rgba(255,180,0,0.1); border-color: var(--alert-amber); color: var(--alert-amber);">CONFIRMAR</button>
-                <button onclick="cerrarDefconAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -294,7 +282,7 @@
         <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
         
-        <div class="menu-item btn-alert" id="btnDefcon" onclick="abrirDefconAuth()" onmouseenter="playHover()" style="margin-top:20px;"><span>🚨</span> NIVEL DEFCON 5</div>
+        <div class="menu-item btn-alert" id="btnDefcon" onclick="intentarCambioDefcon()" onmouseenter="playHover()" style="margin-top:20px;"><span>🚨</span> NIVEL DEFCON 5</div>
 
         <button onclick="logout()" class="btn-tactical" style="margin: 20px 20px 0; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red); font-size:12px;">DESCONECTAR</button>
     </div>
@@ -595,7 +583,6 @@
         if (!n || !e || !p) return window.showToast("COMPLETE TODOS LOS CAMPOS PARA REGISTRO", "error");
         try {
             await createUserWithEmailAndPassword(auth, e, p);
-            // VALORES POR DEFECTO PARA NUEVOS SOLDADOS
             await setDoc(doc(db, "usuarios", e), { 
                 nombre: n, 
                 rango: "Cabo 2°", 
@@ -615,13 +602,20 @@
         } catch (error) { window.showToast("ERROR AL REGISTRAR: Verifica formato o clave.", "error"); }
     };
 
+    // ----- SISTEMA DEFCON SIN CONTRASEÑA -----
     let currentDefcon = 5;
-    window.abrirDefconAuth = () => { window.playClick(); document.getElementById("modalDefconAuth").style.display = "flex"; document.getElementById("defconPassInput").value = ""; document.getElementById("spanCurrentDefcon").innerText = currentDefcon; document.getElementById("defconPassInput").focus(); };
-    window.cerrarDefconAuth = () => { window.playClick(); document.getElementById("modalDefconAuth").style.display = "none"; };
     
-    window.verificarDefconAuth = () => {
+    window.intentarCambioDefcon = () => {
         window.playClick();
-        if(document.getElementById("defconPassInput").value === "2629") { document.getElementById("modalDefconAuth").style.display = "none"; ejecutarCambioDefcon(); } else { window.showToast("CÓDIGO DEFCON INVÁLIDO.", "error"); }
+        const miIndice = RANGOS.indexOf(window.currentUserRank);
+        const indRequerido = RANGOS.indexOf("Teniente Coronel");
+        
+        // Verifica si es Teniente Coronel hacia arriba o si es Administrador
+        if (window.isAdmin || miIndice >= indRequerido) {
+            ejecutarCambioDefcon();
+        } else {
+            window.showToast("ACCESO DENEGADO. Rango insuficiente para alterar DEFCON.", "error");
+        }
     };
 
     function ejecutarCambioDefcon() {
@@ -649,7 +643,7 @@
         if(tab === 'documentos') { targetId = 'seccionDocumentos'; btnId = 'btnDocumentos'; }
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
-        if(tab === 'reclutuamieto') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
+        if(tab === 'reclutamiento') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
         if(tab === 'mapa') { targetId = 'seccionMapa'; btnId = 'btnMapa'; }
         
         const targetEl = document.getElementById(targetId);
@@ -689,7 +683,6 @@
                     document.getElementById("panelSubirDoc").style.display = "block";
                 }
 
-                // SI ES TENIENTE CORONEL O SUPERIOR, MOSTRAR PANEL DE CALIFICACIONES
                 if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel")) {
                     document.getElementById("panelCalificaciones").style.display = "block";
                 }
@@ -712,7 +705,7 @@
             const selS = document.getElementById("targetSoldier"); const selMis = document.getElementById("targetSoldadoMision"); 
             const selLic = document.getElementById("targetSoldadoLicencia"); const selSanc = document.getElementById("targetSoldadoSancion");
             const selR = document.getElementById("targetRank");
-            const selEval = document.getElementById("evalSoldado"); // NUEVO
+            const selEval = document.getElementById("evalSoldado");
 
             lPer.innerHTML = ""; lLic.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = ""; lMis.innerHTML = "";
             selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
@@ -743,7 +736,6 @@
                     const estadoSeguro = d.estado || "Offline";
                     const especialidadSegura = d.especialidad || "Infantería"; 
 
-                    // NUEVAS CALIFICACIONES
                     const cTiro = d.calTiro || "Básico";
                     const cFis = d.calFisico || "Regular";
                     const cPsi = d.calPsico || "Observación";
@@ -765,7 +757,6 @@
                     const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
                     const fCrea = d.fechaCreacion || "01/01/2026";
 
-                    // Al hacer click enviamos las calificaciones
                     lPer.innerHTML += `
                         <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}', '${especialidadSegura}', '${cTiro}', '${cFis}', '${cPsi}')" 
                              style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
@@ -818,12 +809,10 @@
         } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
     }
 
-    // FUNCIONES DE COLORES PARA CALIFICACIONES
     function getColorTiro(v) { return v==="Experto"?"#4df24d":v==="Calificado"?"#ffb400":"#aaa"; }
     function getColorFisico(v) { return v==="Excelente"?"#4df24d":v==="Buena"?"#ffb400":"#aaa"; }
     function getColorPsico(v) { return v==="Apto"?"#4df24d":v==="Observación"?"#ffb400":"#ff3b3b"; }
 
-    // APERTURA DE PERFIL
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad, cTiro, cFis, cPsi) => {
         window.playClick(); 
         const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && email !== window.currentUserEmail;
@@ -859,7 +848,6 @@
 
             document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`;
             
-            // Censurar Calificaciones
             document.getElementById("p_tiro").innerText = "████";
             document.getElementById("p_tiro").style.color = "#050a0f";
             document.getElementById("p_tiro").classList.add("censurado-bar");
@@ -899,7 +887,6 @@
 
             document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
 
-            // Asignar Calificaciones y Colores
             document.getElementById("p_tiro").innerText = cTiro.toUpperCase();
             document.getElementById("p_tiro").style.color = getColorTiro(cTiro);
 

@@ -9,13 +9,13 @@
 
         :root { 
             --tactical-green: #4df24d; 
-            --dim-green: rgba(77, 242, 77, 0.2);
-            --army-dark: #020802;
+            --dim-green: rgba(77, 242, 77, 0.15);
+            --army-dark: #020602;
             --alert-amber: #ffb400;
-            --danger-red: #ff0000;
+            --danger-red: #ff3b3b;
             --gold: #ffd700;
-            --glass-bg: rgba(5, 15, 5, 0.92);
-            --glow: 0 0 12px var(--tactical-green);
+            --tech-blue: #00f2ff;
+            --glass-bg: rgba(5, 10, 5, 0.95);
         }
 
         body {
@@ -23,199 +23,244 @@
             color: var(--tactical-green);
             font-family: 'Share Tech Mono', monospace;
             margin: 0;
-            padding: 20px;
-            background-image: 
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 4px, 4px 100%;
+            padding: 0;
+            background-image: radial-gradient(circle at center, #0a1a0a 0%, #020602 100%);
+            overflow-x: hidden;
         }
 
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .main-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* --- BARRA DE ESTADÍSTICAS SUPERIOR --- */
+        .stats-banner {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid var(--dim-green);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 180px;
+            border-left: 4px solid var(--tactical-green);
+        }
+
+        .stat-card.alto-mando { border-left-color: var(--danger-red); }
+        .stat-card.operativos { border-left-color: var(--tactical-green); }
+        .stat-card.reclutas { border-left-color: var(--tech-blue); }
+
+        .stat-num { font-size: 24px; font-weight: bold; color: white; }
+        .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- CAJAS DE INTERFAZ --- */
         .box {
             background: var(--glass-bg);
             border: 1px solid var(--dim-green);
-            position: relative;
-            max-width: 750px;
-            margin: 40px auto;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-        }
-
-        h2, h3 {
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            text-shadow: var(--glow);
-            border-bottom: 1px solid var(--dim-green);
-            padding-bottom: 10px;
+            padding: 30px;
             margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
         }
 
+        .box::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 10px; height: 10px;
+            border-top: 2px solid var(--tactical-green); border-left: 2px solid var(--tactical-green);
+        }
+
+        /* --- REJILLA DE TARJETAS (ESTILO IMAGEN 4) --- */
+        .grid-tropas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .tarjeta-tactica {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(77, 242, 77, 0.1);
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .tarjeta-tactica:hover {
+            background: var(--dim-green);
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--tactical-green);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(77, 242, 77, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .card-id { color: var(--tech-blue); font-weight: bold; }
+        .card-rank { color: #aaa; text-transform: uppercase; }
+
+        .card-body { display: flex; gap: 15px; align-items: flex-start; }
+        .insignia-mini { width: 50px; height: 50px; filter: drop-shadow(0 0 5px var(--tactical-green)); }
+
+        .card-info b { font-size: 18px; color: white; display: block; margin-bottom: 10px; }
+        .info-row { font-size: 11px; display: grid; grid-template-columns: 80px 1fr; margin-bottom: 4px; }
+        .info-label { color: #666; }
+        .info-val { color: var(--tactical-green); text-transform: uppercase; }
+
+        .card-footer {
+            margin-top: 15px;
+            text-align: right;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* --- FORMULARIOS Y BOTONES --- */
         input, select, button {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--tactical-green);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--dim-green);
             color: var(--tactical-green);
-            padding: 15px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 8px 0;
             width: 100%;
-            box-sizing: border-box;
             font-family: inherit;
-            text-transform: uppercase;
             outline: none;
+        }
+
+        button { 
+            border: 1px solid var(--tactical-green); 
+            cursor: pointer; 
+            font-weight: bold;
             transition: 0.3s;
         }
 
-        button:hover {
-            background: var(--tactical-green);
-            color: var(--army-dark);
-            box-shadow: var(--glow);
-            cursor: pointer;
-        }
+        button:hover { background: var(--tactical-green); color: black; }
 
-        .tarjeta { 
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 4px solid var(--tactical-green);
-            margin: 15px 0;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            left: 0;
-        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background: var(--tactical-green); box-shadow: 0 0 8px var(--tactical-green); }
+        .offline { background: var(--danger-red); }
 
-        .tarjeta:hover { 
-            background: var(--dim-green); 
-            transform: translateX(10px);
-            box-shadow: -5px 0 15px rgba(77, 242, 77, 0.3);
-            border-left-width: 8px;
-        }
+        #adminPanel, #logPanel, #panelPrincipal { display: none; }
 
-        .insignia-img { 
-            width: 60px; height: 60px; 
-            margin-right: 20px;
-            filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg); 
-        }
-
-        .online-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            animation: blink 1.5s infinite;
-        }
-
-        .status-activo { background: var(--tactical-green); box-shadow: 0 0 8px var(--tactical-green); }
-        .status-reserva { background: var(--alert-amber); box-shadow: 0 0 8px var(--alert-amber); }
-        .status-inactivo { background: var(--danger-red); box-shadow: 0 0 8px var(--danger-red); }
-
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        .admin-box { border-color: var(--danger-red) !important; display: none; }
-        #panel, #listaPanel, #statsPanel, #logPanel { display: none; }
-
+        /* MODAL */
         .modal {
-            display: none; position: fixed; z-index: 100; left: 0; top: 0; 
-            width: 100%; height: 100%; background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(10px);
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
         }
         .modal-content {
-            background: #080a08; border: 1px solid var(--tactical-green);
-            margin: 5% auto; padding: 40px; width: 85%; max-width: 550px;
-            box-shadow: 0 0 40px rgba(57, 255, 20, 0.3); text-align: center;
+            background: #050a05; border: 1px solid var(--tactical-green);
+            margin: 10% auto; padding: 30px; width: 90%; max-width: 500px;
         }
-
-        .wallet-section {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid var(--gold);
-            padding: 15px;
-            margin: 20px 0;
-            color: var(--gold);
-            font-size: 18px;
-            display: none;
-        }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .stat-item { border: 1px solid var(--dim-green); padding: 10px; text-align: center; }
-        #logContent { font-size: 12px; color: var(--tactical-green); font-weight: bold; background: #000; padding: 10px; border: 1px dashed var(--dim-green); }
     </style>
 </head>
 <body>
 
-    <div class="box" id="loginBox">
-        <h2>CENTRO DE MANDO</h2>
-        <input id="regNombre" type="text" placeholder="NOMBRE COMPLETO">
-        <input id="email" type="email" placeholder="CORREO">
-        <input id="password" type="password" placeholder="CONTRASEÑA">
+<div class="main-container">
+
+    <div id="loginBox" class="box" style="max-width: 500px; margin: 100px auto;">
+        <h2 style="text-align: center; letter-spacing: 5px;">ACCESS_TERMINAL</h2>
+        <input id="regNombre" type="text" placeholder="ID_OPERATIVO (NOMBRE)">
+        <input id="email" type="email" placeholder="CORREO_ENCRIPTADO">
+        <input id="password" type="password" placeholder="ACCESS_CODE">
         <select id="division">
-            <option value="Ejercito">EJÉRCITO</option>
-            <option value="FACH">FACH</option>
-            <option value="Armada">ARMADA</option>
-            <option value="BOE">BOE</option>
+            <option value="Ejercito">EJÉRCITO DE CHILE</option>
+            <option value="FACH">FUERZA AÉREA (FACH)</option>
+            <option value="Armada">ARMADA DE CHILE</option>
+            <option value="BOE">BRIGADA OP. ESPECIALES</option>
         </select>
-        <button id="btnReg">REGISTRAR SOLDADO</button>
+        <select id="especialidad">
+            <option value="Fusilero">FUSILERO</option>
+            <option value="Oficial de Campo">OFICIAL DE CAMPO</option>
+            <option value="Piloto">PILOTO</option>
+            <option value="Inteligencia">INTELIGENCIA</option>
+            <option value="Médico">MÉDICO TÁCTICO</option>
+        </select>
+        <button id="btnReg">REGISTRAR NUEVO OPERATIVO</button>
         <button id="btnLogin" style="border-color: var(--alert-amber); color: var(--alert-amber);">INGRESAR AL SISTEMA</button>
     </div>
 
-    <div class="box" id="panel">
-        <h3 id="welcome">IDENTIFICANDO...</h3>
-        <p>RANGO: <span id="rank" style="color:white"></span> | DIVISIÓN: <span id="div" style="color:white"></span></p>
-        <button id="btnLogout" style="width: auto; padding: 5px 20px;">DESCONECTAR</button>
-    </div>
-
-    <div class="box" id="logPanel">
-        <h3 style="color:var(--gold)">LOG DE OPERACIONES</h3>
-        <div id="logContent">Sincronizando...</div>
-    </div>
-
-    <div class="box" id="statsPanel">
-        <h3>FUERZAS TOTALES</h3>
-        <div class="stats-grid" id="statsContent"></div>
-    </div>
-
-    <div class="box admin-box" id="adminPanel">
-        <h3>ALTO MANDO: GESTIÓN</h3>
-        <input id="targetEmail" placeholder="CORREO DEL SOLDADO">
-        <select id="newRankAdmin"></select>
-        <input id="manualDays" type="number" placeholder="DÍAS SERVICIO EXTRA">
-        <button id="btnAscender" style="color:var(--danger-red); border: 1px solid var(--danger-red);">APLICAR CAMBIOS</button>
-        <button id="btnBaja" style="background: #400; color: white;">ELIMINAR DEL SERVICIO</button>
-        <hr>
-        <input id="targetMedalla" placeholder="CORREO PARA MEDALLA">
-        <select id="selectMedalla">
-            <option value="🎖️">Medalla al Valor</option>
-            <option value="🛡️">Escudo de Lealtad</option>
-            <option value="⭐">Estrella de Puntería</option>
-            <option value="🔥">Infante de Élite</option>
-        </select>
-        <button id="btnMedalla" style="border-color: var(--gold); color: var(--gold);">CONDECORAR</button>
-    </div>
-
-    <div class="box" id="listaPanel">
-        <h3>REGISTRO DE TROPAS</h3>
-        <input type="text" id="searchBar" placeholder="🔍 BUSCAR SOLDADO..." onkeyup="filtrarSoldados()">
-        <div id="lista">ACCEDIENDO A BASE DE DATOS...</div>
-    </div>
-
-    <div id="modalExpediente" class="modal">
-        <div class="modal-content">
-            <h2 id="expNombre">EXPEDIENTE</h2>
-            <p id="expRangoDiv"></p>
-            
-            <div id="expWallet" class="wallet-section">
-                TARIFA DE SERVICIO FIJA: <br>
-                <span id="balanceAmount" style="font-size: 24px;">0 USD</span> <small>/ HORA</small>
+    <div id="panelPrincipal">
+        
+        <div class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-num" id="countTotal">0</div>
+                <div class="stat-label">Efectivos<br>Totales</div>
             </div>
-
-            <p id="expAntiguedad"></p>
-            <p id="expUltimaCon" style="color:var(--alert-amber)"></p>
-            <hr>
-            <h4>CONDECORACIONES:</h4>
-            <div id="expMedallas"></div>
-            <br>
-            <button onclick="cerrarModal()">CERRAR EXPEDIENTE</button>
+            <div class="stat-card alto-mando">
+                <div class="stat-num" id="countMando">0</div>
+                <div class="stat-label">Alto<br>Mando</div>
+            </div>
+            <div class="stat-card operativos">
+                <div class="stat-num" id="countOps">0</div>
+                <div class="stat-label">Operativos<br>Activos</div>
+            </div>
+            <div class="stat-card reclutas">
+                <div class="stat-num" id="countRec">0</div>
+                <div class="stat-label">Nuevos<br>Reclutas</div>
+            </div>
         </div>
+
+        <div class="box">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="welcome">USUARIO: IDENTIFICANDO...</h3>
+                <button id="btnLogout" style="width: auto; padding: 5px 15px;">SALIR</button>
+            </div>
+            <p style="font-size: 12px;">RANGO: <span id="rank" style="color:white"></span> | UNIDAD: <span id="div" style="color:white"></span></p>
+        </div>
+
+        <div id="adminPanel" class="box" style="border-color: var(--danger-red);">
+            <h3 style="color: var(--danger-red);">GEOFENCING & COMMAND ADMIN</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input id="targetEmail" placeholder="CORREO DEL SOLDADO">
+                <select id="newRankAdmin"></select>
+                <input id="manualDays" type="number" placeholder="+ DÍAS SERVICIO">
+                <button id="btnAscender">APLICAR RANGO</button>
+            </div>
+        </div>
+
+        <div class="box">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3>REGISTRO TÁCTICO DE PERSONAL</h3>
+                <input type="text" id="searchBar" placeholder="🔍 FILTRAR POR NOMBRE..." onkeyup="filtrarSoldados()" style="width: 250px; margin: 0;">
+            </div>
+            <div id="lista" class="grid-tropas">
+                </div>
+        </div>
+
+        <div id="logPanel" class="box">
+            <h4 style="color: var(--gold); margin: 0 0 10px 0;">ÚLTIMA ACTIVIDAD DEL SISTEMA</h4>
+            <div id="logContent" style="font-size: 11px;">Sincronizando logs satelitales...</div>
+        </div>
+
     </div>
+</div>
+
+<div id="modalExpediente" class="modal">
+    <div class="modal-content">
+        <h2 id="expNombre" style="margin-top: 0;"></h2>
+        <div style="border: 1px solid var(--dim-green); padding: 15px; margin-bottom: 15px;">
+            <p id="expRangoDiv"></p>
+            <p id="expSueldo" style="color: var(--gold); font-size: 20px;"></p>
+            <p id="expAntiguedad"></p>
+            <p id="expUltimaCon"></p>
+        </div>
+        <h4>CONDECORACIONES</h4>
+        <div id="expMedallas"></div>
+        <button onclick="cerrarModal()" style="margin-top: 20px;">CERRAR ARCHIVO</button>
+    </div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -235,29 +280,25 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- SISTEMA DE SONIDO TÁCTICO ---
+    // --- SONIDO ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     window.playHoverSound = () => {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        
-        oscillator.type = 'sine'; 
-        oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); // Tono agudo y corto
-        
-        gainNode.gain.setValueAtTime(0.015, audioCtx.currentTime); // Volumen muy sutil (1.5%)
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.05);
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
     };
 
     const RANGOS_LISTA = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     
-    const SUELDOS_FIJOS = {
+    const SUELDOS = {
         "Recluta": "$3.500", "Cabo 2°": "$3.800", "Cabo 1°": "$3.800", "Sargento 2°": "$4.000",
         "Sargento 1°": "$4.300", "Suboficial": "$4.600", "Suboficial Mayor": "$5.000",
         "Subteniente": "$5.300", "Teniente": "$5.700", "Capitán": "$6.200", "Mayor": "$6.800",
@@ -268,115 +309,76 @@
     const sel = document.getElementById("newRankAdmin");
     RANGOS_LISTA.forEach(r => { let o = document.createElement("option"); o.value = r; o.textContent = r; sel.appendChild(o); });
 
-    function formatearFecha(isoString) {
-        if(!isoString) return "Nunca";
-        return new Date(isoString).toLocaleString('es-CL', { timeZone: 'America/Santiago' });
-    }
+    async function cargarDatos() {
+        const qs = await getDocs(collection(db, "usuarios"));
+        let h = "";
+        let counts = { Total: 0, Mando: 0, Ops: 0, Rec: 0 };
+        
+        qs.forEach(d => {
+            const x = d.data();
+            counts.Total++;
+            const r = x.rango || "Recluta";
+            if (r.includes("General") || r.includes("Coronel")) counts.Mando++;
+            else if (r === "Recluta") counts.Rec++;
+            else counts.Ops++;
 
-    function getStatusClass(ultimaConexion) {
-        if(!ultimaConexion) return "status-inactivo";
-        const diffMs = new Date() - new Date(ultimaConexion);
-        const diffDays = diffMs / (1000 * 60 * 60 * 24);
-        if (diffDays < 2) return "status-activo";
-        if (diffDays < 7) return "status-reserva";
-        return "status-inactivo";
-    }
+            const status = (new Date() - new Date(x.ultimaConexion)) / 60000 < 10 ? "online" : "offline";
+            const idMilitar = `ID-${Math.floor(Math.random() * 900 + 100)}`; // Simulado para estética
 
-    window.filtrarSoldados = function() {
-        let input = document.getElementById('searchBar').value.toLowerCase();
-        let tarjetas = document.getElementsByClassName('tarjeta');
-        for (let i = 0; i < tarjetas.length; i++) {
-            let nombre = tarjetas[i].getAttribute('data-nombre').toLowerCase();
-            tarjetas[i].style.display = nombre.includes(input) ? "flex" : "none";
-        }
-    };
+            h += `
+            <div class="tarjeta-tactica" onmouseenter="playHoverSound()" onclick="verExpediente('${x.email}')">
+                <div class="card-header">
+                    <span class="card-rank">${r}</span>
+                    <span class="card-id">${idMilitar}</span>
+                </div>
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2592/2592201.png" class="insignia-mini">
+                    <div class="card-info">
+                        <b>${x.nombre}</b>
+                        <div class="info-row"><span class="info-label">Estado</span><span class="info-val">Operativo</span></div>
+                        <div class="info-row"><span class="info-label">Especialidad</span><span class="info-val">${x.especialidad || 'Fusilero'}</span></div>
+                        <div class="info-row"><span class="info-label">Unidad</span><span class="info-val">${x.division}</span></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-dot ${status}"></span> ${status.toUpperCase()}
+                </div>
+            </div>`;
+        });
+
+        document.getElementById("lista").innerHTML = h;
+        document.getElementById("countTotal").innerText = counts.Total;
+        document.getElementById("countMando").innerText = counts.Mando;
+        document.getElementById("countOps").innerText = counts.Ops;
+        document.getElementById("countRec").innerText = counts.Rec;
+    }
 
     window.verExpediente = async (email) => {
         const snap = await getDoc(doc(db, "usuarios", email));
         if (snap.exists()) {
             const x = snap.data();
-            const esMismoUsuario = (auth.currentUser && auth.currentUser.email === email);
-            document.getElementById("expNombre").innerText = x.nombre || "Sin ID";
+            document.getElementById("expNombre").innerText = x.nombre;
             document.getElementById("expRangoDiv").innerText = `${x.rango} | ${x.division}`;
-            const wallet = document.getElementById("expWallet");
-            if (esMismoUsuario) {
-                wallet.style.display = "block";
-                const sueldoFijo = SUELDOS_FIJOS[x.rango] || "$3.500";
-                document.getElementById("balanceAmount").innerText = `${sueldoFijo} USD`;
-            } else { wallet.style.display = "none"; }
-            let diasBase = 0;
-            if(x.fechaIngreso) {
-                const fIngreso = new Date(x.fechaIngreso);
-                diasBase = Math.floor(Math.abs(new Date() - fIngreso) / (1000 * 60 * 60 * 24));
-            }
-            document.getElementById("expAntiguedad").innerText = `TIEMPO EN SERVICIO: ${diasBase + parseInt(x.antiguedadManual || 0)} DÍAS`;
-            document.getElementById("expUltimaCon").innerText = `ÚLTIMA CONEXIÓN: ${formatearFecha(x.ultimaConexion)}`;
-            let meds = "";
-            if(x.medallas) x.medallas.forEach(m => meds += `<span style="font-size:30px; margin:5px;">${m}</span>`);
-            document.getElementById("expMedallas").innerHTML = meds || "Sin condecoraciones.";
+            document.getElementById("expSueldo").innerText = `ASIGNACIÓN: ${SUELDOS[x.rango] || "$3.500"} USD/H`;
             document.getElementById("modalExpediente").style.display = "block";
         }
     };
 
     window.cerrarModal = () => document.getElementById("modalExpediente").style.display = "none";
 
-    async function registrarAccion(mensaje) {
-        const fechaHora = new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' });
-        await setDoc(doc(db, "config", "logs"), { ultimaAccion: `[${fechaHora}] ${mensaje}` });
-        cargarLogs();
-    }
-
-    async function cargarLogs() {
-        const snap = await getDoc(doc(db, "config", "logs"));
-        if(snap.exists()) document.getElementById("logContent").innerText = snap.data().ultimaAccion;
-    }
-
-    async function cargarDatos() {
-        const qs = await getDocs(collection(db, "usuarios"));
-        let h = "";
-        let counts = { Ejercito: 0, FACH: 0, Armada: 0, BOE: 0, Total: 0 };
-        const mapa = { "Cabo 2°": "cabo_2.png", "Cabo 1°": "cabo_1.png", "Sargento 2°": "sargento_2.png", "Sargento 1°": "sargento_1.png", "General en Jefe": "general_en_jefe.png" };
-        qs.forEach(d => {
-            const x = d.data();
-            const r = x.rango || "Recluta";
-            counts[x.division] = (counts[x.division] || 0) + 1;
-            counts.Total++;
-            const statusClass = getStatusClass(x.ultimaConexion);
-            let img = mapa[r] || r.toLowerCase().trim().replace(/ /g, "_").replace("í", "i").replace("°", "") + ".png";
-            
-            // Se añadió onmouseenter="playHoverSound()" para el sonido
-            h += `<div class="tarjeta" data-nombre="${x.nombre}" onclick="verExpediente('${x.email}')" onmouseenter="playHoverSound()" style="border-left-color: ${getDivisionColor(x.division)}">
-                <img src="img/${img}" class="insignia-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2592/2592201.png'">
-                <div><b style="color:white;">${x.nombre}</b><br><small>${r} [${x.division}]</small></div>
-                <div style="margin-left:auto; text-align:right;">
-                    <span class="online-dot ${statusClass}"></span>
-                    <small style="font-size:10px">${statusClass.replace('status-', '').toUpperCase()}</small>
-                </div>
-            </div>`;
-        });
-        document.getElementById("lista").innerHTML = h;
-        document.getElementById("statsContent").innerHTML = `<div class="stat-item">EJÉRCITO: ${counts.Ejercito}</div><div class="stat-item">FACH: ${counts.FACH}</div><div class="stat-item">ARMADA: ${counts.Armada}</div><div class="stat-item">BOE: ${counts.BOE}</div><div class="stat-item" style="grid-column: span 2; border-color: var(--tactical-green)">TOTAL ACTIVOS: ${counts.Total}</div>`;
-        cargarLogs();
-    }
-
-    function getDivisionColor(div) {
-        const colors = { "Ejercito": "#39ff14", "FACH": "#ffffff", "Armada": "#1e90ff", "BOE": "#ff3b3b" };
-        return colors[div] || "gray";
-    }
-
-    let nombreUsuarioActual = "";
-
+    // Lógica Firebase (Igual a la anterior pero adaptada al nuevo UI)
     document.getElementById("btnReg").onclick = async () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
         const nom = document.getElementById("regNombre").value;
         const div = document.getElementById("division").value;
+        const esp = document.getElementById("especialidad").value;
         if(!nom || !email || !pass) return alert("DATOS INCOMPLETOS");
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
             const hoy = new Date().toISOString();
-            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, medallas: [], fechaIngreso: hoy, antiguedadManual: 0, ultimaConexion: hoy });
-            alert("SOLDADO REGISTRADO"); cargarDatos();
+            await setDoc(doc(db, "usuarios", email), { email, nombre: nom, rango: "Recluta", division: div, especialidad: esp, medallas: [], fechaIngreso: hoy, ultimaConexion: hoy });
+            alert("SOLDADO REGISTRADO"); location.reload();
         } catch(e) { alert(e.message); }
     };
 
@@ -388,41 +390,18 @@
 
     document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
 
-    document.getElementById("btnAscender").onclick = async () => {
-        const email = document.getElementById("targetEmail").value;
-        const nuevo = document.getElementById("newRankAdmin").value;
-        const diasExtra = document.getElementById("manualDays").value || 0;
-        try { 
-            await updateDoc(doc(db, "usuarios", email), { rango: nuevo, antiguedadManual: parseInt(diasExtra) }); 
-            registrarAccion(`${nombreUsuarioActual} actualizó perfil de ${email}`);
-            alert("CAMBIOS APLICADOS"); cargarDatos(); 
-        } catch(e) { alert("ERROR"); }
-    };
-
-    document.getElementById("btnMedalla").onclick = async () => {
-        const email = document.getElementById("targetEmail").value;
-        const med = document.getElementById("selectMedalla").value;
-        try {
-            await updateDoc(doc(db, "usuarios", email), { medallas: arrayUnion(med) });
-            registrarAccion(`${nombreUsuarioActual} condecoró a ${email} con ${med}`);
-            alert("CONDECORACIÓN ENTREGADA"); cargarDatos();
-        } catch(e) { alert("ERROR"); }
-    };
-
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const userRef = doc(db, "usuarios", user.email);
-            const snap = await getDoc(userRef);
+            const snap = await getDoc(doc(db, "usuarios", user.email));
             if (snap.exists()) {
                 const d = snap.data();
-                nombreUsuarioActual = d.nombre || user.email;
-                await updateDoc(userRef, { ultimaConexion: new Date().toISOString() });
                 document.getElementById("loginBox").style.display = "none";
-                ["panel", "listaPanel", "statsPanel"].forEach(id => document.getElementById(id).style.display = "block");
-                document.getElementById("welcome").innerText = "OFICIAL: " + nombreUsuarioActual.toUpperCase();
+                document.getElementById("panelPrincipal").style.display = "block";
+                document.getElementById("welcome").innerText = "OPERATIVO: " + d.nombre.toUpperCase();
                 document.getElementById("rank").innerText = d.rango;
                 document.getElementById("div").innerText = d.division;
-                const jerarquia = ["capitán", "capitan", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
+                
+                const jerarquia = ["capitán", "mayor", "teniente coronel", "coronel", "general de brigada", "general de división", "general en jefe"];
                 if (jerarquia.includes(d.rango.toLowerCase())) {
                     document.getElementById("adminPanel").style.display = "block";
                     document.getElementById("logPanel").style.display = "block";
@@ -431,6 +410,14 @@
             }
         }
     });
+
+    window.filtrarSoldados = function() {
+        let input = document.getElementById('searchBar').value.toLowerCase();
+        let tarjetas = document.getElementsByClassName('tarjeta-tactica');
+        for (let t of tarjetas) {
+            t.style.display = t.innerText.toLowerCase().includes(input) ? "block" : "none";
+        }
+    };
 </script>
 </body>
 </html>

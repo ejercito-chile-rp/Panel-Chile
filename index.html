@@ -1,246 +1,351 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA DE MANDO TÁCTICO - CHILE</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISTEMA DE MANDO TÁCTICO - CHILE</title>
 
-        :root { 
-            --tactical-green: #4df24d; 
-            --dim-green: rgba(77, 242, 77, 0.15);
-            --army-dark: #020602;
-            --alert-amber: #ffb400;
-            --danger-red: #ff3b3b;
-            --admin-blue: #00f2ff;
-            /* Colores de Unidad [cite: 2026-02-21] */
-            --unit-fach: #ffffff;
-            --unit-boe: #ff0000;
-            --unit-armada: #0044ff;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-        body {
-            background: var(--army-dark);
-            color: var(--tactical-green);
-            font-family: 'Share Tech Mono', monospace;
-            margin: 0; display: flex; height: 100vh; overflow: hidden;
-        }
+:root { 
+    --tactical-green: #4df24d; 
+    --dim-green: rgba(77, 242, 77, 0.15);
+    --army-dark: #020602;
+    --alert-amber: #ffb400;
+    --danger-red: #ff3b3b;
+    --admin-blue: #00f2ff;
+}
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: rgba(5, 10, 5, 0.9);
-            border-right: 1px solid var(--dim-green);
-            display: flex; flex-direction: column; padding: 20px 0;
-        }
+body {
+    background: var(--army-dark);
+    color: var(--tactical-green);
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0;
+    display: flex;
+    height: 100vh;
+}
 
-        .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
+.sidebar {
+    width: 260px;
+    background: rgba(5, 10, 5, 0.9);
+    border-right: 1px solid var(--dim-green);
+    padding: 20px 0;
+}
 
-        .menu-item {
-            padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px;
-            transition: 0.2s; border-left: 3px solid transparent; color: var(--tactical-green);
-        }
+.menu-item {
+    padding: 12px 25px;
+    cursor: pointer;
+}
 
-        .menu-item:hover { background: var(--dim-green); border-left-color: var(--tactical-green); }
-        .menu-item.active { background: rgba(0, 242, 255, 0.1); border-left-color: var(--admin-blue); color: #fff; }
+.main-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
 
-        /* CONTENIDO */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); }
+#adminTools {
+    display: none;
+    border: 1px solid var(--danger-red);
+    padding: 20px;
+    margin-bottom: 30px;
+}
 
-        /* REGISTRO TÁCTICO DINÁMICO [cite: 2026-02-21] */
-        .card-rp {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--dim-green);
-            padding: 15px; display: flex; gap: 15px; align-items: center;
-            transition: 0.3s;
-        }
-        .card-rp.fach { border-color: var(--unit-fach); border-width: 2px; }
-        .card-rp.boe { border-color: var(--unit-boe); border-width: 2px; }
-        .card-rp.armada { border-color: var(--unit-armada); border-width: 2px; }
+.auth-input {
+    background: black;
+    border: 1px solid var(--tactical-green);
+    color: var(--tactical-green);
+    padding: 10px;
+    width: 100%;
+}
 
-        /* SECCIÓN FACH */
-        #seccionFach { display: none; }
-        .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
-        .pilot-container { border: 1px solid var(--dim-green); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; }
+#loginScreen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
 
-        .pilot-card-mini {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(77, 242, 77, 0.1);
-            padding: 12px; margin-bottom: 10px;
-            display: grid; grid-template-columns: 50px 1fr 40px;
-            align-items: center; gap: 10px; transition: 0.3s;
-        }
-        .pilot-card-mini:hover { background: var(--dim-green); cursor: pointer; }
+.soldado-card{
+    padding:15px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+    background: rgba(255,255,255,0.03);
+}
 
-        /* PANEL ADMIN */
-        #adminTools { display: none; border: 1px solid var(--danger-red); padding: 20px; margin-bottom: 30px; background: rgba(255,0,0,0.05); }
-        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; }
-        
-        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
-    </style>
+</style>
 </head>
+
 <body>
 
-    <div id="loginScreen">
-        <div style="width: 350px; border: 1px solid var(--tactical-green); padding: 40px; text-align: center;">
-            <h3 style="letter-spacing: 3px;">TERMINAL DE ACCESO</h3>
-            <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL MILITAR">
-            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
-            <button onclick="window.ejecutarLogin()" style="width: 100%; background: transparent; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px; cursor: pointer; font-family: inherit;">INICIAR ENLACE</button>
-        </div>
-    </div>
+<div id="loginScreen">
+    <div style="width:350px;border:1px solid var(--tactical-green);padding:30px;">
+        <h3>ACCESO MILITAR</h3>
 
-    <div class="sidebar">
-        <div style="padding: 20px; border-bottom: 1px solid var(--dim-green); margin-bottom: 10px;">
-            <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase;">...</div>
-            <div id="userRank" style="font-size: 10px; color: var(--alert-amber);">IDENTIFICANDO...</div>
-        </div>
-        <div class="menu-category">COMANDO CENTRAL</div>
-        <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')"><span>📋</span> Personal RP</div>
-        <div class="menu-item" id="btnFach" onclick="switchTab('fach')"><span>✈️</span> Sección Fach</div>
-        <div class="menu-category">SISTEMAS DE VUELO</div>
-        <div class="menu-item" onclick="abrirAdminAuth()"><span style="color: var(--admin-blue);">🌐</span> Menu Admin</div>
-        <button onclick="window.ejecutarLogout()" style="margin: auto 20px 20px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 8px; cursor: pointer; font-family: inherit;">DESCONECTAR</button>
-    </div>
+        <input id="userEmail" type="email" class="auth-input" placeholder="EMAIL">
+        <input id="userPass" type="password" class="auth-input" placeholder="CONTRASEÑA">
 
-    <div class="main-content">
-        <div id="seccionPersonal">
-            <div id="adminTools">
-                <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 15px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
-                    <select id="targetSoldier" class="auth-input"></select>
-                    <select id="targetRank" class="auth-input"></select>
-                    <select id="targetAeronave" class="auth-input">
-                        <option value="F-16">F-16 FALCON</option>
-                        <option value="F-22">F-22 RAPTOR</option>
-                        <option value="Black Hawk">BLACK HAWK</option>
-                        <option value="Chinook">CHINOOK</option>
-                        <option value="C-130 Hercules">C-130 HERCULES</option>
-                    </select>
-                    <button onclick="procesarCambiosAdmin()" style="background: var(--danger-red); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">ACTUALIZAR</button>
-                </div>
-            </div>
-            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px;"></div>
-        </div>
-
-        <div id="seccionFach">
-            <div class="fach-layout">
-                <div class="pilot-container">
-                    <div id="listaComandante"></div>
-                    <div id="listaInstructor"></div>
-                    <div id="listaCadete"></div>
-                </div>
-                <div class="flight-display" id="mainDisplayFach" style="border: 1px solid var(--dim-green); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <div id="vIcon" style="font-size: 100px;">📡</div>
-                    <div id="vPilot" style="font-size: 24px; color: white;">SELECCIONE PILOTO</div>
-                    <div id="vUnit" style="color: var(--admin-blue);">---</div>
-                </div>
-            </div>
-        </div>
+        <button onclick="login()">INICIAR SESIÓN</button>
     </div>
+</div>
+
+<div class="sidebar">
+
+<div id="userName">...</div>
+<div id="userRank">...</div>
+
+<div class="menu-item" onclick="abrirAdminAuth()">ADMIN</div>
+
+<button onclick="logout()">SALIR</button>
+
+</div>
+
+<div class="main-content">
+
+<div id="adminTools">
+
+<select id="targetSoldier" class="auth-input"></select>
+
+<select id="targetRank" class="auth-input"></select>
+
+<select id="targetAeronave" class="auth-input">
+<option>F-16</option>
+<option>F-22</option>
+<option>BLACK HAWK</option>
+<option>CHINOOK</option>
+</select>
+
+<button onclick="procesarCambiosAdmin()">ACTUALIZAR</button>
+
+</div>
+
+<div id="listaSoldados"></div>
+
+</div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
-        authDomain: "panel-chile.firebaseapp.com",
-        projectId: "panel-chile",
-        storageBucket: "panel-chile.firebasestorage.app",
-        messagingSenderId: "124864601883",
-        appId: "1:124864601883:web:839163be2060253f68bdbe"
-    };
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+import {
+getFirestore,
+doc,
+getDoc,
+updateDoc,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"]; [cite: 2026-02-21]
+const firebaseConfig = {
 
-    const hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
-    hoverSound.volume = 0.1; [cite: 2026-02-20]
+apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
+authDomain: "panel-chile.firebaseapp.com",
+projectId: "panel-chile",
+storageBucket: "panel-chile.appspot.com",
+messagingSenderId: "124864601883",
+appId: "1:124864601883:web:839163be2060253f68bdbe"
 
-    // SOLUCIÓN AL ERROR DE REFERENCIA: Asignar funciones a window
-    window.ejecutarLogin = async () => {
-        const e = document.getElementById("userEmail").value;
-        const p = document.getElementById("userPass").value;
-        try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("ACCESO DENEGADO"); }
-    };
+};
 
-    window.ejecutarLogout = () => signOut(auth).then(() => location.reload());
+const app = initializeApp(firebaseConfig);
 
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const snap = await getDoc(doc(db, "usuarios", user.email));
-            if (snap.exists()) {
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("userName").innerText = snap.data().nombre;
-                document.getElementById("userRank").innerText = snap.data().rango;
-                cargarDatos();
-            }
-        }
-    });
+const auth = getAuth(app);
 
-    async function cargarDatos() {
-        const snap = await getDocs(collection(db, "usuarios"));
-        const lPer = document.getElementById("listaSoldados");
-        const selS = document.getElementById("targetSoldier");
-        const selR = document.getElementById("targetRank");
+const db = getFirestore(app);
 
-        lPer.innerHTML = "";
-        selS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
-        selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
 
-        snap.forEach(docSnap => {
-            const d = docSnap.data();
-            const div = (d.division || "EJERCITO").toLowerCase();
-            
-            // Asignación de clase por color [cite: 2026-02-21]
-            let colorClase = "";
-            if (div === "fach") colorClase = "fach";
-            else if (div === "boe") colorClase = "boe";
-            else if (div === "armada") colorClase = "armada";
 
-            selS.innerHTML += `<option value="${docSnap.id}">${d.nombre}</option>`;
+/* NUEVO SISTEMA COLOR DIVISION */
+function getDivisionColor(division){
 
-            lPer.innerHTML += `
-                <div class="card-rp ${colorClase}">
-                    <div style="font-size: 24px;">👤</div>
-                    <div>
-                        <div style="font-weight:bold; color:white;">${d.nombre}</div>
-                        <div style="font-size:10px; opacity:0.8;">${d.rango} // ${div.toUpperCase()}</div>
-                    </div>
-                </div>`;
-        });
-    }
+if(division==="FACH") return "#ffffff";
 
-    window.switchTab = (tab) => {
-        document.getElementById("seccionPersonal").style.display = tab === 'personal' ? 'block' : 'none';
-        document.getElementById("seccionFach").style.display = tab === 'fach' ? 'block' : 'none';
-        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(tab === 'personal' ? 'btnPersonal' : 'btnFach').classList.add('active');
-    };
+if(division==="BOE") return "#ff3b3b";
 
-    window.abrirAdminAuth = () => {
-        const rank = document.getElementById("userRank").innerText;
-        if(rank !== "General en Jefe") {
-            alert("ACCESO DENEGADO: SOLO EL GENERAL EN JEFE POSEE ESTA LLAVE."); [cite: 2026-02-21]
-            return;
-        }
-        if(prompt("CÓDIGO:") === "CHILE2026") document.getElementById("adminTools").style.display = "block";
-    };
+if(division==="ARMADA") return "#00a2ff";
 
-    window.procesarCambiosAdmin = async () => {
-        const email = document.getElementById("targetSoldier").value;
-        const rango = document.getElementById("targetRank").value;
-        const avion = document.getElementById("targetAeronave").value;
-        await updateDoc(doc(db, "usuarios", email), { rango, aeronave: avion });
-        alert("ACTUALIZADO");
-        cargarDatos();
-    };
+return "#4df24d";
+
+}
+
+
+
+const RANGOS = [
+
+"Cabo 2°",
+"Cabo 1°",
+"Sargento 2°",
+"Sargento 1°",
+"Suboficial",
+"Suboficial Mayor",
+"Subteniente",
+"Teniente",
+"Capitán",
+"Mayor",
+"Teniente Coronel",
+"Coronel",
+"General de Brigada",
+"General de División",
+"General en Jefe"
+
+];
+
+
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(user){
+
+const snap = await getDoc(doc(db,"usuarios",user.email));
+
+if(snap.exists()){
+
+document.getElementById("loginScreen").style.display="none";
+
+document.getElementById("userName").innerText=snap.data().nombre;
+
+document.getElementById("userRank").innerText=snap.data().rango;
+
+cargarDatos();
+
+}
+
+}
+
+});
+
+
+
+async function cargarDatos(){
+
+const snap = await getDocs(collection(db,"usuarios"));
+
+const lista = document.getElementById("listaSoldados");
+
+const sel = document.getElementById("targetSoldier");
+
+const selRank = document.getElementById("targetRank");
+
+lista.innerHTML="";
+sel.innerHTML="";
+selRank.innerHTML="";
+
+RANGOS.forEach(r=>{
+
+selRank.innerHTML+=`<option>${r}</option>`;
+
+});
+
+snap.forEach(docSnap=>{
+
+const d = docSnap.data();
+
+const email = docSnap.id;
+
+const divisionColor = getDivisionColor(d.division);
+
+sel.innerHTML+=`<option value="${email}">${d.nombre}</option>`;
+
+lista.innerHTML+=`
+
+<div class="soldado-card"
+
+style="border:1px solid ${divisionColor};">
+
+<div style="font-size:26px;color:${divisionColor};">👤</div>
+
+<div>
+
+<div style="color:${divisionColor};font-weight:bold;">
+
+${d.nombre}
+
+</div>
+
+<div style="color:${divisionColor};font-size:12px;">
+
+${d.rango} // ${d.division||"EJERCITO"}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+
+window.procesarCambiosAdmin = async ()=>{
+
+const email=document.getElementById("targetSoldier").value;
+
+const rango=document.getElementById("targetRank").value;
+
+const aeronave=document.getElementById("targetAeronave").value;
+
+await updateDoc(doc(db,"usuarios",email),{
+
+rango:rango,
+
+aeronave:aeronave
+
+});
+
+alert("ACTUALIZADO");
+
+cargarDatos();
+
+};
+
+
+
+window.login = async ()=>{
+
+const e=document.getElementById("userEmail").value;
+
+const p=document.getElementById("userPass").value;
+
+await signInWithEmailAndPassword(auth,e,p);
+
+};
+
+
+
+window.logout=()=>{
+
+signOut(auth);
+
+location.reload();
+
+};
+
+
+
+window.abrirAdminAuth=()=>{
+
+const code=prompt("CODIGO");
+
+if(code==="CHILE2026"){
+
+document.getElementById("adminTools").style.display="block";
+
+}
+
+};
+
 </script>
+
 </body>
 </html>

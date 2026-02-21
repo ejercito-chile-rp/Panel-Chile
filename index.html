@@ -95,8 +95,16 @@
         .perfil-item { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; }
         .perfil-item span { display: block; font-size: 11px; color: #888; margin-bottom: 5px; font-family: 'Share Tech Mono', monospace;}
         .perfil-item strong { color: white; font-size: 15px; text-transform: uppercase; }
-        .historial-content { padding: 15px; overflow-y: auto; max-height: 200px; font-size: 13px; display: flex; flex-direction: column; gap: 10px; font-family: 'Share Tech Mono', monospace; }
-        .historial-log { border-left: 2px solid var(--theme-color); padding-left: 12px; color: #ccc; background: rgba(255,255,255,0.02); padding-top: 5px; padding-bottom: 5px;}
+        
+        /* ESTILOS DE ESPECIALIDADES / ETIQUETAS */
+        .especialidades-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .esp-tag { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; font-family: 'Share Tech Mono', monospace; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .esp-piloto { background: rgba(77, 144, 242, 0.15); color: #4d90f2; border: 1px solid #4d90f2; }
+        .esp-francotirador { background: rgba(255, 180, 0, 0.15); color: #ffb400; border: 1px solid #ffb400; }
+        .esp-artilleria { background: rgba(255, 59, 59, 0.15); color: #ff3b3b; border: 1px solid #ff3b3b; }
+        .esp-infanteria { background: rgba(77, 242, 77, 0.15); color: #4df24d; border: 1px solid #4df24d; }
+        .esp-fuerzas { background: rgba(150, 50, 255, 0.15); color: #b666ff; border: 1px solid #b666ff; }
+        .esp-default { background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid #aaa; }
 
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         .hangar-card-new { display: flex; flex-direction: column; overflow: hidden; }
@@ -121,19 +129,15 @@
         /* ESTILOS DEL MAPA GTA SA INTEGRADO Y REDIMENSIONABLE */
         .map-wrapper { 
             position: relative; 
-            /* Altura inicial ajustada para que no sea tan grande al principio */
             height: 50vh; 
-            /* Altura mínima para que no desaparezca */
             min-height: 300px;
-            /* PROPIEDADES CLAVE PARA REDIMENSIONAR CON "PINZA" */
-            resize: vertical; /* Permite al usuario estirar verticalmente */
-            overflow: hidden; /* Mantiene la imagen dentro del contenedor */
+            resize: vertical; 
+            overflow: hidden; 
             border-radius: 12px; 
             border: 1px solid var(--glass-border); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
         
-        /* Indicador visual de la esquina de redimensión (opcional, para navegadores basados en WebKit) */
         ::-webkit-resizer {
             border-color: transparent var(--theme-color) var(--theme-color) transparent;
             border-style: solid;
@@ -196,7 +200,7 @@
         <div class="perfil-container glass-panel">
             <div class="perfil-header">
                 <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:20px;">🎖️</span> EXPEDIENTE CLASIFICADO</span>
-                <button class="btn-cerrar-perfil" onclick="cerrarPerfil()" style="color:white;">✖</button>
+                <button class="btn-cerrar-perfil" onclick="cerrarPerfil()" style="color:white; background:transparent; border:none; font-size:18px; cursor:pointer;">✖</button>
             </div>
             <div class="perfil-body">
                 <div class="perfil-col-izq">
@@ -227,9 +231,10 @@
                         </div>
                     </div>
 
-                    <div class="perfil-historial glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
-                        <div class="historial-title" style="background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--glass-border);">HISTORIAL DE INTELIGENCIA RECIENTE</div>
-                        <div class="historial-content" id="p_historial_logs"></div>
+                    <div class="perfil-especialidades glass-panel" style="border:none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); padding: 20px; background: rgba(0,0,0,0.4);">
+                        <div style="font-size: 12px; color: #888; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 10px;">ESPECIALIDADES TÁCTICAS</div>
+                        <div class="especialidades-container" id="p_especialidades">
+                            </div>
                     </div>
                 </div>
             </div>
@@ -294,7 +299,7 @@
             <h3 style="color: var(--admin-blue); margin-top: 0; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom:10px;">[ ACCESO CLASIFICADO - ADMINISTRADOR ]</h3>
             
             <p style="color: white; font-weight: bold; margin: 20px 0 10px; font-size: 14px;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px;">
                 <select id="targetSoldier" class="auth-input" style="margin:0;"></select>
                 <select id="targetRank" class="auth-input" style="margin:0;"></select>
                 <select id="targetDivision" class="auth-input" style="margin:0;">
@@ -302,6 +307,13 @@
                     <option value="FACH">FACH</option>
                     <option value="ARMADA">ARMADA</option>
                     <option value="BOE">BOE</option>
+                </select>
+                <select id="targetEspecialidad" class="auth-input" style="margin:0;">
+                    <option value="Infantería">Infantería</option>
+                    <option value="Piloto">Piloto</option>
+                    <option value="Francotirador">Francotirador</option>
+                    <option value="Artillería de apoyo">Artillería de apoyo</option>
+                    <option value="Fuerzas especiales">Fuerzas especiales</option>
                 </select>
                 <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves" style="margin:0;"></select>
                 <button onclick="procesarCambiosAdmin()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ACTUALIZAR</button>
@@ -554,7 +566,8 @@
         if (!n || !e || !p) return window.showToast("COMPLETE TODOS LOS CAMPOS PARA REGISTRO", "error");
         try {
             await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "usuarios", e), { nombre: n, rango: "Cabo 2°", division: "EJÉRCITO", estado: "Online", fechaCreacion: new Date().toLocaleDateString('es-CL'), sanciones: [], licencias: {}, misionActiva: null, aeronave: null });
+            // ASIGNAMOS UNA ESPECIALIDAD POR DEFECTO EN EL REGISTRO
+            await setDoc(doc(db, "usuarios", e), { nombre: n, rango: "Cabo 2°", division: "EJÉRCITO", especialidad: "Infantería", estado: "Online", fechaCreacion: new Date().toLocaleDateString('es-CL'), sanciones: [], licencias: {}, misionActiva: null, aeronave: null });
             registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`); window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
         } catch (error) { window.showToast("ERROR AL REGISTRAR: Verifica formato o clave.", "error"); }
     };
@@ -639,7 +652,6 @@
     async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); } catch(e) {} }
     async function cargarLogsBase() { const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100)); const snap = await getDocs(q); window.cachedLogs = []; snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); }); }
 
-    // ====== MEJORA: FUNCIÓN A PRUEBA DE ERRORES ======
     async function cargarDatos() {
         try {
             const snap = await getDocs(collection(db, "usuarios"));
@@ -654,15 +666,14 @@
             selS.innerHTML = '<option value="">SELECCIONAR...</option>'; selMis.innerHTML = '<option value="">SELECCIONAR...</option>'; 
             selLic.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selSanc.innerHTML = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
             
-            // --- NUEVO: SISTEMA DE BLOQUEO POR RANGO (Visual) ---
+            // SISTEMA DE BLOQUEO POR RANGO (Visual)
             const myRankIndex = RANGOS.indexOf(window.currentUserRank);
             let allowedRanks = RANGOS;
             
-            // Si no es General en Jefe, solo mostramos los rangos menores al suyo
             if (window.currentUserRank !== "General en Jefe" && myRankIndex > 0) {
                 allowedRanks = RANGOS.slice(0, myRankIndex);
             } else if (myRankIndex === 0 && window.currentUserRank !== "General en Jefe") {
-                allowedRanks = [RANGOS[0]]; // fallback si por error un cabo abre esto
+                allowedRanks = [RANGOS[0]]; 
             }
             selR.innerHTML = allowedRanks.map(r => `<option value="${r}">${r}</option>`).join("");
             
@@ -674,12 +685,12 @@
                     const d = docSnap.data(); const email = docSnap.id;
                     windowUsersData[email] = d;
                     
-                    // --- NUEVO: Validaciones de seguridad por si hay datos vacíos en la base de datos ---
                     const nombreSeguro = d.nombre ? d.nombre.toUpperCase() : "SOLDADO DESCONOCIDO";
                     const rangoSeguro = d.rango ? d.rango : "Cabo 2°";
                     const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
                     const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
                     const estadoSeguro = d.estado || "Offline";
+                    const especialidadSegura = d.especialidad || "Infantería"; // NUEVO
                     
                     totalSoldadosCount++;
                     if (OFICIALES.includes(rangoSeguro)) totalOficialesCount++;
@@ -697,8 +708,9 @@
                     const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
                     const fCrea = d.fechaCreacion || "01/01/2026";
 
+                    // Al hacer click, pasamos la especialidad también
                     lPer.innerHTML += `
-                        <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}')" 
+                        <div class="glass-panel slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}', '${especialidadSegura}')" 
                              style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
                             <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 8px; border: 2px solid var(--theme-color); box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
                             <div>
@@ -753,7 +765,8 @@
         }
     }
 
-    window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw) => {
+    // MODIFICADO PARA RECIBIR LA ESPECIALIDAD Y PINTAR LA ETIQUETA
+    window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad) => {
         window.playClick(); 
         document.getElementById("p_nombre").innerText = nombre;
         document.getElementById("p_rango").innerText = rango;
@@ -772,18 +785,22 @@
         document.getElementById("p_mision").innerText = misionTexto;
         document.getElementById("p_mision").style.color = mColor;
 
-        const logBox = document.getElementById("p_historial_logs"); logBox.innerHTML = "";
-        const userLogs = window.cachedLogs.filter(l => l.autor === nombre || (l.detalle && l.detalle.includes(email)));
-        
-        if (userLogs.length === 0) {
-            logBox.innerHTML = "<div style='color:#555; text-align:center; padding:20px;'>No hay registros recientes para este elemento.</div>";
-        } else {
-            userLogs.slice(0, 15).forEach(log => {
-                logBox.innerHTML += `<div class="historial-log"><div class="historial-date">${log.fechaFormato || ''} - [${log.accion}]</div><div>${log.detalle}</div></div>`;
-            });
-        }
+        // SISTEMA VISUAL DE ESPECIALIDADES
+        const contenedorEsp = document.getElementById("p_especialidades");
+        let claseColor = "esp-default";
+        let icono = "🎖️";
+
+        if(especialidad === "Piloto") { claseColor = "esp-piloto"; icono = "✈️"; }
+        else if(especialidad === "Francotirador") { claseColor = "esp-francotirador"; icono = "🎯"; }
+        else if(especialidad === "Artillería de apoyo") { claseColor = "esp-artilleria"; icono = "💥"; }
+        else if(especialidad === "Infantería") { claseColor = "esp-infanteria"; icono = "🪖"; }
+        else if(especialidad === "Fuerzas especiales") { claseColor = "esp-fuerzas"; icono = "⚡"; }
+
+        contenedorEsp.innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
+
         document.getElementById("perfilModal").style.display = "flex";
     };
+    
     window.cerrarPerfil = () => { window.playClick(); document.getElementById("perfilModal").style.display = "none"; };
 
     window.actualizarLicencia = async () => {
@@ -871,17 +888,17 @@
     window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
     window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
     
-    // ====== MEJORA: SISTEMA DE BLOQUEO POR RANGO EN SERVIDOR ======
+    // SISTEMA DE BLOQUEO POR RANGO EN SERVIDOR (CON ESPECIALIDAD AÑADIDA)
     window.procesarCambiosAdmin = async () => { 
         window.playClick(); 
         const email = document.getElementById("targetSoldier").value; 
         const rango = document.getElementById("targetRank").value; 
         const division = document.getElementById("targetDivision").value; 
         const avion = document.getElementById("targetAeronave").value; 
+        const especialidad = document.getElementById("targetEspecialidad").value; 
         
         if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
         
-        // Bloqueo estricto por si logran saltar el bloqueo visual
         const myRankIndex = RANGOS.indexOf(window.currentUserRank);
         const targetRankIndex = RANGOS.indexOf(rango);
 
@@ -892,10 +909,11 @@
         await updateDoc(doc(db, "usuarios", email), { 
             rango: rango, 
             division: division, 
-            aeronave: avion === "SIN ASIGNAR" ? null : avion 
+            aeronave: avion === "SIN ASIGNAR" ? null : avion,
+            especialidad: especialidad // NUEVO
         }); 
         
-        registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango}, división ${division} y aeronave ${avion}.`); 
+        registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango}, división ${division}, especialidad ${especialidad}.`); 
         window.showToast("BASE DE DATOS ACTUALIZADA", "success"); 
         cargarDatos(); 
     };

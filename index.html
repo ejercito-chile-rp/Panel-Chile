@@ -8,11 +8,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
         :root { 
-            /* COLORES BASE DINÁMICOS (Cambian con el DEFCON) */
             --theme-color: #4df24d; 
             --theme-dim: rgba(77, 242, 77, 0.15);
-            
-            /* COLORES FIJOS */
             --army-dark: #020602;
             --alert-amber: #ffb400;
             --danger-red: #ff3b3b;
@@ -20,18 +17,17 @@
             --maint-gray: #888888;
         }
 
-        /* NIVELES DEFCON (Controlan el color de toda la UI) */
-        body.defcon-5 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } /* Verde - Normal */
-        body.defcon-4 { --theme-color: #4db8f2; --theme-dim: rgba(77, 184, 242, 0.15); } /* Azul - Precaución */
-        body.defcon-3 { --theme-color: #f2e24d; --theme-dim: rgba(242, 226, 77, 0.15); } /* Amarillo - Alerta Media */
-        body.defcon-2 { --theme-color: #f28a4d; --theme-dim: rgba(242, 138, 77, 0.15); } /* Naranja - Alerta Alta */
-        body.defcon-1 { --theme-color: #ff3b3b; --theme-dim: rgba(255, 59, 59, 0.15); animation: red-pulse 1.5s infinite; } /* Rojo - Combate Inminente */
+        body.defcon-5 { --theme-color: #4df24d; --theme-dim: rgba(77, 242, 77, 0.15); } 
+        body.defcon-4 { --theme-color: #4db8f2; --theme-dim: rgba(77, 184, 242, 0.15); } 
+        body.defcon-3 { --theme-color: #f2e24d; --theme-dim: rgba(242, 226, 77, 0.15); } 
+        body.defcon-2 { --theme-color: #f28a4d; --theme-dim: rgba(242, 138, 77, 0.15); } 
+        body.defcon-1 { --theme-color: #ff3b3b; --theme-dim: rgba(255, 59, 59, 0.15); animation: red-pulse 1.5s infinite; } 
 
         body {
             background: var(--army-dark); color: var(--theme-color);
             font-family: 'Share Tech Mono', monospace;
             margin: 0; display: flex; height: 100vh; overflow: hidden;
-            transition: all 0.5s ease;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         @keyframes red-pulse {
@@ -40,112 +36,122 @@
             100% { box-shadow: inset 0 0 0px var(--theme-color); background: #020602; }
         }
 
+        /* ANIMACIONES PROFESIONALES */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-up { animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 4px; }
+
         /* SIDEBAR */
-        .sidebar { width: 260px; background: rgba(5, 10, 5, 0.9); border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; padding: 20px 0; z-index: 10; transition: border-color 0.5s; }
+        .sidebar { width: 260px; background: rgba(5, 10, 5, 0.9); border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; padding: 20px 0; z-index: 10; transition: border-color 0.5s; backdrop-filter: blur(10px); }
         .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; font-weight: bold; }
-        .menu-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; border-left: 3px solid transparent; color: var(--theme-color); }
-        .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); }
-        .menu-item.active { background: var(--theme-dim); border-left-color: var(--theme-color); color: #fff; }
+        .menu-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 3px solid transparent; color: var(--theme-color); position: relative; overflow: hidden; }
+        .menu-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--theme-dim); z-index: -1; transition: width 0.3s; }
+        .menu-item:hover::before { width: 100%; }
+        .menu-item:hover { border-left-color: var(--theme-color); transform: translateX(5px); }
+        .menu-item.active { background: var(--theme-dim); border-left-color: var(--theme-color); color: #fff; transform: translateX(5px); }
         .btn-alert { color: var(--theme-color); border-left-color: transparent; font-weight: bold; background: rgba(0,0,0,0.3); border-top: 1px dashed var(--theme-dim); border-bottom: 1px dashed var(--theme-dim); margin-top: 10px;}
-        .btn-alert:hover { background: var(--theme-dim); border-left-color: var(--theme-color); }
         .menu-hidden { display: none !important; }
 
         /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); z-index: 5; position: relative;}
         
-        /* SECCIONES OCULTAS */
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionVehiculos { display: none; }
         
+        /* RADAR ANIMADO REALISTA */
+        .radar-realista {
+            position: relative;
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            border: 2px solid var(--theme-color);
+            background: 
+                radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 255, 0, 0.1) 100%),
+                repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%);
+            background-color: #020602;
+            overflow: hidden;
+            box-shadow: 0 0 20px var(--theme-dim), inset 0 0 20px var(--theme-dim);
+            margin: auto;
+        }
+        .radar-realista::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--theme-dim);
+        }
+        .radar-realista::after {
+            content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--theme-dim);
+        }
+        .radar-sweep {
+            position: absolute; top: 50%; left: 50%; width: 50%; height: 50%;
+            background: conic-gradient(from 0deg, var(--theme-color) 0%, transparent 60%);
+            transform-origin: 0 0;
+            animation: sweep 2.5s linear infinite;
+            opacity: 0.6;
+        }
+        .blip {
+            position: absolute; width: 6px; height: 6px; background: var(--theme-color); border-radius: 50%;
+            box-shadow: 0 0 10px var(--theme-color);
+            opacity: 0; animation: blip-fade 2.5s infinite;
+        }
+        @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
+
         /* FACH & PILOTS */
         .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
         .pilot-container { border: 1px solid var(--theme-dim); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; transition: border-color 0.5s; }
         .sub-header { font-size: 11px; color: var(--alert-amber); padding: 10px 0; border-bottom: 1px solid var(--theme-dim); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
-        .pilot-card-mini { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; margin-bottom: 10px; display: grid; grid-template-columns: 50px 1fr 40px; align-items: center; gap: 10px; transition: 0.3s; }
-        .pilot-card-mini:hover { background: var(--theme-dim); border-color: var(--theme-color); cursor: pointer; transform: translateX(5px); }
-        .icon-box { width: 45px; height: 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--theme-color); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .pilot-card-mini { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; margin-bottom: 10px; display: grid; grid-template-columns: 50px 1fr 40px; align-items: center; gap: 10px; transition: all 0.3s ease; }
+        .pilot-card-mini:hover { background: var(--theme-dim); border-color: var(--theme-color); cursor: pointer; transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .icon-box { width: 45px; height: 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--theme-color); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: transform 0.3s;}
+        .pilot-card-mini:hover .icon-box { transform: scale(1.1); }
 
-        .mini-radar { width: 35px; height: 35px; border: 1px solid var(--theme-color); border-radius: 50%; position: relative; opacity: 0.6; overflow: hidden; background: radial-gradient(circle, var(--theme-dim) 0%, transparent 70%); }
-        .mini-radar::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px dashed var(--theme-color); opacity: 0.3; }
-        .mini-radar::after { content: ''; position: absolute; width: 50%; height: 50%; background: linear-gradient(90deg, transparent, var(--theme-color)); top: 0; left: 50%; transform-origin: bottom left; animation: scan 2s linear infinite; }
-        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .flight-display { border: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.5s ease; }
-        .main-icon-display { font-size: 130px; z-index: 2; transition: all 0.5s ease; }
-
-        /* PANEL ADMIN */
-        #adminTools { display: none; border: 1px solid var(--admin-blue); padding: 20px; margin-bottom: 30px; background: rgba(0, 242, 255, 0.05); }
-        .auth-input { background: #000; border: 1px solid var(--theme-color); color: var(--theme-color); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; transition: border-color 0.5s, color 0.5s; }
+        .flight-display { border: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.5s ease; overflow: hidden; }
         
-        /* LOGIN Y TERMINAL */
-        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .terminal-text { border-right: 2px solid var(--theme-color); white-space: nowrap; overflow: hidden; font-size: 14px; margin-bottom: 20px; animation: typing 2s steps(40, end), blink-caret .75s step-end infinite; }
-        @keyframes typing { from { width: 0 } to { width: 280px } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--theme-color); } }
+        /* LOGIN NUEVO */
+        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 3000; display: flex; justify-content: center; align-items: center; }
+        #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(2, 6, 2, 0.85); backdrop-filter: blur(5px); }
+        .login-box { position: relative; width: 400px; border: 1px solid var(--theme-color); padding: 40px; text-align: center; background: rgba(0,20,0,0.6); backdrop-filter: blur(10px); box-shadow: 0 0 30px var(--theme-dim); animation: slideUp 0.8s ease-out; }
+        .login-photo-circle { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -90px auto 20px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; box-shadow: 0 0 20px var(--theme-color); overflow: hidden; position: relative; }
+        .login-photo-circle::after { content: ''; position: absolute; inset: 0; background: radial-gradient(transparent, rgba(0,255,0,0.2)); }
+        .terminal-text { border-right: 2px solid var(--theme-color); white-space: nowrap; overflow: hidden; font-size: 14px; margin-bottom: 20px; animation: typing 2s steps(40, end), blink-caret .75s step-end infinite; color: var(--theme-color); display: inline-block;}
+        .auth-input { background: rgba(0,0,0,0.8); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 12px; width: 100%; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; transition: all 0.3s; outline: none; }
+        .auth-input:focus { box-shadow: 0 0 10px var(--theme-dim); background: rgba(0,20,0,0.9); }
 
-        /* CARNET MILITAR (MODAL) */
-        #carnetModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .carnet-body { width: 400px; background: #050a05; border: 2px solid var(--theme-color); box-shadow: 0 0 20px var(--theme-dim); display: flex; flex-direction: column; transition: border-color 0.5s, box-shadow 0.5s; }
-        .carnet-header { background: var(--theme-color); color: black; padding: 10px; text-align: center; font-weight: bold; letter-spacing: 2px; transition: background 0.5s; }
-        .carnet-content { padding: 20px; display: grid; grid-template-columns: 100px 1fr; gap: 20px; }
-        .carnet-photo { width: 100px; height: 120px; border: 1px solid var(--theme-color); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; }
-        .carnet-data { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
-        .carnet-data strong { color: white; }
-        .carnet-barcode { text-align: center; font-size: 30px; font-family: monospace; color: var(--theme-color); margin-bottom: 10px; letter-spacing: 5px; }
-        .carnet-close { margin: 10px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 5px; cursor: pointer; text-align: center; }
-        .carnet-close:hover { background: var(--danger-red); color: black; }
+        /* PERFIL MILITAR COMPLETO (MODAL REDISEÑADO) */
+        #perfilModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .perfil-container { width: 800px; max-width: 95vw; background: #050a05; border: 1px solid var(--theme-color); box-shadow: 0 0 30px var(--theme-dim); display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; }
+        .perfil-header { background: var(--theme-color); color: black; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; }
+        .perfil-body { display: grid; grid-template-columns: 250px 1fr; gap: 0; }
+        
+        .perfil-col-izq { padding: 25px; border-right: 1px solid var(--theme-dim); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.02); }
+        .perfil-foto-hd { width: 180px; height: 220px; border: 2px solid var(--theme-color); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 20px; position: relative; }
+        .perfil-foto-hd::after { content: ''; position: absolute; inset:0; background: linear-gradient(to bottom, transparent 50%, rgba(0,255,0,0.1) 100%); }
+        
+        .perfil-col-der { padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .perfil-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .perfil-item { background: rgba(0,0,0,0.5); border: 1px solid var(--theme-dim); padding: 12px; }
+        .perfil-item span { display: block; font-size: 10px; color: #888; margin-bottom: 5px; }
+        .perfil-item strong { color: white; font-size: 14px; text-transform: uppercase; }
+        
+        .perfil-historial { flex: 1; border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.8); display: flex; flex-direction: column; }
+        .historial-title { background: var(--theme-dim); padding: 8px 15px; font-size: 12px; font-weight: bold; color: var(--theme-color); }
+        .historial-content { padding: 15px; overflow-y: auto; max-height: 200px; font-size: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .historial-log { border-left: 2px solid var(--theme-color); padding-left: 10px; color: #ddd; }
+        .historial-date { color: var(--theme-color); font-size: 10px; }
 
-        /* REDISEÑO HANGAR (ESTILO VEHÍCULOS) */
+        .btn-cerrar-perfil { background: transparent; border: none; color: black; font-weight: bold; font-family: inherit; font-size: 16px; cursor: pointer; transition: transform 0.2s; }
+        .btn-cerrar-perfil:hover { transform: scale(1.2); }
+
+        /* HANGAR Y TARJETAS */
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .hangar-card-new { 
-            background: #020602; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            display: flex; flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .hangar-card-new:hover { box-shadow: 0 0 15px var(--theme-dim); transform: translateY(-2px); }
-        .hangar-img {
-            height: 160px;
-            background-size: cover;
-            background-position: center;
-            border-bottom: 2px solid var(--theme-color); /* Línea verde (o del color del defcon) separadora */
-            transition: border-color 0.5s;
-        }
-        .hangar-info {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .hangar-text-group { display: flex; flex-direction: column; }
-        .hangar-title {
-            color: #fff;
-            font-weight: bold;
-            font-size: 15px;
-            letter-spacing: 1px;
-        }
-        .hangar-sub {
-            color: var(--theme-color);
-            font-size: 10px;
-            margin-top: 4px;
-            letter-spacing: 1px;
-            transition: color 0.5s;
-        }
-        .hangar-cant {
-            background: var(--admin-blue);
-            color: #000;
-            font-weight: bold;
-            padding: 5px 10px;
-            font-size: 14px;
-            border-radius: 3px;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
-        }
+        .hangar-card-new { background: #020602; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s; }
+        .hangar-card-new:hover { box-shadow: 0 10px 25px var(--theme-dim); transform: translateY(-5px); border-color: var(--theme-color); z-index: 2; }
+        .hangar-img { height: 180px; background-size: cover; background-position: center; border-bottom: 2px solid var(--theme-color); transition: border-color 0.5s; position: relative; overflow: hidden; }
+        .hangar-img::before { content:''; position: absolute; inset:0; background: rgba(0,0,0,0.2); transition: 0.3s; }
+        .hangar-card-new:hover .hangar-img::before { background: transparent; }
 
-        /* OTRAS SECCIONES */
-        .mission-card { border: 1px solid var(--alert-amber); background: rgba(255, 180, 0, 0.05); padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--alert-amber); }
-        .doc-card { border: 1px solid var(--theme-dim); background: rgba(255,255,255,0.03); padding: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
-        .log-entry { font-size: 12px; border-bottom: 1px solid var(--theme-dim); padding: 8px 0; color: #aaa; }
-        .log-entry strong { color: var(--admin-blue); }
-        .log-entry span.log-date { color: var(--theme-color); margin-right: 10px; }
     </style>
 </head>
 <body class="defcon-5">
@@ -156,74 +162,102 @@
     <audio id="sndStartup" src="https://www.soundjay.com/computers/sounds/computer-startup-1.mp3" preload="auto"></audio>
 
     <div id="loginScreen">
-        <div class="terminal-text">ESTABLECIENDO ENLACE SEGURO...</div>
-        <div style="width: 350px; border: 1px solid var(--theme-color); padding: 40px; text-align: center; background: rgba(0,20,0,0.8);">
-            <h3 style="letter-spacing: 3px; margin-top: 0; color: var(--theme-color);">TERMINAL DE ACCESO</h3>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Coat_of_arms_of_Chile.svg/100px-Coat_of_arms_of_Chile.svg.png" style="height: 60px; margin-bottom: 15px; filter: grayscale(1) sepia(1) hue-rotate(80deg) saturate(5);" alt="Escudo">
+        <div class="login-box">
+            <div class="login-photo-circle"></div>
+            <div class="terminal-text" style="display: block; margin: 0 auto 25px; width: fit-content;">ESTABLECIENDO ENLACE SEGURO...</div>
+            <h3 style="letter-spacing: 3px; margin-top: 0; color: white;">ACCESO TÁCTICO</h3>
+            <div style="font-size: 10px; color: var(--theme-color); margin-bottom: 20px;">MINISTERIO DE DEFENSA NACIONAL</div>
+            
             <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL MILITAR">
-            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
-            <button onclick="login()" style="width: 100%; background: var(--theme-dim); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 10px; cursor: pointer; font-weight: bold; letter-spacing: 1px; transition: all 0.3s;">INICIAR ENLACE</button>
+            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA SECRETA">
+            
+            <button onclick="login()" style="width: 100%; background: var(--theme-dim); border: 1px solid var(--theme-color); color: var(--theme-color); padding: 12px; cursor: pointer; font-weight: bold; letter-spacing: 2px; transition: all 0.3s; text-transform: uppercase;">
+                INICIAR ENLACE
+            </button>
         </div>
     </div>
 
-    <div id="carnetModal">
-        <div class="carnet-body">
-            <div class="carnet-header">MINISTERIO DE DEFENSA NACIONAL</div>
-            <div class="carnet-content">
-                <div class="carnet-photo"><div class="mini-radar" style="width: 100px; height: 120px; border-radius: 0; opacity: 0.3;"></div></div>
-                <div class="carnet-data">
-                    <div><span style="color:#888;">NOMBRE:</span> <strong id="c_nombre">---</strong></div>
-                    <div><span style="color:#888;">RANGO:</span> <strong id="c_rango">---</strong></div>
-                    <div><span style="color:#888;">DIVISIÓN:</span> <strong id="c_division">---</strong></div>
-                    <div><span style="color:#888;">ID SECTOR:</span> <strong id="c_id">---</strong></div>
-                    <div style="margin-top: 5px; border-top: 1px dashed var(--theme-dim); padding-top: 5px;">
-                        <span style="color:#888;">OPERACIÓN:</span> <strong id="c_mision" style="color: var(--alert-amber);">NINGUNA</strong>
+    <div id="perfilModal">
+        <div class="perfil-container">
+            <div class="perfil-header">
+                <span>[ EXPEDIENTE CLASIFICADO ]</span>
+                <button class="btn-cerrar-perfil" onclick="cerrarPerfil()">X</button>
+            </div>
+            <div class="perfil-body">
+                <div class="perfil-col-izq">
+                    <div class="perfil-foto-hd"></div>
+                    
+                    <div style="margin-top: 20px; text-align: center; width: 100%;">
+                        <div style="font-size: 10px; color: #888; margin-bottom: 10px;">ESTADO DE SEÑAL VITAL</div>
+                        <div class="radar-realista" style="width: 120px; height: 120px;">
+                            <div class="radar-sweep"></div>
+                            <div class="blip" style="top: 30%; left: 60%; animation-delay: 0.5s;"></div>
+                            <div class="blip" style="top: 70%; left: 40%; animation-delay: 1.2s;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perfil-col-der">
+                    <div style="border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">
+                        <h2 id="p_nombre" style="margin: 0; color: white; font-size: 28px; text-transform: uppercase; letter-spacing: 1px;">NOMBRE SOLDADO</h2>
+                        <div style="color: var(--theme-color); font-size: 14px;" id="p_id">CHL-XXXXXX-000</div>
+                    </div>
+                    
+                    <div class="perfil-data-grid">
+                        <div class="perfil-item"><span>RANGO ACTUAL:</span> <strong id="p_rango" style="color: var(--alert-amber);">---</strong></div>
+                        <div class="perfil-item"><span>DIVISIÓN ASIGNADA:</span> <strong id="p_division">---</strong></div>
+                        <div class="perfil-item"><span>UNIDAD / AERONAVE:</span> <strong id="p_unidad" style="color: var(--admin-blue);">---</strong></div>
+                        <div class="perfil-item"><span>FECHA DE INGRESO:</span> <strong id="p_creacion">01/01/2026</strong></div>
+                        <div class="perfil-item" style="grid-column: span 2;"><span>ESTADO OPERACIONAL:</span> <strong id="p_mision" style="color: var(--theme-color);">DISPONIBLE</strong></div>
+                    </div>
+
+                    <div class="perfil-historial">
+                        <div class="historial-title">HISTORIAL DE SERVICIO RECIENTE</div>
+                        <div class="historial-content" id="p_historial_logs">
+                            <div style="color: #888; font-style: italic; text-align: center; margin-top: 20px;">Recopilando registros...</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="carnet-barcode">||||||| | || ||| ||</div>
-            <button class="carnet-close" onclick="cerrarCarnet()">[ CERRAR EXPEDIENTE ]</button>
         </div>
     </div>
 
     <div class="sidebar">
-        <div style="padding: 20px; border-bottom: 1px solid var(--theme-dim); margin-bottom: 10px;">
-            <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase;">...</div>
-            <div id="userRank" style="font-size: 10px; color: var(--alert-amber); margin-bottom: 8px;">IDENTIFICANDO...</div>
-            <select id="myStatus" class="auth-input" style="padding: 5px; font-size: 10px; border-color: var(--theme-dim);" onchange="updateMyStatus()">
-                <option value="Offline">🔴 OFFLINE</option>
-                <option value="Online">🟢 ONLINE</option>
-                <option value="En misión">🟡 EN MISIÓN</option>
+        <div style="padding: 20px; border-bottom: 1px solid var(--theme-dim); margin-bottom: 10px; text-align: center;">
+            <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase; font-size: 16px; margin-bottom: 5px;">...</div>
+            <div id="userRank" style="font-size: 10px; color: var(--alert-amber); margin-bottom: 15px; letter-spacing: 1px;">IDENTIFICANDO...</div>
+            <select id="myStatus" class="auth-input" style="padding: 8px; font-size: 11px; text-align: center; background: rgba(0,0,0,0.5);" onchange="updateMyStatus()">
+                <option value="Online">🟢 DISPONIBLE / ONLINE</option>
+                <option value="En misión">🟡 EN OPERACIÓN</option>
+                <option value="Offline">🔴 FUERA DE SERVICIO</option>
             </select>
         </div>
         <div class="menu-category">COMANDO CENTRAL</div>
-        <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal RP</div>
+        <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
         <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Sección Fach</div>
         <div class="menu-item" id="btnHangar" onclick="switchTab('hangar')" onmouseenter="playHover()"><span>🛠️</span> Hangar Aéreo</div>
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
         
-        <div class="menu-category menu-hidden" id="menuOficialesTitle">OFICIALES</div>
-        <div class="menu-item menu-hidden" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Documentos</div>
+        <div class="menu-category menu-hidden" id="menuOficialesTitle">SISTEMA OFICIALES</div>
+        <div class="menu-item menu-hidden" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
 
-        <div class="menu-category">SISTEMAS ESTRATÉGICOS</div>
-        <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
+        <div class="menu-category">ADMINISTRACIÓN</div>
+        <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad General</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
         
         <div class="menu-item btn-alert" id="btnDefcon" onclick="cicloDefcon()" onmouseenter="playHover()"><span>🚨</span> ESTADO: DEFCON 5</div>
 
-        <button onclick="logout()" style="margin: auto 20px 20px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 8px; cursor: pointer;">DESCONECTAR</button>
+        <button onclick="logout()" style="margin: auto 20px 20px; background: rgba(255,0,0,0.1); border: 1px solid var(--danger-red); color: var(--danger-red); padding: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;">DESCONECTAR</button>
     </div>
 
-    <div class="main-content">
+    <div class="main-content" id="main-content-area">
         <div id="adminTools">
             <h3 style="color: var(--admin-blue); margin-top: 0; border-bottom: 1px solid; padding-bottom: 5px;">[ ACCESO CLASIFICADO - NIVEL GENERAL ]</h3>
-            
             <p style="color: var(--theme-color); font-weight: bold; margin: 15px 0 10px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
                 <select id="targetSoldier" class="auth-input"></select>
                 <select id="targetRank" class="auth-input"></select>
-                <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves">
-                    </select>
+                <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves"></select>
                 <button onclick="procesarCambiosAdmin()" style="background: var(--admin-blue); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">ACTUALIZAR</button>
             </div>
             
@@ -243,12 +277,12 @@
             </div>
         </div>
 
-        <div id="seccionPersonal">
-            <h2 style="margin-top: 0;">PERSONAL REGISTRADO</h2>
-            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+        <div id="seccionPersonal" class="fade-in">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">PERSONAL REGISTRADO</h2>
+            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; margin-top: 20px;"></div>
         </div>
 
-        <div id="seccionFach">
+        <div id="seccionFach" class="fade-in">
             <h2 style="margin-top: 0;">SISTEMA AERONÁUTICO - FACH</h2>
             <div class="fach-layout">
                 <div class="pilot-container">
@@ -258,45 +292,46 @@
                     <div style="font-size: 9px; color: #888; margin: 20px 0 10px;">— CADETE —</div><div id="listaCadete"></div>
                 </div>
                 <div class="flight-display" id="mainDisplayFach">
-                    <div class="main-icon-display" id="vIcon">📡</div>
-                    <div id="vPilot" style="font-size: 32px; color: white; letter-spacing: 4px; text-align: center;">SISTEMA EN ESPERA</div>
-                    <div id="vUnit" style="color: var(--admin-blue); font-size: 18px; margin-top: 10px; border: 1px solid; padding: 5px 20px;">---</div>
+                    <div class="radar-realista" style="width: 250px; height: 250px; margin-bottom: 30px;">
+                        <div class="radar-sweep"></div>
+                        <div class="blip" style="top: 20%; left: 30%; animation-delay: 0.1s;"></div>
+                        <div class="blip" style="top: 80%; left: 70%; animation-delay: 1.5s;"></div>
+                        <div class="blip" style="top: 40%; left: 80%; animation-delay: 0.8s;"></div>
+                    </div>
+
+                    <div id="vPilot" style="font-size: 32px; color: white; letter-spacing: 4px; text-align: center; text-shadow: 0 0 10px var(--theme-color);">SISTEMA EN ESPERA</div>
+                    <div id="vUnit" style="color: var(--admin-blue); font-size: 18px; margin-top: 10px; border: 1px solid; padding: 5px 20px; background: rgba(0,242,255,0.05);">---</div>
                     <div id="vRank" style="font-size: 12px; margin-top: 15px; opacity: 0.7;">POR FAVOR SELECCIONE UNIDAD DE CONTACTO</div>
-                    <div class="mini-radar" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px;"></div>
                 </div>
             </div>
         </div>
 
-        <div id="seccionHangar">
-            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA AERONÁUTICO</h2>
-            <p style="font-size: 11px; margin-top: -5px; margin-bottom: 20px; color: #888;">> MONITOREO DE ACTIVOS TÁCTICOS Y TRANSPORTE AÉREO</p>
-            <div id="listaHangar" class="hangar-grid-new">
-                </div>
+        <div id="seccionHangar" class="fade-in">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">FLOTA AÉREA NACIONAL</h2>
+            <div id="listaHangar" class="hangar-grid-new" style="margin-top: 20px;"></div>
         </div>
 
-        <div id="seccionMisiones">
-            <h2 style="margin-top: 0;">ESTADO DE OPERACIONES ACTIVAS</h2>
-            <div id="listaMisiones" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
+        <div id="seccionMisiones" class="fade-in">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">ESTADO DE OPERACIONES ACTIVAS</h2>
+            <div id="listaMisiones" style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px;"></div>
         </div>
 
-        <div id="seccionDocumentos">
-            <h2 style="margin-top: 0;">BASE DE DOCUMENTOS TÁCTICOS</h2>
-            <div style="background: rgba(255,255,255,0.05); padding: 20px; border: 1px solid var(--admin-blue); margin-bottom: 20px;">
+        <div id="seccionDocumentos" class="fade-in">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">INTELIGENCIA Y DOCUMENTOS</h2>
+            <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin: 20px 0; box-shadow: 0 0 15px rgba(0,242,255,0.1);">
                 <h4 style="margin-top:0; color:var(--admin-blue);">SUBIR NUEVO REPORTE / ORDEN</h4>
                 <select id="docTipo" class="auth-input"><option value="REPORTE">REPORTE</option><option value="ORDEN">ORDEN TÁCTICA</option></select>
                 <input type="text" id="docTitulo" class="auth-input" placeholder="TÍTULO DEL DOCUMENTO">
                 <textarea id="docContenido" class="auth-input" rows="4" placeholder="CONTENIDO CLASIFICADO..."></textarea>
-                <button onclick="subirDocumento()" style="background: var(--admin-blue); color: black; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer;">ALMACENAR EN RED</button>
+                <button onclick="subirDocumento()" style="background: var(--admin-blue); color: black; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; transition: 0.3s;">ALMACENAR EN RED SECRETA</button>
             </div>
-            <div id="listaDocumentos"></div>
+            <div id="listaDocumentos" style="display: grid; gap: 10px;"></div>
         </div>
 
-        <div id="seccionLogs">
-            <h2 style="margin-top: 0;">REGISTROS DEL SISTEMA (LOGS)</h2>
-            <div style="background: #000; border: 1px solid var(--theme-dim); padding: 15px; height: 60vh; overflow-y: auto;" id="listaLogsContainer">
-                </div>
+        <div id="seccionLogs" class="fade-in">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">REGISTROS DEL SISTEMA (LOGS)</h2>
+            <div style="background: rgba(0,0,0,0.8); border: 1px solid var(--theme-dim); padding: 20px; height: 60vh; overflow-y: auto; margin-top: 20px;" id="listaLogsContainer"></div>
         </div>
-
     </div>
 
 <script type="module">
@@ -320,7 +355,6 @@
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-    // NUEVO FORMATO DE FLOTA AÉREA (Imágenes Reales y Cantidades solicitadas)
     const FLOTA_AEREA = [
         { id: "F-22 Raptor", nombre: "F-22 RAPTOR", cant: 5, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/F-22_Raptor_edit1_%28cropped%29.jpg/640px-F-22_Raptor_edit1_%28cropped%29.jpg" },
         { id: "F-16 Falcon", nombre: "F-16 FALCON", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/640px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg" },
@@ -335,42 +369,34 @@
     window.currentUserName = "Desconocido";
     window.currentUserRank = "";
     window.isAdmin = false;
+    
+    // CACHE DE LOGS PARA PERFILES
+    window.cachedLogs = [];
 
-    // SONIDOS
     const sndHover = document.getElementById("sndHover"); const sndClick = document.getElementById("sndClick");
     const sndAlert = document.getElementById("sndAlert"); const sndStartup = document.getElementById("sndStartup");
     sndHover.volume = 0.1; sndClick.volume = 0.3; sndAlert.volume = 0.4; sndStartup.volume = 0.3;
     window.playHover = () => { sndHover.currentTime = 0; sndHover.play().catch(()=>{}); };
     window.playClick = () => { sndClick.currentTime = 0; sndClick.play().catch(()=>{}); };
 
-    // CICLO DEFCON
     let currentDefcon = 5;
     window.cicloDefcon = () => {
         window.playClick();
-        currentDefcon--;
-        if (currentDefcon < 1) currentDefcon = 5;
-        
-        // Quitar clases anteriores del body y aplicar la nueva
+        currentDefcon--; if (currentDefcon < 1) currentDefcon = 5;
         document.body.className = document.body.className.replace(/defcon-\d/g, '').trim();
         document.body.classList.add(`defcon-${currentDefcon}`);
-        
-        const btn = document.getElementById('btnDefcon');
-        btn.innerHTML = `<span>🚨</span> ESTADO: DEFCON ${currentDefcon}`;
-        
-        if (currentDefcon === 1) {
-            sndAlert.play();
-            registrarLog("ALERTA DEFCON", "Nivel máximo activado (DEFCON 1).");
-        } else {
-            sndAlert.pause();
-            sndAlert.currentTime = 0;
-            registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`);
-        }
+        document.getElementById('btnDefcon').innerHTML = `<span>🚨</span> ESTADO: DEFCON ${currentDefcon}`;
+        if (currentDefcon === 1) { sndAlert.play(); registrarLog("ALERTA DEFCON", "Nivel máximo activado (DEFCON 1)."); } 
+        else { sndAlert.pause(); sndAlert.currentTime = 0; registrarLog("ESTADO DEFCON", `Cambio a DEFCON ${currentDefcon}.`); }
     };
 
-    // TABS
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs"].forEach(id => document.getElementById(id).style.display = 'none');
+        ["seccionPersonal", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs"].forEach(id => {
+            const el = document.getElementById(id);
+            el.style.display = 'none';
+            el.classList.remove('fade-in'); // Reset animation
+        });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
         
         let targetId = "seccionPersonal"; let btnId = "btnPersonal";
@@ -380,11 +406,12 @@
         if(tab === 'documentos') { targetId = 'seccionDocumentos'; btnId = 'btnDocumentos'; }
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
         
-        document.getElementById(targetId).style.display = 'block';
+        const targetEl = document.getElementById(targetId);
+        targetEl.style.display = 'block';
+        setTimeout(() => targetEl.classList.add('fade-in'), 10);
         document.getElementById(btnId).classList.add('active');
     };
 
-    // AUTH Y CARGA
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             sndStartup.play().catch(()=>{});
@@ -392,55 +419,52 @@
             const snap = await getDoc(doc(db, "usuarios", user.email));
             if (snap.exists()) {
                 const data = snap.data();
-                window.currentUserName = data.nombre;
-                window.currentUserRank = data.rango;
-                window.isAdmin = (data.rango === "General en Jefe");
+                window.currentUserName = data.nombre; window.currentUserRank = data.rango; window.isAdmin = (data.rango === "General en Jefe");
                 
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("userName").innerText = data.nombre;
                 document.getElementById("userRank").innerText = window.currentUserRank;
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 
-                // Rellenar Lista de naves para Admin
-                const selectNavesAdmin = document.getElementById("targetAeronave");
-                selectNavesAdmin.innerHTML = FLOTA_AEREA.map(n => `<option value="${n.id}">${n.nombre}</option>`).join("");
-
-                if (window.isAdmin) {
-                    document.getElementById("adminTools").style.display = "block";
-                    document.getElementById("btnLogs").classList.remove("menu-hidden");
-                }
-                if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
-                    document.getElementById("menuOficialesTitle").classList.remove("menu-hidden");
-                    document.getElementById("btnDocumentos").classList.remove("menu-hidden");
-                }
+                document.getElementById("targetAeronave").innerHTML = FLOTA_AEREA.map(n => `<option value="${n.id}">${n.nombre}</option>`).join("");
+                if (window.isAdmin) { document.getElementById("adminTools").style.display = "block"; document.getElementById("btnLogs").classList.remove("menu-hidden"); }
+                if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) { document.getElementById("menuOficialesTitle").classList.remove("menu-hidden"); document.getElementById("btnDocumentos").classList.remove("menu-hidden"); }
                 
-                cargarDatos();
-                cargarDocumentos();
-                cargarHangar();
-                if(window.isAdmin) cargarLogs();
+                cargarDatos(); cargarDocumentos(); cargarHangar(); cargarLogsBase();
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
 
     window.updateMyStatus = async () => {
         if(!window.currentUserEmail) return;
-        const newStatus = document.getElementById("myStatus").value;
-        await updateDoc(doc(db, "usuarios", window.currentUserEmail), { estado: newStatus });
+        await updateDoc(doc(db, "usuarios", window.currentUserEmail), { estado: document.getElementById("myStatus").value });
         cargarDatos();
     };
 
-    // REGISTRO DE LOGS CENTRAL
     async function registrarLog(accion, detalle) {
         try {
-            await addDoc(collection(db, "logs"), {
-                accion: accion, detalle: detalle, autor: window.currentUserName,
-                fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
-            });
-            if(window.isAdmin) cargarLogs();
-        } catch(e) { console.error("Error al registrar log", e); }
+            await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() });
+            cargarLogsBase();
+        } catch(e) { console.error(e); }
     }
 
-    // CARGAR DATA PRINCIPAL
+    // CARGA DE LOGS EN CACHÉ PARA USO RÁPIDO EN PERFILES
+    async function cargarLogsBase() {
+        const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100));
+        const snap = await getDocs(q);
+        window.cachedLogs = [];
+        const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = "";
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            window.cachedLogs.push(d);
+            lCont.innerHTML += `
+                <div style="font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 10px 0; color: #bbb; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                    <span style="color: var(--theme-color); margin-right: 10px; font-family: monospace;">[${d.fechaFormato || '---'}]</span>
+                    <strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}
+                </div>`;
+        });
+    }
+
     async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
         const lPer = document.getElementById("listaSoldados"); const lCom = document.getElementById("listaComandante");
@@ -450,146 +474,104 @@
         const selR = document.getElementById("targetRank");
 
         lPer.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = ""; lMis.innerHTML = "";
-        selS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
-        selMis.innerHTML = '<option value="">ASIGNAR A SOLDADO...</option>';
+        selS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>'; selMis.innerHTML = '<option value="">ASIGNAR A SOLDADO...</option>';
         selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
 
         snap.forEach(docSnap => {
             const d = docSnap.data(); const email = docSnap.id;
-            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
-            selMis.innerHTML += `<option value="${email}">${d.nombre}</option>`;
+            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`; selMis.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
-            let divColor = "var(--theme-color)"; 
-            const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
+            let divColor = "var(--theme-color)"; const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
             if (divUpper === "FACH") divColor = "white"; else if (divUpper === "BOE") divColor = "var(--danger-red)"; else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
             let iconEstado = d.estado === "Online" ? "🟢" : (d.estado === "En misión" ? "🟡" : "🔴");
             const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
+            const fCrea = d.fechaCreacion || "21/02/2026"; // Fecha por defecto o real
+            const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
 
-            // PERSONAL RP
             lPer.innerHTML += `
-                <div onmouseenter="playHover()" onclick="abrirCarnet('${d.nombre}', '${d.rango}', '${d.division}', '${email}', '${objMisionString}')" 
-                     style="background: rgba(255,255,255,0.03); border: 1px solid var(--theme-dim); padding: 15px; display: flex; gap: 15px; align-items: center; transition: 0.2s; cursor: pointer;" 
-                     onmouseover="this.style.background='var(--theme-dim)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-                    <div style="font-size: 24px;">👤</div>
+                <div class="slide-up" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${d.nombre}', '${d.rango}', '${d.division}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}')" 
+                     style="background: rgba(0,0,0,0.4); border: 1px solid var(--theme-dim); padding: 15px; display: flex; gap: 15px; align-items: center; transition: all 0.3s; cursor: pointer;" 
+                     onmouseover="this.style.borderColor='var(--theme-color)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.5)';" 
+                     onmouseout="this.style.borderColor='var(--theme-dim)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    <div style="width: 50px; height: 50px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; border-radius: 5px; border: 1px solid var(--theme-color);"></div>
                     <div>
-                        <div style="font-weight:bold; color:white;">${iconEstado} ${d.nombre}</div>
-                        <div style="font-size:10px; color:${divColor}">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
-                        ${d.misionActiva ? `<div style="font-size:10px; color:var(--alert-amber); margin-top:3px;">🎯 MISIÓN: ${d.misionActiva.tipo}</div>` : ''}
+                        <div style="font-weight:bold; color:white; font-size:16px;">${iconEstado} ${d.nombre.toUpperCase()}</div>
+                        <div style="font-size:11px; color:${divColor}; margin-top:3px; letter-spacing:1px;">${d.rango.toUpperCase()} // ${divUpper}</div>
                     </div>
                 </div>`;
 
-            // FACH
             if (d.division === "FACH") {
                 let cat = (d.rango.includes("General") || d.rango === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango) ? "instructor" : "cadete");
-                const avion = d.aeronave || "SIN ASIGNAR";
-                const item = document.createElement('div'); item.className = "pilot-card-mini";
+                const item = document.createElement('div'); item.className = "pilot-card-mini slide-up";
                 item.onmouseenter = () => playHover(); 
-                item.onclick = () => {
-                    document.getElementById("vPilot").innerText = d.nombre;
-                    document.getElementById("vUnit").innerText = avion;
-                    document.getElementById("vRank").innerText = d.rango;
-                    window.playClick();
-                };
+                item.onclick = () => { document.getElementById("vPilot").innerText = d.nombre; document.getElementById("vUnit").innerText = aeronaveSafe; document.getElementById("vRank").innerText = d.rango; window.playClick(); };
                 item.innerHTML = `<div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
-                                  <div><div style="color:var(--admin-blue); font-size:10px; font-weight:bold;">[${avion}]</div><div style="font-size:12px; color:white;">${d.nombre}</div></div><div class="mini-radar"></div>`;
+                                  <div><div style="color:var(--admin-blue); font-size:10px; font-weight:bold;">[${aeronaveSafe}]</div><div style="font-size:12px; color:white; margin-top:2px;">${d.nombre}</div></div>`;
                 if (cat === "comandante") lCom.appendChild(item); else if (cat === "instructor") lIns.appendChild(item); else lCad.appendChild(item);
             }
 
-            // MISIONES
             if(d.misionActiva) {
                 let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--theme-color)");
                 lMis.innerHTML += `
-                    <div class="mission-card" style="border-left-color: ${mColor};">
-                        <div style="display:flex; justify-content: space-between;"><strong style="color: ${mColor}; font-size:18px;">OPERACIÓN: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 10px; color: #888;">ASIGNADO A: ${d.nombre}</span></div>
-                        <div style="color: white; margin-top: 10px; font-size: 14px;">> OBJETIVO: ${d.misionActiva.detalle}</div>
+                    <div class="slide-up" style="border: 1px solid ${mColor}; background: rgba(0,0,0,0.6); padding: 20px; border-left: 5px solid ${mColor}; transition: transform 0.3s; cursor:default;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+                        <div style="display:flex; justify-content: space-between;"><strong style="color: ${mColor}; font-size:20px; letter-spacing:1px;">OP: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 12px; color: #aaa; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius:3px;">ASIGNADO: ${d.nombre}</span></div>
+                        <div style="color: white; margin-top: 15px; font-size: 15px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 15px;">> OBJETIVO: ${d.misionActiva.detalle}</div>
                     </div>`;
             }
         });
-        if(lMis.innerHTML === "") lMis.innerHTML = "<div style='color: #555; font-style: italic;'>No hay operaciones activas.</div>";
+        if(lMis.innerHTML === "") lMis.innerHTML = "<div style='color: #555; font-style: italic; padding: 20px; text-align:center; border: 1px dashed #333;'>NO HAY OPERACIONES EN CURSO.</div>";
     }
 
-    // CARGAR HANGAR (REDISEÑADO)
     function cargarHangar() {
-        const hContainer = document.getElementById("listaHangar"); 
-        hContainer.innerHTML = "";
-        
+        const hContainer = document.getElementById("listaHangar"); hContainer.innerHTML = "";
         FLOTA_AEREA.forEach(nave => {
             hContainer.innerHTML += `
-                <div class="hangar-card-new">
+                <div class="hangar-card-new slide-up">
                     <div class="hangar-img" style="background-image: url('${nave.img}');"></div>
-                    <div class="hangar-info">
-                        <div class="hangar-text-group">
-                            <div class="hangar-title">${nave.nombre}</div>
-                            <div class="hangar-sub">SISTEMA ACTIVO</div>
+                    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to top, rgba(0,20,0,1), transparent);">
+                        <div style="display: flex; flex-direction: column;">
+                            <div style="color: #fff; font-weight: bold; font-size: 18px; letter-spacing: 1px;">${nave.nombre}</div>
+                            <div style="color: var(--theme-color); font-size: 11px; margin-top: 5px; letter-spacing: 2px;">SISTEMA EN LÍNEA</div>
                         </div>
-                        <div class="hangar-cant">CANT: ${nave.cant}</div>
+                        <div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 8px 15px; font-size: 16px; border-radius: 3px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);">CANT: ${nave.cant}</div>
                     </div>
                 </div>`;
         });
     }
 
-    // CARGAR DOCUMENTOS
     async function cargarDocumentos() {
         const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20));
         const snap = await getDocs(q);
         const lDoc = document.getElementById("listaDocumentos"); lDoc.innerHTML = "";
         snap.forEach(docSnap => {
-            const d = docSnap.data();
-            const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
+            const d = docSnap.data(); const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
             lDoc.innerHTML += `
-                <div class="doc-card">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa;">
-                        <span style="color:${color}; font-weight:bold;">[${d.tipo}]</span>
+                <div class="slide-up" style="border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.6); padding: 15px; border-left: 3px solid ${color}; transition: 0.3s; cursor: pointer;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(0,0,0,0.6)'">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa;">
+                        <span style="color:${color}; font-weight:bold; letter-spacing:1px;">[${d.tipo}]</span>
                         <span>${d.fecha} | AUTOR: ${d.autor}</span>
                     </div>
-                    <div style="color:white; font-weight:bold; font-size:14px; margin:5px 0;">${d.titulo.toUpperCase()}</div>
-                    <div style="color:var(--theme-color); font-size:12px;">${d.contenido}</div>
+                    <div style="color:white; font-weight:bold; font-size:16px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div>
+                    <div style="color:var(--theme-color); font-size:13px; opacity:0.8;">${d.contenido}</div>
                 </div>`;
         });
     }
 
     window.subirDocumento = async () => {
         window.playClick();
-        const tipo = document.getElementById("docTipo").value;
-        const titulo = document.getElementById("docTitulo").value;
-        const cont = document.getElementById("docContenido").value;
+        const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value;
         if(!titulo || !cont) return alert("COMPLETE TODOS LOS CAMPOS");
-
-        await addDoc(collection(db, "documentos"), {
-            tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName,
-            fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
-        });
-        
+        await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() });
         registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`);
         document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = "";
-        cargarDocumentos();
-        alert("DOCUMENTO ARCHIVADO EN LA RED SEGURA");
+        cargarDocumentos(); alert("DOCUMENTO ARCHIVADO EN LA RED SECRETA");
     };
 
-    // CARGAR LOGS
-    async function cargarLogs() {
-        const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = "";
-        const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(50));
-        const snap = await getDocs(q);
-        snap.forEach(docSnap => {
-            const d = docSnap.data();
-            lCont.innerHTML += `
-                <div class="log-entry">
-                    <span class="log-date">[${d.fechaFormato || 'Fecha Desconocida'}]</span>
-                    <strong>${d.autor}:</strong> [${d.accion}] - ${d.detalle}
-                </div>`;
-        });
-    }
-
-    // FUNCIONES ADMIN MISION Y CARNET
     window.asignarMision = async () => {
         window.playClick();
-        const email = document.getElementById("targetSoldadoMision").value;
-        const tipo = document.getElementById("tipoMision").value;
-        const objetivo = document.getElementById("objMision").value;
+        const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value;
         if(!email || !objetivo) return alert("COMPLETE SOLDADO Y OBJETIVO");
-
         await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" });
         registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`);
         document.getElementById("objMision").value = ""; alert("ÓRDENES DESPLEGADAS SATISFACTORIAMENTE"); cargarDatos();
@@ -598,8 +580,7 @@
     window.finalizarMision = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldadoMision").value;
-        if(!email) return alert("SELECCIONE UN SOLDADO DE LA LISTA DE DESPLIEGUE");
-        
+        if(!email) return alert("SELECCIONE UN SOLDADO");
         await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" });
         registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`);
         alert("SOLDADO RETIRADO DE OPERACIÓN ACTIVA"); cargarDatos();
@@ -607,26 +588,58 @@
 
     window.procesarCambiosAdmin = async () => {
         window.playClick();
-        const email = document.getElementById("targetSoldier").value;
-        const rango = document.getElementById("targetRank").value;
-        const avion = document.getElementById("targetAeronave").value;
+        const email = document.getElementById("targetSoldier").value; const rango = document.getElementById("targetRank").value; const avion = document.getElementById("targetAeronave").value;
         if(!email) return alert("SELECCIONE UN SOLDADO");
-        
         await updateDoc(doc(db, "usuarios", email), { rango: rango, aeronave: avion });
         registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango} y unidad ${avion}.`);
         alert("BASE DE DATOS ACTUALIZADA CON ÉXITO"); cargarDatos();
     };
 
-    window.abrirCarnet = (nombre, rango, division, idEmail, objMisionRaw) => {
-        window.playClick(); document.getElementById("c_nombre").innerText = nombre; document.getElementById("c_rango").innerText = rango; document.getElementById("c_division").innerText = division || 'EJÉRCITO';
-        document.getElementById("c_id").innerText = "CHL-" + idEmail.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*1000);
-        let misionTexto = "NINGUNA";
-        if (objMisionRaw !== 'null' && objMisionRaw !== 'undefined') { try { const m = JSON.parse(decodeURIComponent(objMisionRaw)); misionTexto = `[${m.tipo.toUpperCase()}] ${m.detalle}`; } catch(e) {} }
-        document.getElementById("c_mision").innerText = misionTexto; document.getElementById("carnetModal").style.display = "flex";
+    // FUNCIONES DEL NUEVO PERFIL COMPLETO
+    window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw) => {
+        window.playClick(); 
+        document.getElementById("p_nombre").innerText = nombre;
+        document.getElementById("p_rango").innerText = rango;
+        document.getElementById("p_division").innerText = division || 'EJÉRCITO';
+        document.getElementById("p_unidad").innerText = unidad;
+        document.getElementById("p_creacion").innerText = fCreacion;
+        document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
+        
+        let misionTexto = "DISPONIBLE EN BASE"; let mColor = "var(--theme-color)";
+        if (objMisionRaw !== 'null' && objMisionRaw !== 'undefined') { 
+            try { 
+                const m = JSON.parse(decodeURIComponent(objMisionRaw)); 
+                misionTexto = `[EN OPERACIÓN: ${m.tipo.toUpperCase()}] ${m.detalle}`; 
+                mColor = "var(--alert-amber)";
+            } catch(e) {} 
+        }
+        document.getElementById("p_mision").innerText = misionTexto;
+        document.getElementById("p_mision").style.color = mColor;
+
+        // Filtrar Logs Reales del Usuario Cacheado
+        const logBox = document.getElementById("p_historial_logs");
+        logBox.innerHTML = "";
+        const userLogs = window.cachedLogs.filter(l => l.autor === nombre || (l.detalle && l.detalle.includes(email)));
+        
+        if (userLogs.length === 0) {
+            logBox.innerHTML = "<div style='color:#555; text-align:center; padding:20px;'>No hay registros recientes para este elemento.</div>";
+        } else {
+            userLogs.slice(0, 15).forEach(log => {
+                logBox.innerHTML += `
+                    <div class="historial-log">
+                        <div class="historial-date">${log.fechaFormato || ''} - [${log.accion}]</div>
+                        <div>${log.detalle}</div>
+                    </div>`;
+            });
+        }
+
+        document.getElementById("perfilModal").style.display = "flex";
     };
-    window.cerrarCarnet = () => { window.playClick(); document.getElementById("carnetModal").style.display = "none"; };
+    
+    window.cerrarPerfil = () => { window.playClick(); document.getElementById("perfilModal").style.display = "none"; };
+    
     window.abrirAdminAuth = () => { window.playClick(); const code = prompt("CÓDIGO DE SEGURIDAD:"); if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block"; };
-    window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició sesión.`); } catch { alert("ACCESO DENEGADO"); } };
+    window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició sesión.`); } catch { alert("ACCESO DENEGADO / CREDENCIALES INVÁLIDAS"); } };
     window.logout = () => signOut(auth).then(() => location.reload());
 </script>
 </body>

@@ -14,6 +14,10 @@
             --alert-amber: #ffb400;
             --danger-red: #ff3b3b;
             --admin-blue: #00f2ff;
+            /* Nuevos Colores de Unidad */
+            --fach-white: #ffffff;
+            --boe-red: #ff0000;
+            --armada-blue: #0044ff;
         }
 
         body {
@@ -44,7 +48,7 @@
         /* CONTENIDO PRINCIPAL */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); }
 
-        /* SECCIÓN FACH REDISEÑADA */
+        /* SECCIÓN FACH */
         #seccionFach { display: none; }
         .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
         
@@ -89,7 +93,7 @@
 
         @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* VISOR CENTRAL DINÁMICO */
+        /* VISOR CENTRAL */
         .flight-display {
             border: 1px solid var(--dim-green);
             display: flex; flex-direction: column; align-items: center;
@@ -104,6 +108,12 @@
         
         /* LOGIN */
         #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
+
+        /* CLASES DINÁMICAS DE UNIDAD */
+        .card-fach { border-color: var(--fach-white) !important; color: var(--fach-white) !important; }
+        .card-boe { border-color: var(--boe-red) !important; color: var(--boe-red) !important; }
+        .card-armada { border-color: var(--armada-blue) !important; color: var(--armada-blue) !important; }
+        .text-unit-status { font-size: 10px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -193,7 +203,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Salarios y rangos según instrucción [cite: 2026-02-21]
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
     const hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
@@ -236,27 +245,35 @@
             const email = docSnap.id;
             selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
 
-            // Lista Personal RP
+            // Lógica de colores por Unidad [cite: 2026-02-21]
+            let unidadClass = "";
+            let colorTexto = "var(--tactical-green)";
+            const unidad = (d.division || "EJERCITO").toUpperCase();
+
+            if (unidad === "FACH") { unidadClass = "card-fach"; colorTexto = "var(--fach-white)"; }
+            else if (unidad === "BOE") { unidadClass = "card-boe"; colorTexto = "var(--boe-red)"; }
+            else if (unidad === "ARMADA") { unidadClass = "card-armada"; colorTexto = "var(--armada-blue)"; }
+
+            // Lista Personal RP con Colores Dinámicos [cite: 2026-02-21]
             lPer.innerHTML += `
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--dim-green); padding: 15px; display: flex; gap: 15px; align-items: center;">
+                <div class="pilot-card-mini ${unidadClass}" style="display: flex; gap: 15px; align-items: center; border: 1px solid; padding: 15px; margin-bottom: 0;">
                     <div style="font-size: 24px;">👤</div>
                     <div>
                         <div style="font-weight:bold; color:white;">${d.nombre}</div>
-                        <div style="font-size:10px; color:var(--tactical-green)">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
+                        <div class="text-unit-status" style="color: ${colorTexto}">${d.rango} // ${unidad}</div>
                     </div>
                 </div>`;
 
-            // Sección Fach con Aeronaves [cite: 2026-02-21]
-            if (d.division === "FACH") {
+            // Sección Fach
+            if (unidad === "FACH") {
                 let cat = "cadete";
                 if (d.rango.includes("General") || d.rango === "Coronel") cat = "comandante";
                 else if (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango)) cat = "instructor";
 
                 const avion = d.aeronave || "SIN ASIGNAR";
-
                 const item = document.createElement('div');
                 item.className = "pilot-card-mini";
-                item.onmouseenter = () => hoverSound.play();
+                item.onmouseenter = () => hoverSound.play(); [cite: 2026-02-20]
                 item.onclick = () => verPiloto(d.nombre, d.rango, cat, avion);
                 item.innerHTML = `
                     <div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
@@ -296,6 +313,11 @@
     };
 
     window.abrirAdminAuth = () => {
+        const userR = document.getElementById("userRank").innerText;
+        if(userR !== "General en Jefe") {
+            alert("ACCESO DENEGADO: SOLO EL GENERAL EN JEFE POSEE ESTA LLAVE."); [cite: 2026-02-21]
+            return;
+        }
         const code = prompt("CÓDIGO DE SEGURIDAD:");
         if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block";
     };

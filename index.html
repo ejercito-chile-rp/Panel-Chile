@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA DE MANDO TÁCTICO - CHILE</title>
+    <title>SISTEMA DE MANDO TÁCTICO</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
@@ -13,151 +13,139 @@
             --army-dark: #020602;
             --alert-amber: #ffb400;
             --danger-red: #ff3b3b;
-            --glass-bg: rgba(5, 10, 5, 0.95);
+            --admin-blue: #00f2ff;
         }
 
         body {
             background: var(--army-dark);
             color: var(--tactical-green);
             font-family: 'Share Tech Mono', monospace;
-            margin: 0; padding: 0;
-            background-image: radial-gradient(circle at center, #0a1a0a 0%, #020602 100%);
+            margin: 0; display: flex; height: 100vh; overflow: hidden;
         }
 
-        .main-container { padding: 20px; max-width: 1300px; margin: 0 auto; display: flex; gap: 20px; }
-
-        /* BARRA LATERAL ESTILO IMAGEN 9 */
+        /* SIDEBAR ESTILO IMAGEN 8 */
         .sidebar {
-            width: 250px;
-            background: rgba(0,0,0,0.5);
+            width: 260px;
+            background: rgba(5, 10, 5, 0.8);
             border-right: 1px solid var(--dim-green);
-            height: 100vh;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
         }
+
+        .menu-category { font-size: 10px; color: var(--alert-amber); padding: 10px 25px; letter-spacing: 1px; }
 
         .menu-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid transparent;
+            padding: 12px 25px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: 0.3s;
+            gap: 12px;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
         }
 
-        .menu-item:hover {
-            background: rgba(255, 180, 0, 0.05);
-            border-color: var(--alert-amber);
-            color: var(--alert-amber);
-        }
+        .menu-item:hover { background: var(--dim-green); border-left-color: var(--tactical-green); }
+        .menu-item.active { background: rgba(255, 180, 0, 0.1); border-left-color: var(--alert-amber); color: #fff; }
 
-        .menu-item i { color: #00f2ff; }
+        /* CONTENIDO PRINCIPAL */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); }
 
-        /* INTERFAZ DE LOGIN ADMIN ESTILO IMAGEN 1 */
+        /* LOGIN ADMIN OVERLAY (Imagen 1) */
         .admin-auth-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center;
         }
 
         .auth-card {
-            width: 450px;
-            padding: 40px;
-            border: 1px solid var(--tactical-green);
+            width: 500px; padding: 40px; border: 1px solid var(--tactical-green); text-align: center;
+            box-shadow: 0 0 20px var(--dim-green);
         }
 
         .auth-input {
-            background: none;
-            border: 1px solid var(--tactical-green);
-            color: var(--tactical-green);
-            padding: 15px;
-            width: 100%;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 14px;
+            background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green);
+            padding: 15px; width: 100%; margin-bottom: 20px; box-sizing: border-box; font-family: inherit;
         }
 
-        /* RESTO DE ESTILOS EXISTENTES */
-        .content-area { flex: 1; }
-        .stats-banner { display: flex; gap: 15px; margin-bottom: 25px; }
-        .stat-card {
-            background: rgba(0, 20, 0, 0.6); border: 1px solid var(--dim-green);
-            padding: 10px 20px; border-left: 4px solid var(--tactical-green); min-width: 150px;
-        }
-        .stat-num { font-size: 22px; font-weight: bold; color: white; }
-        .box { background: var(--glass-bg); border: 1px solid var(--dim-green); padding: 20px; margin-bottom: 20px; }
-        .grid-tropas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .tarjeta-tactica { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(77, 242, 77, 0.1); padding: 15px; cursor: pointer; }
-        .tarjeta-tactica:hover { background: var(--dim-green); border-color: var(--tactical-green); }
+        /* TARJETAS DE REGISTRO TÁCTICO (Imagen 4) */
+        .grid-tropas { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
         
-        #adminPanel { border: 1px solid var(--danger-red); display: none; }
-        button { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px; cursor: pointer; width: 100%; }
-        button:hover { background: var(--tactical-green); color: #000; }
+        .soldado-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(77, 242, 77, 0.1);
+            position: relative; padding: 20px; display: flex; gap: 15px;
+        }
+        
+        .status-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+        
+        /* PANEL DE ACCIONES ADMIN */
+        #adminTools { display: none; border: 1px solid var(--danger-red); padding: 20px; margin-bottom: 30px; background: rgba(255,0,0,0.05); }
 
-        #loginBox, #panelPrincipal { display: none; }
+        button { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px 20px; cursor: pointer; font-family: inherit; }
+        button:hover { background: var(--tactical-green); color: #000; }
+        
+        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
+    <div id="loginScreen">
+        <div class="auth-card" style="width: 350px;">
+            <h3>TERMINAL DE ACCESO</h3>
+            <input type="email" id="userEmail" class="auth-input" placeholder="CORREO">
+            <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
+            <button onclick="login()">INGRESAR AL SISTEMA</button>
+        </div>
+    </div>
+
     <div id="adminAuthOverlay" class="admin-auth-overlay">
         <div class="auth-card">
-            <h3 style="margin-bottom: 30px; letter-spacing: 5px;">VERIFICACIÓN DE MANDO</h3>
-            <input type="text" id="adminID" class="auth-input" placeholder="ID_OPERATIVO">
-            <input type="email" id="adminMail" class="auth-input" placeholder="CORREO_ENCRIPTADO">
-            <input type="password" id="adminCode" class="auth-input" placeholder="ACCESS_CODE">
+            <h2 style="letter-spacing: 5px; color: var(--tactical-green);">LEVEL 5 ACCESS REQUIRED</h2>
+            <p style="font-size: 12px; margin-bottom: 30px;">INTRODUZCA CÓDIGO DE ENCRIPTACIÓN PARA GESTIÓN DE RANGOS</p>
+            <input type="password" id="accessCodeInput" class="auth-input" placeholder="ACCESS_CODE">
             <div style="display: flex; gap: 10px;">
-                <button onclick="intentarAccesoAdmin()">ACCEDER</button>
-                <button onclick="cerrarAdminAuth()" style="border-color: var(--danger-red); color: var(--danger-red);">CANCELAR</button>
+                <button onclick="verificarCodigoAdmin()" style="flex: 1;">DESBLOQUEAR</button>
+                <button onclick="cerrarAdminAuth()" style="flex: 1; border-color: var(--danger-red); color: var(--danger-red);">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <div id="loginBox" class="box" style="max-width: 400px; margin: 100px auto; display: block;">
-        <h2 style="text-align: center;">TERMINAL DE ACCESO</h2>
-        <input id="regNombre" type="text" placeholder="NOMBRE COMPLETO" style="width:100%; padding:10px; margin:5px 0;">
-        <input id="email" type="email" placeholder="CORREO ELECTRÓNICO" style="width:100%; padding:10px; margin:5px 0;">
-        <input id="password" type="password" placeholder="CONTRASEÑA" style="width:100%; padding:10px; margin:5px 0;">
-        <button id="btnLogin">INGRESAR</button>
-    </div>
+    <div class="sidebar">
+        <div style="padding: 20px; border-bottom: 1px solid var(--dim-green); margin-bottom: 10px;">
+            <div id="userName" style="color: white; font-weight: bold;">CARGANDO...</div>
+            <div id="userRank" style="font-size: 10px; color: var(--alert-amber);">IDENTIFICANDO RANGO</div>
+        </div>
 
-    <div id="panelPrincipal" class="main-container">
+        <div class="menu-category">PERSONAL Y COMANDO</div>
+        <div class="menu-item active"><span>📋</span> Personal RP</div>
+        <div class="menu-item"><span>✈️</span> Pilotos de Facción</div>
         
-        <div class="sidebar">
-            <p style="font-size: 10px; color: #666; letter-spacing: 2px;">OPERACIONES TÁCTICAS</p>
-            <div class="menu-item"><span>📡</span> Registro Táctico</div>
-            <div class="menu-item"><span>🚀</span> Radar de Misión</div>
-            <div class="menu-item" id="btnMenuAdmin" onclick="abrirAdminAuth()">
-                <span style="color: #00f2ff;">🌐</span> Menu Admin
+        <div class="menu-category">OPERACIONES TÁCTICAS</div>
+        <div class="menu-item" onclick="abrirAdminAuth()">
+            <span style="color: var(--admin-blue);">🌐</span> Menu Admin
+        </div>
+        
+        <div style="margin-top: auto; padding: 20px;">
+            <button onclick="logout()" style="width: 100%; border-color: var(--danger-red); color: var(--danger-red);">DESCONECTAR</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="adminTools">
+            <h3 style="color: var(--danger-red); margin-top: 0;">MODIFICACIÓN DE EXPEDIENTES</h3>
+            <div style="display: flex; gap: 15px;">
+                <select id="targetSoldier" class="auth-input" style="margin:0; flex: 2;"></select>
+                <select id="targetRank" class="auth-input" style="margin:0; flex: 2;"></select>
+                <button onclick="procesarCambioRango()" style="flex: 1; border-color: var(--danger-red);">APLICAR RANGO</button>
             </div>
-            <button id="btnLogout" style="margin-top: 50px;">DESCONECTAR</button>
         </div>
 
-        <div class="content-area">
-            <div class="stats-banner">
-                <div class="stat-card"><div class="stat-num" id="countTotal">0</div><div class="stat-label">Efectivos</div></div>
-                <div class="stat-card" style="border-left-color: var(--danger-red);"><div class="stat-num" id="countMando">0</div><div class="stat-label">Alto Mando</div></div>
-            </div>
-
-            <div id="adminPanel" class="box">
-                <p style="color: var(--danger-red);">CONTROL DE MANDO SUPERIOR</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <select id="userSelectAdmin" style="padding:10px;"><option value="">SELECCIONAR SOLDADO...</option></select>
-                    <select id="newRankAdmin" style="padding:10px;"><option value="">ASIGNAR RANGO...</option></select>
-                    <button onclick="aplicarCambiosAdmin()" style="border-color: var(--danger-red);">APLICAR</button>
-                </div>
-            </div>
-
-            <div class="box">
-                <h3 id="welcome">IDENTIFICANDO...</h3>
-                <div id="lista" class="grid-tropas"></div>
-            </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="margin: 0;">REGISTRO TÁCTICO</h2>
+            <input type="text" id="search" placeholder="🔍 FILTRAR NOMBRE..." onkeyup="filtrar()" style="background: none; border: 1px solid var(--dim-green); color: white; padding: 8px;">
         </div>
+
+        <div id="listaSoldados" class="grid-tropas"></div>
     </div>
 
 <script type="module">
@@ -178,75 +166,111 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let usuarioActual = null;
+    const RANGOS = ["Recluta", "Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
+    
+    // --- CONFIGURACIÓN DEL CÓDIGO ADMIN ---
+    const MASTER_ACCESS_CODE = "CHILE2026"; 
 
-    // FUNCIONES DE ACCESO ADMIN
-    window.abrirAdminAuth = () => {
-        if (usuarioActual && usuarioActual.rango === "General en Jefe") {
-            document.getElementById("adminAuthOverlay").style.display = "flex";
+    // Autenticación Base
+    window.login = async () => {
+        const e = document.getElementById("userEmail").value;
+        const p = document.getElementById("userPass").value;
+        try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert("DATOS INCORRECTOS"); }
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const snap = await getDoc(doc(db, "usuarios", user.email));
+            if (snap.exists()) {
+                const u = snap.data();
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("userName").innerText = u.nombre;
+                document.getElementById("userRank").innerText = u.rango;
+                cargarPersonal();
+            }
         } else {
-            alert("ACCESO DENEGADO: SOLO EL GENERAL EN JEFE POSEE ESTA LLAVE.");
+            document.getElementById("loginScreen").style.display = "flex";
         }
+    });
+
+    // Gestión Admin
+    window.abrirAdminAuth = () => {
+        document.getElementById("adminAuthOverlay").style.display = "flex";
     };
 
     window.cerrarAdminAuth = () => {
         document.getElementById("adminAuthOverlay").style.display = "none";
     };
 
-    window.intentarAccesoAdmin = () => {
-        const id = document.getElementById("adminID").value;
-        const mail = document.getElementById("adminMail").value;
-        const code = document.getElementById("adminCode").value;
-
-        // Validación simple de ejemplo (puedes ajustarla a tu gusto)
-        if (mail === usuarioActual.email && code !== "") {
+    window.verificarCodigoAdmin = () => {
+        const input = document.getElementById("accessCodeInput").value;
+        if (input === MASTER_ACCESS_CODE) {
             document.getElementById("adminAuthOverlay").style.display = "none";
-            document.getElementById("adminPanel").style.display = "block";
-            alert("IDENTIDAD CONFIRMADA. BIENVENIDO GENERAL.");
+            document.getElementById("adminTools").style.display = "block";
+            alert("ACCESO CONCEDIDO: MODO EDITOR ACTIVADO.");
         } else {
-            alert("FALLO EN LA AUTENTICACIÓN. SISTEMA BLOQUEADO.");
+            alert("CÓDIGO ERRÓNEO. SE HA NOTIFICADO EL INTENTO DE INTRUSIÓN.");
         }
     };
 
-    // LÓGICA DE FIREBASE (Manteniendo tu estructura original)
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const snap = await getDoc(doc(db, "usuarios", user.email));
-            if (snap.exists()) {
-                usuarioActual = snap.data();
-                document.getElementById("loginBox").style.display = "none";
-                document.getElementById("panelPrincipal").style.display = "flex";
-                document.getElementById("welcome").innerText = `BIENVENIDO: ${usuarioActual.nombre}`;
-                cargarDatos();
-            }
-        } else {
-            document.getElementById("loginBox").style.display = "block";
-            document.getElementById("panelPrincipal").style.display = "none";
-        }
-    });
-
-    async function cargarDatos() {
+    async function cargarPersonal() {
         const querySnapshot = await getDocs(collection(db, "usuarios"));
-        const listaDiv = document.getElementById("lista");
-        const adminSelect = document.getElementById("userSelectAdmin");
-        listaDiv.innerHTML = "";
+        const lista = document.getElementById("listaSoldados");
+        const selectS = document.getElementById("targetSoldier");
+        const selectR = document.getElementById("targetRank");
         
+        lista.innerHTML = "";
+        selectS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
+        selectR.innerHTML = '';
+        RANGOS.forEach(r => selectR.innerHTML += `<option value="${r}">${r}</option>`);
+
         querySnapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            // Llenar lista visual
-            listaDiv.innerHTML += `<div class="tarjeta-tactica"><b>${data.nombre}</b><br>${data.rango}</div>`;
-            // Llenar select de admin
+            const d = docSnap.data();
+            const email = docSnap.id;
+            
+            // Llenar select admin
             let opt = document.createElement("option");
-            opt.value = docSnap.id; opt.textContent = data.nombre;
-            adminSelect.appendChild(opt);
+            opt.value = email; opt.textContent = d.nombre;
+            selectS.appendChild(opt);
+
+            // Determinar color de barra (Imagen 4)
+            let color = "var(--tactical-green)";
+            if (d.rango.includes("General") || d.rango === "Coronel") color = "var(--alert-amber)";
+            if (d.division === "BOE") color = "var(--danger-red)";
+
+            lista.innerHTML += `
+                <div class="soldado-card">
+                    <div class="status-bar" style="background: ${color}"></div>
+                    <div style="width: 50px; height: 50px; background: ${color}33; display: flex; align-items: center; justify-content: center; border: 1px solid ${color}">
+                        ▲
+                    </div>
+                    <div>
+                        <div style="font-weight: bold; color: white;">${d.nombre.toUpperCase()}</div>
+                        <div style="font-size: 11px; color: ${color}">${d.rango} [${d.division}]</div>
+                        <div style="font-size: 9px; margin-top: 5px; color: #666;">ID: ${email.split('@')[0]}</div>
+                    </div>
+                </div>`;
         });
     }
 
-    document.getElementById("btnLogin").onclick = () => {
-        signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value);
+    window.procesarCambioRango = async () => {
+        const email = document.getElementById("targetSoldier").value;
+        const nuevoRango = document.getElementById("targetRank").value;
+        
+        if (!email) return alert("SELECCIONA UN SOLDADO");
+        
+        await updateDoc(doc(db, "usuarios", email), { rango: nuevoRango });
+        alert("RANGO ACTUALIZADO EN EL EXPEDIENTE");
+        cargarPersonal();
     };
 
-    document.getElementById("btnLogout").onclick = () => signOut(auth).then(() => location.reload());
+    window.logout = () => signOut(auth).then(() => location.reload());
+
+    window.filtrar = () => {
+        const q = document.getElementById("search").value.toLowerCase();
+        const cards = document.getElementsByClassName("soldado-card");
+        for (let c of cards) c.style.display = c.innerText.toLowerCase().includes(q) ? "flex" : "none";
+    };
 
 </script>
 </body>

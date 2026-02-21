@@ -100,7 +100,7 @@
 
         /* PANEL ADMIN */
         #adminTools { display: none; border: 1px solid var(--danger-red); padding: 20px; margin-bottom: 30px; background: rgba(255,0,0,0.05); }
-        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; }
+        .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; }
         
         /* LOGIN */
         #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
@@ -120,7 +120,13 @@
     <div class="sidebar">
         <div style="padding: 20px; border-bottom: 1px solid var(--dim-green); margin-bottom: 10px;">
             <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase;">...</div>
-            <div id="userRank" style="font-size: 10px; color: var(--alert-amber);">IDENTIFICANDO...</div>
+            <div id="userRank" style="font-size: 10px; color: var(--alert-amber); margin-bottom: 8px;">IDENTIFICANDO...</div>
+            
+            <select id="myStatus" class="auth-input" style="padding: 5px; font-size: 10px; border-color: var(--dim-green);" onchange="updateMyStatus()">
+                <option value="Offline">🔴 OFFLINE</option>
+                <option value="Online">🟢 ONLINE</option>
+                <option value="En misión">🟡 EN MISIÓN</option>
+            </select>
         </div>
         <div class="menu-category">COMANDO CENTRAL</div>
         <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')"><span>📋</span> Personal RP</div>
@@ -134,7 +140,7 @@
         <div id="seccionPersonal">
             <div id="adminTools">
                 <p style="color: var(--danger-red); font-weight: bold; margin: 0 0 15px 0;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
                     <select id="targetSoldier" class="auth-input"></select>
                     <select id="targetRank" class="auth-input"></select>
                     <select id="targetAeronave" class="auth-input">
@@ -146,7 +152,23 @@
                     </select>
                     <button onclick="procesarCambiosAdmin()" style="background: var(--danger-red); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">ACTUALIZAR</button>
                 </div>
+                
+                <div style="border-top: 1px dashed var(--danger-red); padding-top: 15px;">
+                    <p style="color: var(--alert-amber); font-weight: bold; margin: 0 0 10px 0;">⚖️ SISTEMA DE SANCIONES DISCIPLINARIAS</p>
+                    <div style="display: grid; grid-template-columns: 1fr 2fr 1fr auto; gap: 10px;">
+                        <select id="targetSancion" class="auth-input">
+                            <option value="Falta leve">Falta leve</option>
+                            <option value="Falta grave">Falta grave</option>
+                            <option value="Suspensión">Suspensión</option>
+                            <option value="Expulsión">Expulsión</option>
+                        </select>
+                        <input type="text" id="motivoSancion" class="auth-input" placeholder="MOTIVO DE INFRACCIÓN">
+                        <input type="text" id="duracionSancion" class="auth-input" placeholder="DURACIÓN (Ej: 2 días)">
+                        <button onclick="aplicarSancion()" style="background: var(--alert-amber); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">SANCIONAR</button>
+                    </div>
+                </div>
             </div>
+            
             <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
         </div>
 
@@ -178,7 +200,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    // IMPORTANTE: Se añadió arrayUnion para guardar el historial de sanciones
+    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4",
@@ -195,6 +218,10 @@
 
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
+    // Variables globales para la sesión actual
+    window.currentUserEmail = null;
+    window.currentUserName = "Desconocido";
+
     // Se expone el sonido globalmente para que las tarjetas de personal lo puedan usar
     window.hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
     window.hoverSound.volume = 0.1;
@@ -208,12 +235,21 @@
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            window.currentUserEmail = user.email;
             const snap = await getDoc(doc(db, "usuarios", user.email));
             if (snap.exists()) {
+                const data = snap.data();
+                window.currentUserName = data.nombre;
+                
                 document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("userName").innerText = snap.data().nombre;
-                const rangoUsuario = snap.data().rango;
+                document.getElementById("userName").innerText = data.nombre;
+                const rangoUsuario = data.rango;
                 document.getElementById("userRank").innerText = rangoUsuario;
+                
+                // Cargar el estado personal
+                if(data.estado) {
+                    document.getElementById("myStatus").value = data.estado;
+                }
                 
                 // Mostrar siempre el panel de admin si es General en Jefe
                 if (rangoUsuario === "General en Jefe") {
@@ -224,6 +260,16 @@
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
+
+    // Función para actualizar el estado del usuario logueado en tiempo real
+    window.updateMyStatus = async () => {
+        if(!window.currentUserEmail) return;
+        const newStatus = document.getElementById("myStatus").value;
+        await updateDoc(doc(db, "usuarios", window.currentUserEmail), {
+            estado: newStatus
+        });
+        cargarDatos();
+    };
 
     async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
@@ -251,13 +297,23 @@
             else if (divUpper === "BOE") divColor = "var(--danger-red)";
             else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
-            // Lista Personal RP (actualizada con color dinámico y sonido hover)
+            // Configurar Icono de Estado
+            let iconEstado = "🔴";
+            if (d.estado === "Online") iconEstado = "🟢";
+            else if (d.estado === "En misión") iconEstado = "🟡";
+
+            // Visualizar historial de sanciones
+            const totalSanciones = d.sanciones ? d.sanciones.length : 0;
+            const alertaSancion = totalSanciones > 0 ? `<div style="font-size:10px; color:var(--danger-red); margin-top:5px;">⚠️ TIENE ${totalSanciones} SANCION(ES) EN HISTORIAL</div>` : '';
+
+            // Lista Personal RP (actualizada con Estado, Sanciones, color dinámico y sonido hover)
             lPer.innerHTML += `
                 <div onmouseenter="window.hoverSound.play()" style="background: rgba(255,255,255,0.03); border: 1px solid var(--dim-green); padding: 15px; display: flex; gap: 15px; align-items: center; transition: 0.2s; cursor: pointer;" onmouseover="this.style.background='var(--dim-green)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
                     <div style="font-size: 24px;">👤</div>
                     <div>
-                        <div style="font-weight:bold; color:white;">${d.nombre}</div>
+                        <div style="font-weight:bold; color:white;">${iconEstado} ${d.nombre}</div>
                         <div style="font-size:10px; color:${divColor}">${d.rango} // ${d.division || 'EJÉRCITO'}</div>
+                        ${alertaSancion}
                     </div>
                 </div>`;
 
@@ -310,11 +366,6 @@
         }
     };
 
-    window.abrirAdminAuth = () => {
-        const code = prompt("CÓDIGO DE SEGURIDAD:");
-        if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block";
-    };
-
     window.procesarCambiosAdmin = async () => {
         const email = document.getElementById("targetSoldier").value;
         const rango = document.getElementById("targetRank").value;
@@ -327,6 +378,43 @@
         });
         alert("BASE DE DATOS ACTUALIZADA CON ÉXITO");
         cargarDatos();
+    };
+
+    // Función para Aplicar Sanciones
+    window.aplicarSancion = async () => {
+        const email = document.getElementById("targetSoldier").value; // Reusamos el selector de usuario
+        const tipoSancion = document.getElementById("targetSancion").value;
+        const motivo = document.getElementById("motivoSancion").value;
+        const duracion = document.getElementById("duracionSancion").value;
+
+        if(!email) return alert("SELECCIONE AL SOLDADO A SANCIONAR DESDE EL MENÚ DESPLEGABLE");
+        if(!motivo || !duracion) return alert("POR FAVOR COMPLETE MOTIVO Y DURACIÓN");
+
+        const nuevaSancion = {
+            tipo: tipoSancion,
+            motivo: motivo,
+            duracion: duracion,
+            fecha: new Date().toLocaleDateString('es-CL'),
+            sancionador: window.currentUserName
+        };
+
+        try {
+            await updateDoc(doc(db, "usuarios", email), {
+                sanciones: arrayUnion(nuevaSancion)
+            });
+            alert("SANCION APLICADA Y REGISTRADA EN EL EXPEDIENTE");
+            document.getElementById("motivoSancion").value = "";
+            document.getElementById("duracionSancion").value = "";
+            cargarDatos();
+        } catch(error) {
+            console.error("Error al sancionar: ", error);
+            alert("ERROR AL APLICAR SANCION");
+        }
+    };
+
+    window.abrirAdminAuth = () => {
+        const code = prompt("CÓDIGO DE SEGURIDAD:");
+        if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block";
     };
 
     window.login = async () => {

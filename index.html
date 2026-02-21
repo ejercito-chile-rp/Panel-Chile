@@ -14,10 +14,10 @@
             --alert-amber: #ffb400;
             --danger-red: #ff3b3b;
             --admin-blue: #00f2ff;
-            /* Nuevos Colores de Unidad */
-            --fach-white: #ffffff;
-            --boe-red: #ff0000;
-            --armada-blue: #0044ff;
+            /* Colores de Unidad [cite: 2026-02-21] */
+            --unit-fach: #ffffff;
+            --unit-boe: #ff0000;
+            --unit-armada: #0044ff;
         }
 
         body {
@@ -45,25 +45,24 @@
         .menu-item:hover { background: var(--dim-green); border-left-color: var(--tactical-green); }
         .menu-item.active { background: rgba(0, 242, 255, 0.1); border-left-color: var(--admin-blue); color: #fff; }
 
-        /* CONTENIDO PRINCIPAL */
+        /* CONTENIDO */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); }
+
+        /* REGISTRO TÁCTICO DINÁMICO [cite: 2026-02-21] */
+        .card-rp {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--dim-green);
+            padding: 15px; display: flex; gap: 15px; align-items: center;
+            transition: 0.3s;
+        }
+        .card-rp.fach { border-color: var(--unit-fach); border-width: 2px; }
+        .card-rp.boe { border-color: var(--unit-boe); border-width: 2px; }
+        .card-rp.armada { border-color: var(--unit-armada); border-width: 2px; }
 
         /* SECCIÓN FACH */
         #seccionFach { display: none; }
         .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
-        
-        .pilot-container { 
-            border: 1px solid var(--dim-green); 
-            background: rgba(0, 10, 0, 0.6); 
-            padding: 15px; 
-            overflow-y: auto;
-        }
-
-        .sub-header { 
-            font-size: 11px; color: var(--alert-amber); 
-            padding: 10px 0; border-bottom: 1px solid var(--dim-green);
-            margin-bottom: 15px; display: flex; align-items: center; gap: 5px;
-        }
+        .pilot-container { border: 1px solid var(--dim-green); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; }
 
         .pilot-card-mini {
             background: rgba(255, 255, 255, 0.03);
@@ -72,48 +71,13 @@
             display: grid; grid-template-columns: 50px 1fr 40px;
             align-items: center; gap: 10px; transition: 0.3s;
         }
-
-        .pilot-card-mini:hover { background: var(--dim-green); border-color: var(--admin-blue); cursor: pointer; transform: translateX(5px); }
-
-        .icon-box {
-            width: 45px; height: 45px; background: rgba(0,0,0,0.5);
-            border: 1px solid var(--admin-blue); display: flex;
-            align-items: center; justify-content: center; font-size: 20px;
-        }
-
-        .mini-radar {
-            width: 35px; height: 35px; border: 1px solid var(--tactical-green);
-            border-radius: 50%; position: relative; opacity: 0.4;
-        }
-        .mini-radar::after {
-            content: ''; position: absolute; width: 50%; height: 1px;
-            background: var(--tactical-green); top: 50%; left: 50%;
-            transform-origin: left; animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* VISOR CENTRAL */
-        .flight-display {
-            border: 1px solid var(--dim-green);
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; position: relative;
-            transition: all 0.5s ease;
-        }
-        .main-icon-display { font-size: 130px; z-index: 2; transition: all 0.5s ease; }
+        .pilot-card-mini:hover { background: var(--dim-green); cursor: pointer; }
 
         /* PANEL ADMIN */
         #adminTools { display: none; border: 1px solid var(--danger-red); padding: 20px; margin-bottom: 30px; background: rgba(255,0,0,0.05); }
         .auth-input { background: #000; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 12px; width: 100%; margin-bottom: 10px; font-family: inherit; }
         
-        /* LOGIN */
         #loginScreen { position: fixed; inset: 0; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
-
-        /* CLASES DINÁMICAS DE UNIDAD */
-        .card-fach { border-color: var(--fach-white) !important; color: var(--fach-white) !important; }
-        .card-boe { border-color: var(--boe-red) !important; color: var(--boe-red) !important; }
-        .card-armada { border-color: var(--armada-blue) !important; color: var(--armada-blue) !important; }
-        .text-unit-status { font-size: 10px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -123,7 +87,7 @@
             <h3 style="letter-spacing: 3px;">TERMINAL DE ACCESO</h3>
             <input type="email" id="userEmail" class="auth-input" placeholder="EMAIL MILITAR">
             <input type="password" id="userPass" class="auth-input" placeholder="CONTRASEÑA">
-            <button onclick="login()" style="width: 100%; background: transparent; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px; cursor: pointer; font-family: inherit;">INICIAR ENLACE</button>
+            <button onclick="window.ejecutarLogin()" style="width: 100%; background: transparent; border: 1px solid var(--tactical-green); color: var(--tactical-green); padding: 10px; cursor: pointer; font-family: inherit;">INICIAR ENLACE</button>
         </div>
     </div>
 
@@ -137,7 +101,7 @@
         <div class="menu-item" id="btnFach" onclick="switchTab('fach')"><span>✈️</span> Sección Fach</div>
         <div class="menu-category">SISTEMAS DE VUELO</div>
         <div class="menu-item" onclick="abrirAdminAuth()"><span style="color: var(--admin-blue);">🌐</span> Menu Admin</div>
-        <button onclick="logout()" style="margin: auto 20px 20px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 8px; cursor: pointer; font-family: inherit;">DESCONECTAR</button>
+        <button onclick="window.ejecutarLogout()" style="margin: auto 20px 20px; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 8px; cursor: pointer; font-family: inherit;">DESCONECTAR</button>
     </div>
 
     <div class="main-content">
@@ -157,29 +121,20 @@
                     <button onclick="procesarCambiosAdmin()" style="background: var(--danger-red); color: black; border: none; padding: 0 20px; font-weight: bold; cursor: pointer;">ACTUALIZAR</button>
                 </div>
             </div>
-            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+            <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px;"></div>
         </div>
 
         <div id="seccionFach">
             <div class="fach-layout">
                 <div class="pilot-container">
-                    <div class="sub-header">▶ CONTACTOS ID // ACTIVOS</div>
-                    
-                    <div style="font-size: 9px; color: #555; margin-bottom: 10px;">— PILOTO COMANDANTE —</div>
                     <div id="listaComandante"></div>
-
-                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— PILOTO INSTRUCTOR —</div>
                     <div id="listaInstructor"></div>
-
-                    <div style="font-size: 9px; color: #555; margin: 20px 0 10px;">— CADETE —</div>
                     <div id="listaCadete"></div>
                 </div>
-
-                <div class="flight-display" id="mainDisplayFach">
-                    <div class="main-icon-display" id="vIcon">📡</div>
-                    <div id="vPilot" style="font-size: 32px; color: white; letter-spacing: 4px;">SISTEMA EN ESPERA</div>
-                    <div id="vUnit" style="color: var(--admin-blue); font-size: 18px; margin-top: 10px; border: 1px solid; padding: 5px 20px;">---</div>
-                    <div id="vRank" style="font-size: 12px; margin-top: 15px; opacity: 0.7;">POR FAVOR SELECCIONE UNIDAD DE CONTACTO</div>
+                <div class="flight-display" id="mainDisplayFach" style="border: 1px solid var(--dim-green); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div id="vIcon" style="font-size: 100px;">📡</div>
+                    <div id="vPilot" style="font-size: 24px; color: white;">SELECCIONE PILOTO</div>
+                    <div id="vUnit" style="color: var(--admin-blue);">---</div>
                 </div>
             </div>
         </div>
@@ -203,17 +158,19 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
+    const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"]; [cite: 2026-02-21]
 
     const hoverSound = new Audio('https://www.soundjay.com/buttons/sounds/button-28.mp3');
-    hoverSound.volume = 0.1;
+    hoverSound.volume = 0.1; [cite: 2026-02-20]
 
-    window.switchTab = (tab) => {
-        document.getElementById("seccionPersonal").style.display = tab === 'personal' ? 'block' : 'none';
-        document.getElementById("seccionFach").style.display = tab === 'fach' ? 'block' : 'none';
-        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(tab === 'personal' ? 'btnPersonal' : 'btnFach').classList.add('active');
+    // SOLUCIÓN AL ERROR DE REFERENCIA: Asignar funciones a window
+    window.ejecutarLogin = async () => {
+        const e = document.getElementById("userEmail").value;
+        const p = document.getElementById("userPass").value;
+        try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("ACCESO DENEGADO"); }
     };
+
+    window.ejecutarLogout = () => signOut(auth).then(() => location.reload());
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -224,124 +181,66 @@
                 document.getElementById("userRank").innerText = snap.data().rango;
                 cargarDatos();
             }
-        } else { document.getElementById("loginScreen").style.display = "flex"; }
+        }
     });
 
     async function cargarDatos() {
         const snap = await getDocs(collection(db, "usuarios"));
         const lPer = document.getElementById("listaSoldados");
-        const lCom = document.getElementById("listaComandante");
-        const lIns = document.getElementById("listaInstructor");
-        const lCad = document.getElementById("listaCadete");
         const selS = document.getElementById("targetSoldier");
         const selR = document.getElementById("targetRank");
 
-        lPer.innerHTML = ""; lCom.innerHTML = ""; lIns.innerHTML = ""; lCad.innerHTML = "";
+        lPer.innerHTML = "";
         selS.innerHTML = '<option value="">SELECCIONAR SOLDADO...</option>';
         selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
 
         snap.forEach(docSnap => {
             const d = docSnap.data();
-            const email = docSnap.id;
-            selS.innerHTML += `<option value="${email}">${d.nombre}</option>`;
+            const div = (d.division || "EJERCITO").toLowerCase();
+            
+            // Asignación de clase por color [cite: 2026-02-21]
+            let colorClase = "";
+            if (div === "fach") colorClase = "fach";
+            else if (div === "boe") colorClase = "boe";
+            else if (div === "armada") colorClase = "armada";
 
-            // Lógica de colores por Unidad [cite: 2026-02-21]
-            let unidadClass = "";
-            let colorTexto = "var(--tactical-green)";
-            const unidad = (d.division || "EJERCITO").toUpperCase();
+            selS.innerHTML += `<option value="${docSnap.id}">${d.nombre}</option>`;
 
-            if (unidad === "FACH") { unidadClass = "card-fach"; colorTexto = "var(--fach-white)"; }
-            else if (unidad === "BOE") { unidadClass = "card-boe"; colorTexto = "var(--boe-red)"; }
-            else if (unidad === "ARMADA") { unidadClass = "card-armada"; colorTexto = "var(--armada-blue)"; }
-
-            // Lista Personal RP con Colores Dinámicos [cite: 2026-02-21]
             lPer.innerHTML += `
-                <div class="pilot-card-mini ${unidadClass}" style="display: flex; gap: 15px; align-items: center; border: 1px solid; padding: 15px; margin-bottom: 0;">
+                <div class="card-rp ${colorClase}">
                     <div style="font-size: 24px;">👤</div>
                     <div>
                         <div style="font-weight:bold; color:white;">${d.nombre}</div>
-                        <div class="text-unit-status" style="color: ${colorTexto}">${d.rango} // ${unidad}</div>
+                        <div style="font-size:10px; opacity:0.8;">${d.rango} // ${div.toUpperCase()}</div>
                     </div>
                 </div>`;
-
-            // Sección Fach
-            if (unidad === "FACH") {
-                let cat = "cadete";
-                if (d.rango.includes("General") || d.rango === "Coronel") cat = "comandante";
-                else if (["Capitán", "Mayor", "Teniente Coronel"].includes(d.rango)) cat = "instructor";
-
-                const avion = d.aeronave || "SIN ASIGNAR";
-                const item = document.createElement('div');
-                item.className = "pilot-card-mini";
-                item.onmouseenter = () => hoverSound.play(); [cite: 2026-02-20]
-                item.onclick = () => verPiloto(d.nombre, d.rango, cat, avion);
-                item.innerHTML = `
-                    <div class="icon-box">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
-                    <div>
-                        <div style="color:var(--admin-blue); font-size:10px; font-weight:bold;">[${avion}]</div>
-                        <div style="font-size:12px; color:white;">${d.nombre}</div>
-                    </div>
-                    <div class="mini-radar"></div>`;
-                
-                if (cat === "comandante") lCom.appendChild(item);
-                else if (cat === "instructor") lIns.appendChild(item);
-                else lCad.appendChild(item);
-            }
         });
     }
 
-    window.verPiloto = (nombre, rango, cat, avion) => {
-        const display = document.getElementById("mainDisplayFach");
-        const icon = document.getElementById("vIcon");
-        document.getElementById("vPilot").innerText = nombre.toUpperCase();
-        document.getElementById("vUnit").innerText = "UNIDAD ACTUAL: " + avion.toUpperCase();
-        document.getElementById("vRank").innerText = "RANGO: " + rango.toUpperCase();
-
-        if (cat === "comandante") {
-            display.style.borderColor = "var(--alert-amber)";
-            icon.innerText = "🦅";
-            icon.style.filter = "drop-shadow(0 0 20px var(--alert-amber))";
-        } else if (cat === "instructor") {
-            display.style.borderColor = "var(--admin-blue)";
-            icon.innerText = "✈️";
-            icon.style.filter = "drop-shadow(0 0 20px var(--admin-blue))";
-        } else {
-            display.style.borderColor = "var(--tactical-green)";
-            icon.innerText = "🪖";
-            icon.style.filter = "drop-shadow(0 0 20px var(--tactical-green))";
-        }
+    window.switchTab = (tab) => {
+        document.getElementById("seccionPersonal").style.display = tab === 'personal' ? 'block' : 'none';
+        document.getElementById("seccionFach").style.display = tab === 'fach' ? 'block' : 'none';
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(tab === 'personal' ? 'btnPersonal' : 'btnFach').classList.add('active');
     };
 
     window.abrirAdminAuth = () => {
-        const userR = document.getElementById("userRank").innerText;
-        if(userR !== "General en Jefe") {
+        const rank = document.getElementById("userRank").innerText;
+        if(rank !== "General en Jefe") {
             alert("ACCESO DENEGADO: SOLO EL GENERAL EN JEFE POSEE ESTA LLAVE."); [cite: 2026-02-21]
             return;
         }
-        const code = prompt("CÓDIGO DE SEGURIDAD:");
-        if(code === "CHILE2026") document.getElementById("adminTools").style.display = "block";
+        if(prompt("CÓDIGO:") === "CHILE2026") document.getElementById("adminTools").style.display = "block";
     };
 
     window.procesarCambiosAdmin = async () => {
         const email = document.getElementById("targetSoldier").value;
         const rango = document.getElementById("targetRank").value;
         const avion = document.getElementById("targetAeronave").value;
-        if(!email) return alert("SELECCIONE UN SOLDADO");
-        
-        await updateDoc(doc(db, "usuarios", email), { 
-            rango: rango,
-            aeronave: avion
-        });
-        alert("BASE DE DATOS ACTUALIZADA CON ÉXITO");
+        await updateDoc(doc(db, "usuarios", email), { rango, aeronave: avion });
+        alert("ACTUALIZADO");
         cargarDatos();
     };
-
-    window.login = async () => {
-        const e = document.getElementById("userEmail").value;
-        const p = document.getElementById("userPass").value;
-        try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("ACCESO DENEGADO"); }
-    };
-    window.logout = () => signOut(auth).then(() => location.reload());
 </script>
 </body>
 </html>

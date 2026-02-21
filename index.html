@@ -118,9 +118,28 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        /* ESTILOS DEL MAPA GTA SA INTEGRADO */
-        .map-wrapper { position: relative; height: 65vh; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        /* AQUÍ SE USA TU IMAGEN LOCAL DEL MAPA */
+        /* ESTILOS DEL MAPA GTA SA INTEGRADO Y REDIMENSIONABLE */
+        .map-wrapper { 
+            position: relative; 
+            /* Altura inicial ajustada para que no sea tan grande al principio */
+            height: 50vh; 
+            /* Altura mínima para que no desaparezca */
+            min-height: 300px;
+            /* PROPIEDADES CLAVE PARA REDIMENSIONAR CON "PINZA" */
+            resize: vertical; /* Permite al usuario estirar verticalmente */
+            overflow: hidden; /* Mantiene la imagen dentro del contenedor */
+            border-radius: 12px; 
+            border: 1px solid var(--glass-border); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        
+        /* Indicador visual de la esquina de redimensión (opcional, para navegadores basados en WebKit) */
+        ::-webkit-resizer {
+            border-color: transparent var(--theme-color) var(--theme-color) transparent;
+            border-style: solid;
+            border-width: 6px;
+        }
+
         .map-bg { position: absolute; inset: 0; background: url('mapagtasa.jpg') center/cover no-repeat; opacity: 0.85; }
         
         .map-unit { position: absolute; width: 14px; height: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; animation: pulseNode 2s infinite; z-index: 2; }
@@ -348,6 +367,7 @@
                     </div>
                 </div>
             </div>
+            <div style="font-size: 10px; color: #666; margin-top: 5px; text-align: right;">Arrastre la esquina inferior derecha para ajustar el tamaño del mapa.</div>
         </div>
 
         <div id="seccionEstadisticas">
@@ -479,20 +499,20 @@
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
 
-    // FLOTA AÉREA CON TUS IMÁGENES LOCALES
-    // Asegúrate de que los archivos .jpg estén en la misma carpeta que este HTML
+    // FLOTA AÉREA ACTUALIZADA (SEGÚN TUS INDICACIONES)
     const FLOTA_AEREA = [
         { id: "F-22 Raptor", cant: 5, img: "f22.jpg" },
         { id: "F-16 Falcon", cant: 1, img: "f16.jpg" },
-        { id: "Avión Justiciero (AC-130)", cant: 1, img: "AC130.jpg" },
-        // Mantuve los enlaces online para C-130 y Cobra ya que no vi foto local para ellos en tu lista
-        { id: "C-130 Hércules", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Lockheed_C-130_Hercules_in_flight.jpg" },
+        // Se eliminó "Avión Justiciero (AC-130)" como pediste
+        // El C-130 ahora usa la foto del AC130
+        { id: "C-130 Hércules", cant: 1, img: "AC130.jpg" },
         { id: "UH-60 Black Hawk", cant: 3, img: "blackhawk.jpg" },
         { id: "CH-47 Chinook", cant: 1, img: "chinook.jpg" },
-        { id: "AH-1 Cobra", cant: 1, img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/AH-1W_Super_Cobra_in_flight_2004.jpg" }
+        // El AH-1 Cobra ahora usa la foto local ah1.jpg
+        { id: "AH-1 Cobra", cant: 1, img: "ah1.jpg" }
     ];
 
-    // FLOTA TERRESTRE (Mantuve los enlaces online ya que no me pasaste fotos de estos)
+    // FLOTA TERRESTRE
     const FLOTA_TERRESTRE = [
         { id: "Carros Ligeros Blindados", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/d/da/Mowag_Piranha_III_10.jpg" },
         { id: "Tanques Pesados", cant: 2, img: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Leopard_2_A5_der_Bundeswehr.jpg" },

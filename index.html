@@ -45,7 +45,7 @@
         .menu-hidden { display: none !important; }
 
         .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #0a1a0a 0%, #020602 100%); z-index: 5; position: relative;}
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento { display: none; }
         
         .fach-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: 85vh; }
         .pilot-container { border: 1px solid var(--theme-dim); background: rgba(0, 10, 0, 0.6); padding: 15px; overflow-y: auto; }
@@ -117,7 +117,6 @@
         .lic-revocada { color: var(--danger-red); border-color: var(--danger-red); background: rgba(255,59,59,0.1); }
         .lic-ninguna { color: #555; border-color: #333; }
 
-        /* ESTILOS DE ESTADÍSTICAS */
         .stat-card-wrapper { background: rgba(0,0,0,0.6); border: 1px solid var(--theme-dim); padding: 30px 20px; text-align: center; transition: 0.3s; }
         .stat-card-wrapper:hover { border-color: var(--theme-color); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
     </style>
@@ -233,6 +232,7 @@
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
         
         <div class="menu-category menu-hidden" id="menuOficialesTitle">SISTEMA OFICIALES</div>
+        <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
         <div class="menu-item menu-hidden" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
 
         <div class="menu-category">ADMINISTRACIÓN</div>
@@ -336,6 +336,28 @@
                 </div>
             </div>
             <div id="listaUsuariosLicencias" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+        </div>
+
+        <div id="seccionReclutamiento">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--theme-dim); padding-bottom: 10px;">SISTEMA DE RECLUTAMIENTO</h2>
+            
+            <div style="background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--admin-blue); margin-bottom: 20px;">
+                <h4 style="margin-top:0; color:var(--admin-blue);">REGISTRAR NUEVO POSTULANTE</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="text" id="recNombre" class="auth-input" placeholder="NOMBRE DEL POSTULANTE">
+                    <select id="recDivision" class="auth-input">
+                        <option value="EJÉRCITO">EJÉRCITO</option>
+                        <option value="FACH">FACH</option>
+                        <option value="ARMADA">ARMADA</option>
+                        <option value="BOE">BOE</option>
+                    </select>
+                </div>
+                <textarea id="recNotas" class="auth-input" rows="2" placeholder="NOTAS / EXPERIENCIA PREVIA / OBSERVACIONES..."></textarea>
+                <button onclick="registrarPostulante()" class="btn-tactical" style="background: var(--admin-blue); color: black; width: 100%;">INGRESAR A BASE DE DATOS</button>
+            </div>
+            
+            <h3 style="color: var(--alert-amber); margin-top: 30px;">POSTULACIONES PENDIENTES DE EVALUACIÓN</h3>
+            <div id="listaPostulantes" style="display: grid; gap: 10px;"></div>
         </div>
 
         <div id="seccionFach">
@@ -448,20 +470,14 @@
         document.getElementById("spanCurrentDefcon").innerText = currentDefcon;
         document.getElementById("defconPassInput").focus(); 
     };
-    
-    window.cerrarDefconAuth = () => { 
-        window.playClick(); 
-        document.getElementById("modalDefconAuth").style.display = "none"; 
-    };
+    window.cerrarDefconAuth = () => { window.playClick(); document.getElementById("modalDefconAuth").style.display = "none"; };
     
     window.verificarDefconAuth = () => {
         window.playClick();
         if(document.getElementById("defconPassInput").value === "2629") {
             document.getElementById("modalDefconAuth").style.display = "none";
             ejecutarCambioDefcon();
-        } else { 
-            window.showToast("CÓDIGO DEFCON INVÁLIDO.", "error"); 
-        }
+        } else { window.showToast("CÓDIGO DEFCON INVÁLIDO.", "error"); }
     };
 
     function ejecutarCambioDefcon() {
@@ -487,7 +503,7 @@
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento"].forEach(id => {
             const el = document.getElementById(id); el.style.display = 'none'; el.classList.remove('fade-in');
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -500,6 +516,7 @@
         if(tab === 'documentos') { targetId = 'seccionDocumentos'; btnId = 'btnDocumentos'; }
         if(tab === 'logs') { targetId = 'seccionLogs'; btnId = 'btnLogs'; }
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
+        if(tab === 'reclutamiento') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
         
         const targetEl = document.getElementById(targetId);
         targetEl.style.display = 'block';
@@ -522,17 +539,18 @@
                 document.getElementById("userRank").innerText = window.currentUserRank;
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 
-                document.getElementById("targetAeronave").innerHTML = FLOTA_AEREA.map(n => `<option value="${n.id}">${n.id}</option>`).join("");
+                // ACTUALIZACIÓN SOLICITADA: Incluir "SIN ASIGNAR" en el menú de ascensos de administrador
+                document.getElementById("targetAeronave").innerHTML = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>` + FLOTA_AEREA.map(n => `<option value="${n.id}">${n.id}</option>`).join("");
                 
                 if (window.isAdmin) {
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
                 }
                 
-                // PANEL LICENCIAS Y DOCUMENTOS VISIBLES PARA TODOS LOS OFICIALES (O ADMIN)
                 if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
                     document.getElementById("menuOficialesTitle").classList.remove("menu-hidden");
                     document.getElementById("btnDocumentos").classList.remove("menu-hidden");
-                    document.getElementById("panelAdminLicencias").style.display = "block"; // AHORA VISIBLE PARA OFICIALES
+                    document.getElementById("btnReclutamiento").classList.remove("menu-hidden"); // RECLUTAMIENTO VISIBLE
+                    document.getElementById("panelAdminLicencias").style.display = "block";
                 }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); if(window.isAdmin) cargarLogsVisual();
@@ -571,16 +589,12 @@
         selR.innerHTML = RANGOS.map(r => `<option value="${r}">${r}</option>`).join("");
         
         windowUsersData = {};
-        
-        let totalSoldadosCount = 0;
-        let totalOficialesCount = 0;
-        let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
+        let totalSoldadosCount = 0; let totalOficialesCount = 0; let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
 
         snap.forEach(docSnap => {
             const d = docSnap.data(); const email = docSnap.id;
             windowUsersData[email] = d;
             
-            // CONTEO ESTADÍSTICAS
             totalSoldadosCount++;
             if (OFICIALES.includes(d.rango)) totalOficialesCount++;
             
@@ -642,13 +656,11 @@
             }
         });
         
-        // ACTUALIZAR PANEL DE ESTADÍSTICAS
         document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
         document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
         document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
     }
 
-    // ABRIR PERFIL COMPLETO
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw) => {
         window.playClick(); 
         document.getElementById("p_nombre").innerText = nombre;
@@ -706,6 +718,70 @@
             window.showToast("SANCIÓN APLICADA A EXPEDIENTE", "success"); 
             document.getElementById("motivoSancion").value = ""; document.getElementById("duracionSancion").value = ""; cargarDatos();
         } catch(error) { window.showToast("ERROR AL APLICAR SANCIÓN", "error"); }
+    };
+
+    // LOGICA RECLUTAMIENTO NUEVA
+    window.registrarPostulante = async () => {
+        window.playClick();
+        const nombre = document.getElementById("recNombre").value;
+        const division = document.getElementById("recDivision").value;
+        const notas = document.getElementById("recNotas").value;
+        
+        if(!nombre) return window.showToast("EL NOMBRE DEL POSTULANTE ES OBLIGATORIO.", "error");
+
+        try {
+            await addDoc(collection(db, "reclutamiento"), {
+                nombre: nombre, division: division, notas: notas, estado: "Pendiente",
+                fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp()
+            });
+            window.showToast("POSTULANTE REGISTRADO EN LA BASE DE DATOS.", "success");
+            document.getElementById("recNombre").value = "";
+            document.getElementById("recNotas").value = "";
+            cargarReclutamiento();
+        } catch(e) {
+            window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error");
+        }
+    };
+
+    async function cargarReclutamiento() {
+        const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q);
+        const list = document.getElementById("listaPostulantes");
+        list.innerHTML = "";
+        let count = 0;
+
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            if(d.estado !== "Pendiente") return;
+            count++;
+            list.innerHTML += `
+                <div class="slide-up" style="border: 1px solid var(--theme-dim); background: rgba(0,0,0,0.6); padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="color:white; font-weight:bold; font-size:16px;">${d.nombre}</div>
+                        <div style="color:var(--admin-blue); font-size:12px;">División de Interés: ${d.division}</div>
+                        <div style="color:#aaa; font-size:11px; margin-top:5px; max-width: 400px; word-wrap: break-word;">${d.notas || 'Sin observaciones'}</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.2); border-color: var(--theme-color); color: var(--theme-color);">APROBAR</button>
+                        <button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(255,59,59,0.2); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        if (count === 0) list.innerHTML = "<div style='color:#555; font-style:italic;'>No hay postulaciones pendientes.</div>";
+    }
+
+    window.evaluarPostulante = async (id, estado, nombre) => {
+        window.playClick();
+        try {
+            await updateDoc(doc(db, "reclutamiento", id), { estado: estado });
+            registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`);
+            window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error');
+            cargarReclutamiento();
+        } catch (e) {
+            window.showToast("ERROR AL EVALUAR POSTULANTE", "error");
+        }
     };
 
     function cargarHangar() {

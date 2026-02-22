@@ -58,7 +58,21 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
-        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(20px); border-radius: 0 15px 15px 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5);}
+        /* --- SIDEBAR ACTUALIZADA --- */
+        .sidebar { 
+            width: 310px; /* Aumentado ligeramente para el Alto Mando */
+            background: rgba(8, 12, 18, 0.85); 
+            border-right: 1px solid var(--glass-border); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 25px 0; 
+            z-index: 10; 
+            backdrop-filter: blur(20px); 
+            border-radius: 0 15px 15px 0; 
+            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+            overflow-y: auto; /* Scroll habilitado */
+            overflow-x: hidden;
+        }
         .menu-category { font-size: 11px; color: #888; padding: 10px 25px; letter-spacing: 2px; font-weight: 700; margin-top: 10px;}
         .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
         .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); color: var(--theme-color); padding-left: 30px; }
@@ -66,6 +80,61 @@
         .btn-alert { color: var(--danger-red); border-left-color: transparent; margin-top: auto; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
         .btn-alert:hover { color: var(--danger-red); background: rgba(255, 59, 59, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
+
+        /* --- NUEVO: ESTILOS TARJETAS ALTO MANDO --- */
+        .mando-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 0 20px 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: default;
+        }
+        .mando-card::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; transition: width 0.3s ease;
+        }
+        .mando-card:hover { background: rgba(255, 255, 255, 0.05); transform: translateX(5px); }
+        .mando-card:hover::before { width: 6px; }
+
+        /* Colores por rama */
+        .ejercito::before { background-color: #4df24d; box-shadow: 0 0 10px #4df24d; }
+        .armada::before { background-color: #4d90f2; box-shadow: 0 0 10px #4d90f2; }
+        .fach::before { background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff; }
+
+        .mando-card:hover.ejercito { border-color: rgba(77, 242, 77, 0.3); box-shadow: -5px 5px 15px rgba(77, 242, 77, 0.1); }
+        .mando-card:hover.armada { border-color: rgba(77, 144, 242, 0.3); box-shadow: -5px 5px 15px rgba(77, 144, 242, 0.1); }
+        .mando-card:hover.fach { border-color: rgba(0, 229, 255, 0.3); box-shadow: -5px 5px 15px rgba(0, 229, 255, 0.1); }
+
+        .mando-flex { display: flex; align-items: center; gap: 12px; }
+        .mando-avatar {
+            width: 45px; height: 45px; border-radius: 6px; object-fit: cover;
+            border: 1px solid var(--glass-border);
+            filter: grayscale(100%) contrast(120%);
+            transition: 0.4s ease;
+        }
+        .mando-card:hover .mando-avatar { filter: grayscale(0%) contrast(100%); transform: scale(1.05); }
+        
+        .mando-info { flex: 1; }
+        .mando-rama {
+            font-size: 9px; letter-spacing: 1px; font-weight: bold; padding: 2px 5px;
+            border-radius: 3px; display: inline-block; margin-bottom: 4px; font-family: 'Share Tech Mono', monospace;
+        }
+        .ejercito .mando-rama { color: #4df24d; background: rgba(77, 242, 77, 0.1); }
+        .armada .mando-rama { color: #4d90f2; background: rgba(77, 144, 242, 0.1); }
+        .fach .mando-rama { color: #00e5ff; background: rgba(0, 229, 255, 0.1); }
+
+        .mando-nombre { font-family: 'Jura', sans-serif; font-size: 15px; font-weight: 700; color: #fff; line-height: 1.1; }
+        .mando-rango { font-size: 11px; color: #aaa; font-family: 'Share Tech Mono', monospace; margin-top: 2px; }
+        .mando-desc {
+            font-size: 11px; color: #888; line-height: 1.4; border-top: 1px dashed var(--glass-border);
+            padding-top: 8px; font-family: 'Share Tech Mono', monospace;
+        }
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative;}
         #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa { display: none; }
@@ -140,21 +209,7 @@
         @keyframes bounceIn { from { transform: translate(-50%, -100%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 
         .map-nav-btn {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--theme-color);
-            color: var(--theme-color);
-            font-size: 16px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 20;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s;
-            backdrop-filter: blur(5px);
+            position: absolute; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--theme-color); color: var(--theme-color); font-size: 16px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 20; display: flex; justify-content: center; align-items: center; transition: all 0.2s; backdrop-filter: blur(5px);
         }
         .map-nav-btn:hover { background: var(--theme-color); color: #000; box-shadow: 0 0 15px var(--theme-color); transform: scale(1.1); }
         .map-nav-left { left: 15px; top: calc(50% - 20px); }
@@ -315,6 +370,43 @@
         <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
         
+        <div class="menu-category" style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">🎖️ ALTOS MANDOS</div>
+        
+        <div class="mando-card ejercito">
+            <div class="mando-flex">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar">
+                <div class="mando-info">
+                    <span class="mando-rama">EJÉRCITO</span>
+                    <div class="mando-nombre">J. Morales</div>
+                    <div class="mando-rango">Gral. de Ejército</div>
+                </div>
+            </div>
+            <div class="mando-desc">Comandante en Jefe. Estrategia y despliegue de divisiones blindadas.</div>
+        </div>
+
+        <div class="mando-card armada">
+            <div class="mando-flex">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar">
+                <div class="mando-info">
+                    <span class="mando-rama">ARMADA</span>
+                    <div class="mando-nombre">A. Vergara</div>
+                    <div class="mando-rango">Almirante</div>
+                </div>
+            </div>
+            <div class="mando-desc">Dirección Naval. Supervisión de infantería de marina y control costero.</div>
+        </div>
+
+        <div class="mando-card fach">
+            <div class="mando-flex">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar">
+                <div class="mando-info">
+                    <span class="mando-rama">FUERZA AÉREA</span>
+                    <div class="mando-nombre">R. Salazar</div>
+                    <div class="mando-rango">Gral. del Aire</div>
+                </div>
+            </div>
+            <div class="mando-desc">Estado Mayor. Escuadrones de interceptores y supremacía aérea.</div>
+        </div>
         <div class="menu-item btn-alert" id="btnDefcon" onclick="intentarCambioDefcon()" onmouseenter="playHover()" style="margin-top:20px;"><span>🚨</span> NIVEL DEFCON 5</div>
 
         <button onclick="logout()" class="btn-tactical" style="margin: 20px 20px 0; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red); font-size:12px;">DESCONECTAR</button>
@@ -801,7 +893,6 @@
                     else if (divUpper === "BOE") divColor = "var(--danger-red)"; 
                     else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
-                    // ----- NUEVO SISTEMA DE ICONOS SEGÚN ESTADO -----
                     let iconEstado = "🔴";
                     if (estadoSeguro === "ACTIVO" || estadoSeguro === "Online") iconEstado = "🟢";
                     else if (estadoSeguro === "EN BASE") iconEstado = "🟡";
@@ -1124,7 +1215,6 @@
         cargarDatos(); 
     };
 
-    // ----- FUNCIONES DEL MAPA TÁCTICO CON ZOOM, SCROLL Y FIREBASE -----
     let mapBaseSize = 1200; 
     let currentMapZoom = 1;
 
@@ -1150,7 +1240,6 @@
         }
     }
 
-    // FUNCIÓN PARA NAVEGAR CON LAS FLECHAS
     window.scrollMap = (dx, dy) => {
         window.playHover();
         const vp = document.getElementById('mapViewport');

@@ -69,7 +69,7 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative;}
         
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionAltosMandos, #seccionCalendario { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionAltosMandos, #seccionCalendario, #seccionComunicados { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
 
@@ -203,12 +203,12 @@
 
         <div id="modalFoto" class="custom-modal">
             <div class="modal-body glass-panel">
-                <h3 style="color: var(--theme-color); margin-top: 0; letter-spacing: 2px;">ACTUALIZAR FOTOGRAFÍA OFICIAL</h3>
-                <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">[ ACCESO RESTRINGIDO - CORONEL+ ]<br>Seleccione un soldado y suba su fotografía oficial desde su dispositivo.</p>
+                <h3 style="color: var(--theme-color); margin-top: 0; letter-spacing: 2px;">ACTUALIZAR FOTOGRAFÍA O BANDERA</h3>
+                <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">[ ACCESO RESTRINGIDO - CORONEL+ ]<br>Seleccione un soldado e ingrese la URL de su nueva imagen.</p>
                 <select id="fotoTargetSoldado" class="auth-input" style="text-align: center;"></select>
-                <input type="file" id="fotoFileInput" class="auth-input" accept="image/png, image/jpeg, image/webp" style="text-align: center; padding: 10px; cursor: pointer;">
+                <input type="text" id="fotoUrlInput" class="auth-input" placeholder="URL DE LA IMAGEN (IMGUR, DISCORD, ETC)" style="text-align: center;">
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="guardarFoto()" class="btn-tactical" style="flex: 1; background: rgba(0,229,255,0.1); border-color: var(--theme-color); color: var(--theme-color);">SUBIR IMAGEN</button>
+                    <button onclick="guardarFoto()" class="btn-tactical" style="flex: 1; background: rgba(0,229,255,0.1); border-color: var(--theme-color); color: var(--theme-color);">ACTUALIZAR FOTO</button>
                     <button onclick="cerrarPanelFoto()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
                 </div>
             </div>
@@ -338,6 +338,7 @@
             
             <div class="menu-category">PANEL CENTRAL</div>
             <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
+            <div class="menu-item" id="btnComunicados" onclick="switchTab('comunicados')" onmouseenter="playHover()"><span>📢</span> Comunicados Oficiales</div>
             <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
             <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
             <div class="menu-item" id="btnLicencias" onclick="switchTab('licencias')" onmouseenter="playHover()"><span>🪪</span> Licencias</div>
@@ -459,6 +460,26 @@
             <div id="seccionPersonal">
                 <h2 class="section-title"><span>📋</span> PERSONAL REGISTRADO</h2>
                 <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;"></div>
+            </div>
+
+            <div id="seccionComunicados">
+                <h2 class="section-title"><span>📢</span> COMUNICADOS OFICIALES Y NOTICIAS</h2>
+                
+                <div class="glass-panel" id="panelAdminComunicados" style="padding: 25px; border-color: var(--alert-amber); margin-bottom: 30px; display: none;">
+                    <h4 style="margin-top:0; color:var(--alert-amber); font-size:16px;">EMITIR NUEVO COMUNICADO (CAPITÁN+)</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-bottom:15px;">
+                        <select id="comTipo" class="auth-input" style="margin:0;">
+                            <option value="Ascenso">🎖️ Ascenso</option>
+                            <option value="Evento">📅 Evento Especial</option>
+                            <option value="Aviso">⚠️ Aviso Importante</option>
+                        </select>
+                        <input type="text" id="comTitulo" class="auth-input" placeholder="TÍTULO DEL COMUNICADO..." style="margin:0;">
+                    </div>
+                    <textarea id="comContenido" class="auth-input" rows="4" placeholder="Cuerpo del comunicado (Máximo detalle posible)..." style="margin-bottom:15px;"></textarea>
+                    <button onclick="publicarComunicado()" class="btn-tactical" style="background: var(--alert-amber); color: black; border:none; width: 100%;">PUBLICAR EN RED GENERAL</button>
+                </div>
+
+                <div id="listaComunicados" style="display: grid; gap: 15px;"></div>
             </div>
 
             <div id="seccionAltosMandos">
@@ -672,17 +693,15 @@
                 <div class="glass-panel" style="padding: 25px; height: 65vh; overflow-y: auto;" id="listaLogsContainer"></div>
             </div>
         </div>
-    </div> <script type="module">
+    </div> 
+    
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, limit, arrayUnion, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    // IMPORTACIÓN DE FIREBASE STORAGE (NUEVO)
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
     const firebaseConfig = { apiKey: "AIzaSyBYfZSISbpVShSfEA70vY1bANiyy40uVP4", authDomain: "panel-chile.firebaseapp.com", projectId: "panel-chile", storageBucket: "panel-chile.firebasestorage.app", messagingSenderId: "124864601883", appId: "1:124864601883:web:839163be2060253f68bdbe" };
     const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
-    // INICIALIZACIÓN DE STORAGE (NUEVO)
-    const storage = getStorage(app);
 
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
@@ -787,50 +806,96 @@
     window.abrirPanelFoto = () => { window.playClick(); document.getElementById('modalFoto').style.display = 'flex'; };
     window.cerrarPanelFoto = () => { window.playClick(); document.getElementById('modalFoto').style.display = 'none'; };
     
-    // FUNCION MODIFICADA: SUBIDA DE FOTO A FIREBASE STORAGE (NUEVO)
+    // MÉTODO ORIGINAL POR URL RESTAURADO
     window.guardarFoto = async () => {
         window.playClick();
         const email = document.getElementById("fotoTargetSoldado").value;
-        const fileInput = document.getElementById("fotoFileInput");
-        const file = fileInput.files[0];
+        const url = document.getElementById("fotoUrlInput").value;
         
-        if(!email || !file) return window.showToast("SELECCIONE UN SOLDADO Y UN ARCHIVO LOCAL", "error");
-
-        window.showToast("SUBIENDO IMAGEN A LA RED NACIONAL, ESPERE...", "success");
+        if(!email || !url) return window.showToast("COMPLETE LOS CAMPOS DE FOTO", "error");
 
         try {
-            // Se define la ruta de almacenamiento en Storage con el correo y fecha para evitar reemplazos
-            const storageRef = ref(storage, `fotos_personal_chile/${email}_${Date.now()}`);
-            
-            // Sube el archivo
-            const snapshot = await uploadBytes(storageRef, file);
-            
-            // Obtiene la URL de la nube
-            const downloadURL = await getDownloadURL(snapshot.ref);
-
-            // Se guarda en el expediente (Firestore)
-            await updateDoc(doc(db, "usuarios", email), { foto: downloadURL });
-            
-            registrarLog("MODIFICACIÓN PERFIL", `Actualizó la fotografía oficial del expediente de ${email}.`);
-            window.showToast("FOTOGRAFÍA SUBIDA Y EXPEDIENTE ACTUALIZADO", "success");
-            
+            await updateDoc(doc(db, "usuarios", email), { foto: url });
+            registrarLog("MODIFICACIÓN PERFIL", `Actualizó la fotografía de expediente de ${email}.`);
+            window.showToast("FOTOGRAFÍA ACTUALIZADA", "success");
             cerrarPanelFoto();
-            fileInput.value = ""; // Limpiar input
+            document.getElementById("fotoUrlInput").value = "";
             cargarDatos();
-        } catch(e) { 
-            console.error("Error subiendo foto:", e);
-            window.showToast("ERROR AL SUBIR: REVISE REGLAS DE FIREBASE STORAGE", "error"); 
-        }
+        } catch(e) { window.showToast("ERROR AL ACTUALIZAR", "error"); }
     };
+
+    // FUNCIONES SISTEMA DE COMUNICADOS
+    window.publicarComunicado = async () => {
+        window.playClick();
+        const tipo = document.getElementById("comTipo").value;
+        const titulo = document.getElementById("comTitulo").value;
+        const contenido = document.getElementById("comContenido").value;
+
+        if(!titulo || !contenido) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error");
+
+        try {
+            await addDoc(collection(db, "comunicados"), {
+                tipo: tipo,
+                titulo: titulo,
+                contenido: contenido,
+                autor: window.currentUserName,
+                rangoAutor: window.currentUserRank,
+                fecha: new Date().toLocaleString('es-CL'),
+                timestamp: serverTimestamp()
+            });
+            registrarLog("NUEVO COMUNICADO", `Emitió un comunicado tipo ${tipo}: ${titulo}`);
+            window.showToast("COMUNICADO PUBLICADO CON ÉXITO", "success");
+            document.getElementById("comTitulo").value = "";
+            document.getElementById("comContenido").value = "";
+            cargarComunicados();
+        } catch(e) { window.showToast("ERROR AL PUBLICAR COMUNICADO", "error"); }
+    };
+
+    async function cargarComunicados() {
+        const q = query(collection(db, "comunicados"), orderBy("timestamp", "desc"), limit(30));
+        const snap = await getDocs(q);
+        const lista = document.getElementById("listaComunicados");
+        if(!lista) return;
+        lista.innerHTML = "";
+        let count = 0;
+
+        snap.forEach(docSnap => {
+            count++;
+            const d = docSnap.data();
+            let borderColor = "var(--theme-color)";
+            if(d.tipo === "Ascenso") borderColor = "#4df24d";
+            if(d.tipo === "Aviso") borderColor = "var(--danger-red)";
+            if(d.tipo === "Evento") borderColor = "var(--admin-blue)";
+
+            lista.innerHTML += `
+                <div class="glass-panel slide-up" style="padding: 20px; border-left: 4px solid ${borderColor};">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+                        <div>
+                            <span style="font-size:10px; padding:3px 8px; border-radius:4px; background:rgba(255,255,255,0.1); color:${borderColor}; font-weight:bold; letter-spacing:1px; margin-bottom:8px; display:inline-block;">${d.tipo.toUpperCase()}</span>
+                            <h3 style="margin:0; color:white; font-size:20px; letter-spacing:1px;">${d.titulo}</h3>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:11px; color:#aaa; font-family:'Share Tech Mono';">${d.fecha}</div>
+                            <div style="font-size:11px; color:var(--alert-amber); margin-top:4px;">EMITIDO POR: ${d.rangoAutor} ${d.autor}</div>
+                        </div>
+                    </div>
+                    <div style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; white-space: pre-wrap;">${d.contenido}</div>
+                </div>
+            `;
+        });
+
+        if (count === 0) lista.innerHTML = "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay comunicados recientes en la red.</div>";
+    }
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionAltosMandos", "seccionCalendario"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionAltosMandos", "seccionCalendario", "seccionComunicados"].forEach(id => {
             const el = document.getElementById(id); el.style.display = 'none'; el.classList.remove('fade-in');
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
         
         let targetId = "seccionPersonal"; let btnId = "btnPersonal";
+        if(tab === 'comunicados') { targetId = 'seccionComunicados'; btnId = 'btnComunicados'; }
         if(tab === 'estadisticas') { targetId = 'seccionEstadisticas'; btnId = 'btnEstadisticas'; }
         if(tab === 'fach') { targetId = 'seccionFach'; btnId = 'btnFach'; }
         if(tab === 'misiones') { targetId = 'seccionMisiones'; btnId = 'btnMisiones'; }
@@ -869,6 +934,12 @@
                 if (window.isAdmin) {
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
                 }
+
+                // Permiso para crear comunicados (Capitán o superior)
+                if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Capitán")) {
+                    const pAdminCom = document.getElementById("panelAdminComunicados");
+                    if(pAdminCom) pAdminCom.style.display = "block";
+                }
                 
                 if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
                     document.getElementById("btnReclutamiento").classList.remove("menu-hidden"); 
@@ -886,10 +957,10 @@
 
                 if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Coronel")) {
                     document.getElementById("panelAdminMandos").style.display = "block";
-                    document.getElementById("btnEditarFoto").style.display = "block"; // MOSTRAR PANEL GESTIÓN FOTOS
+                    document.getElementById("btnEditarFoto").style.display = "block"; 
                 }
                 
-                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); if(window.isAdmin) cargarLogsVisual();
+                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); if(window.isAdmin) cargarLogsVisual();
                 
                 iniciarSyncMapa();
                 iniciarSyncMandos();

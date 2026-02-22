@@ -130,8 +130,7 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        /* ESTILOS DEL MAPA INTERACTIVO (VIEWPORT + ZOOM) */
-        .map-viewport-container { border: 1px solid var(--glass-border); border-radius: 12px; background: #020406; overflow: auto; position: relative; flex: 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+        /* ESTILOS DEL MAPA INTERACTIVO (VIEWPORT + ZOOM + FLECHAS) */
         .drag-icon { font-size: 24px; cursor: grab; transition: transform 0.2s, filter 0.2s; user-select: none; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); display: flex; justify-content: center; width: 100%; }
         .drag-icon:active { cursor: grabbing; transform: scale(0.9); }
         .drag-icon:hover { transform: scale(1.3); filter: drop-shadow(0 0 10px var(--theme-color)); }
@@ -139,6 +138,29 @@
         .map-marker { position: absolute; transform: translate(-50%, -50%); font-size: 28px; cursor: pointer; z-index: 10; filter: drop-shadow(0 0 8px rgba(0,0,0,0.8)); transition: transform 0.2s; user-select: none; animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .map-marker:hover { transform: translate(-50%, -50%) scale(1.2); filter: drop-shadow(0 0 12px var(--danger-red)); }
         @keyframes bounceIn { from { transform: translate(-50%, -100%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+        .map-nav-btn {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--theme-color);
+            color: var(--theme-color);
+            font-size: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .map-nav-btn:hover { background: var(--theme-color); color: #000; box-shadow: 0 0 15px var(--theme-color); transform: scale(1.1); }
+        .map-nav-left { left: 15px; top: calc(50% - 20px); }
+        .map-nav-right { right: 15px; top: calc(50% - 20px); }
+        .map-nav-up { top: 15px; left: calc(50% - 20px); }
+        .map-nav-down { bottom: 15px; left: calc(50% - 20px); }
 
     </style>
 </head>
@@ -164,6 +186,18 @@
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button onclick="verificarAdminAuth()" class="btn-tactical" style="flex: 1; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red);">AUTORIZAR</button>
                 <button onclick="cerrarAdminAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalDefconAuth" class="custom-modal">
+        <div class="modal-body glass-panel">
+            <h3 style="color: var(--alert-amber); margin-top: 0; letter-spacing: 2px;">PROTOCOLO DEFCON</h3>
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">INGRESE CÓDIGO DE AUTORIZACIÓN (ESTADO ACTUAL: <span id="spanCurrentDefcon">5</span>)</p>
+            <input type="password" id="defconPassInput" class="auth-input" placeholder="CÓDIGO SECRETO" style="text-align: center; border-color: var(--alert-amber);">
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button onclick="verificarDefconAuth()" class="btn-tactical" style="flex: 1; background: rgba(255,180,0,0.1); border-color: var(--alert-amber); color: var(--alert-amber);">CONFIRMAR</button>
+                <button onclick="cerrarDefconAuth()" class="btn-tactical" style="background: transparent; color: #888; border-color: var(--glass-border);">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -254,10 +288,13 @@
         <div style="padding: 0 25px 20px; border-bottom: 1px solid var(--glass-border); margin-bottom: 15px; text-align: center;">
             <div id="userName" style="color: white; font-weight: bold; text-transform: uppercase; font-size: 18px;">...</div>
             <div id="userRank" style="font-size: 11px; color: var(--alert-amber); margin: 8px 0 20px; letter-spacing: 1px;">IDENTIFICANDO...</div>
-            <select id="myStatus" class="auth-input" style="padding: 10px; font-size: 12px; text-align: center; margin:0;" onchange="updateMyStatus()">
-                <option value="Online">🟢 DISPONIBLE</option>
-                <option value="En misión">🟡 EN OPERACIÓN</option>
-                <option value="Offline">🔴 FUERA DE SERVICIO</option>
+            
+            <select id="myStatus" class="auth-input" style="padding: 10px; font-size: 12px; text-align: center; margin:0; font-weight: bold;" onchange="updateMyStatus()">
+                <option value="ACTIVO">🟢 ACTIVO</option>
+                <option value="EN BASE">🟡 EN BASE</option>
+                <option value="EN ENTRENAMIENTO">🔵 EN ENTRENAMIENTO</option>
+                <option value="EN OPERACIÓN">🟠 EN OPERACIÓN</option>
+                <option value="NO DISPONIBLE">🔴 NO DISPONIBLE</option>
             </select>
         </div>
         
@@ -377,9 +414,9 @@
                 <div class="glass-panel" style="width: 70px; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 15px; z-index: 10; flex-shrink: 0; overflow-y: auto;">
                     
                     <div style="font-size: 10px; color: var(--theme-color); text-align: center; line-height: 1; font-weight: bold;">ZOOM</div>
-                    <button onclick="zoomMapa(0.4)" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Acercar (Zoom In)">➕</button>
-                    <button onclick="zoomMapa(-0.4)" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Alejar (Zoom Out)">➖</button>
-                    <button onclick="resetZoomMapa()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Restaurar Tamaño Base">🔄</button>
+                    <button onclick="zoomMapa(0.4)" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Acercar">➕</button>
+                    <button onclick="zoomMapa(-0.4)" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Alejar">➖</button>
+                    <button onclick="resetZoomMapa()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Restaurar Tamaño">🔄</button>
 
                     <div style="width: 40px; height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
 
@@ -396,13 +433,21 @@
                     </div>
                 </div>
 
-                <div id="mapViewport" class="map-viewport-container fade-in">
-                    <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
-                        <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none;"></div>
-                        </div>
+                <div style="position: relative; flex: 1; border-radius: 12px; border: 1px solid var(--glass-border); overflow: hidden; display: flex;">
+                    
+                    <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
+                        <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
+                            <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none;"></div>
+                            </div>
+                    </div>
+
+                    <button onclick="scrollMap(-250, 0)" class="map-nav-btn map-nav-left" title="Deslizar Izquierda">◀</button>
+                    <button onclick="scrollMap(250, 0)" class="map-nav-btn map-nav-right" title="Deslizar Derecha">▶</button>
+                    <button onclick="scrollMap(0, -250)" class="map-nav-btn map-nav-up" title="Deslizar Arriba">▲</button>
+                    <button onclick="scrollMap(0, 250)" class="map-nav-btn map-nav-down" title="Deslizar Abajo">▼</button>
                 </div>
             </div>
-            <div style="font-size: 10px; color: #666; margin-top: 10px; text-align: right;">Arrastre un ícono al mapa para posicionarlo. Doble clic sobre un ícono para eliminarlo. Use los controles para Acercar/Alejar.</div>
+            <div style="font-size: 10px; color: #666; margin-top: 10px; text-align: right;">Arrastre un ícono al mapa para posicionarlo (visible para todos). Doble clic sobre un ícono para eliminarlo. Usa las flechas para moverte.</div>
         </div>
 
         <div id="seccionEstadisticas">
@@ -597,7 +642,7 @@
                 calTiro: "Básico",
                 calFisico: "Regular",
                 calPsico: "Observación",
-                estado: "Online", 
+                estado: "ACTIVO", 
                 fechaCreacion: new Date().toLocaleDateString('es-CL'), 
                 sanciones: [], 
                 licencias: {}, 
@@ -691,7 +736,6 @@
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); if(window.isAdmin) cargarLogsVisual();
                 
-                // INICIAR SINCRONIZACIÓN MAPA TÁCTICO
                 iniciarSyncMapa();
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
@@ -738,7 +782,7 @@
                     const rangoSeguro = d.rango ? d.rango : "Cabo 2°";
                     const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
                     const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
-                    const estadoSeguro = d.estado || "Offline";
+                    const estadoSeguro = d.estado || "ACTIVO";
                     const especialidadSegura = d.especialidad || "Infantería"; 
 
                     const cTiro = d.calTiro || "Básico";
@@ -757,7 +801,14 @@
                     else if (divUpper === "BOE") divColor = "var(--danger-red)"; 
                     else if (divUpper === "ARMADA") divColor = "var(--admin-blue)";
 
-                    let iconEstado = estadoSeguro === "Online" ? "🟢" : (estadoSeguro === "En misión" ? "🟡" : "🔴");
+                    // ----- NUEVO SISTEMA DE ICONOS SEGÚN ESTADO -----
+                    let iconEstado = "🔴";
+                    if (estadoSeguro === "ACTIVO" || estadoSeguro === "Online") iconEstado = "🟢";
+                    else if (estadoSeguro === "EN BASE") iconEstado = "🟡";
+                    else if (estadoSeguro === "EN ENTRENAMIENTO") iconEstado = "🔵";
+                    else if (estadoSeguro === "EN OPERACIÓN" || estadoSeguro === "En misión") iconEstado = "🟠";
+                    else if (estadoSeguro === "NO DISPONIBLE" || estadoSeguro === "Offline") iconEstado = "🔴";
+
                     const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:11px; color:var(--danger-red); margin-top:5px; font-weight:bold; background:rgba(255,59,59,0.1); padding:2px 6px; border-radius:3px; display:inline-block;">⚠️ ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
                     const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
                     const fCrea = d.fechaCreacion || "01/01/2026";
@@ -1041,8 +1092,8 @@
     }
 
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
-    window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "En misión" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
-    window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "Online" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
+    window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "EN OPERACIÓN" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
+    window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "ACTIVO" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
     
     window.procesarCambiosAdmin = async () => { 
         window.playClick(); 
@@ -1073,17 +1124,15 @@
         cargarDatos(); 
     };
 
-    // ----- FUNCIONES DEL MAPA TÁCTICO CON ZOOM Y FIREBASE -----
-    
-    // VARIABLES PARA ZOOM
-    let mapBaseSize = 1200; // El tamaño base será un gran cuadrado de 1200x1200
+    // ----- FUNCIONES DEL MAPA TÁCTICO CON ZOOM, SCROLL Y FIREBASE -----
+    let mapBaseSize = 1200; 
     let currentMapZoom = 1;
 
     window.zoomMapa = (amount) => {
         window.playClick();
         currentMapZoom += amount;
-        if (currentMapZoom < 0.4) currentMapZoom = 0.4; // Límite máximo alejado
-        if (currentMapZoom > 4.0) currentMapZoom = 4.0; // Límite máximo acercado
+        if (currentMapZoom < 0.4) currentMapZoom = 0.4; 
+        if (currentMapZoom > 4.0) currentMapZoom = 4.0; 
         aplicarZoomMapa();
     };
 
@@ -1101,6 +1150,13 @@
         }
     }
 
+    // FUNCIÓN PARA NAVEGAR CON LAS FLECHAS
+    window.scrollMap = (dx, dy) => {
+        window.playHover();
+        const vp = document.getElementById('mapViewport');
+        if (vp) vp.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
+    };
+
     function iniciarSyncMapa() {
         onSnapshot(collection(db, "mapa_estrategico"), (snapshot) => {
             const mapa = document.getElementById('mapaEstrategico');
@@ -1117,7 +1173,6 @@
                 marker.style.left = data.x + '%';
                 marker.style.top = data.y + '%';
                 
-                // Eliminar marcador de firebase con doble clic
                 marker.ondblclick = async () => {
                     window.playHover();
                     await deleteDoc(doc(db, "mapa_estrategico", docSnap.id));
@@ -1165,7 +1220,6 @@
             if (!iconToDrop) return;
             window.playClick();
             
-            // Recálculo exacto basado en el tamaño dinámico del mapa
             const rect = mapa.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;

@@ -80,7 +80,7 @@
 
         #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 3000; display: flex; justify-content: center; align-items: center; }
         #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
-        .login-box { position: relative; width: 420px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
 
         .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
@@ -283,8 +283,10 @@
     <div id="loginScreen">
         <div class="login-box glass-panel">
             <div class="login-photo-circle"></div>
-            <h3 style="letter-spacing: 3px; margin-top: 0; color: white; font-size: 24px;">COMANDO TÁCTICO</h3>
-            <p style="color: var(--theme-color); font-size: 12px; margin-top: -10px; margin-bottom: 30px; letter-spacing: 1px;">FUERZAS ARMADAS DE CHILE</p>
+            
+            <h2 style="font-family: 'Jura', sans-serif; letter-spacing: 4px; margin-top: 0; color: white; font-size: 30px; text-transform: uppercase; text-shadow: 0 0 20px var(--theme-color);">GUERRA MUNDIAL RP</h2>
+            <h3 style="letter-spacing: 3px; margin-top: 10px; color: #ccc; font-size: 16px;">SISTEMA DE MANDO TÁCTICO</h3>
+            <p style="color: var(--theme-color); font-size: 12px; margin-top: -5px; margin-bottom: 30px; letter-spacing: 1px;">FUERZAS ARMADAS DE CHILE</p>
             
             <input type="text" id="regNombre" class="auth-input" placeholder="NOMBRE Y APELLIDO (MILITAR)" style="text-align: center; display:none;">
             <input type="email" id="userEmail" class="auth-input" placeholder="CORREO ENCRIPTADO" style="text-align: center;">
@@ -389,7 +391,21 @@
                         <option value="Expulsión">Expulsión</option>
                     </select>
                     <input type="text" id="motivoSancion" class="auth-input" placeholder="MOTIVO INFRACCIÓN" style="margin:0;">
-                    <input type="text" id="duracionSancion" class="auth-input" placeholder="DURACIÓN" style="margin:0;">
+                    
+                    <select id="duracionSancion" class="auth-input" style="margin:0;">
+                        <option value="" disabled selected>DURACIÓN...</option>
+                        <option value="1 MIN">1 MIN</option>
+                        <option value="5 MIN">5 MIN</option>
+                        <option value="10 MIN">10 MIN</option>
+                        <option value="30 MIN">30 MIN</option>
+                        <option value="1 HORA">1 HORA</option>
+                        <option value="2 HORAS">2 HORAS</option>
+                        <option value="12 HORAS">12 HORAS</option>
+                        <option value="24 HORAS">24 HORAS</option>
+                        <option value="1 SEMANA">1 SEMANA</option>
+                        <option value="1 MES">1 MES</option>
+                    </select>
+
                     <button onclick="aplicarSancion()" class="btn-tactical" style="background: rgba(255,59,59,0.2); border-color: var(--danger-red); color: var(--danger-red);">SANCIONAR</button>
                     <button onclick="quitarSanciones()" class="btn-tactical" style="background: transparent; border-color: var(--theme-color); color: var(--theme-color);">LIMPIAR EXPEDIENTE</button>
                 </div>
@@ -793,7 +809,6 @@
                 if (window.isAdmin || OFICIALES.includes(window.currentUserRank)) {
                     document.getElementById("btnReclutamiento").classList.remove("menu-hidden"); 
                     document.getElementById("panelAdminLicencias").style.display = "block";
-                    // NUEVO: Mostrar panel de programar entreamientos a Oficiales
                     document.getElementById("panelAdminCalendario").style.display = "block";
                 }
 
@@ -1199,7 +1214,6 @@
         cargarDatos(); 
     };
 
-    // ----- FUNCIONES: MAPA TÁCTICO -----
     let mapBaseSize = 1200; 
     let currentMapZoom = 1;
 
@@ -1311,10 +1325,8 @@
         });
     }, 1000);
 
-    // ----- FUNCIONES: ALTOS MANDOS -----
     function iniciarSyncMandos() {
         onSnapshot(collection(db, "altos_mandos"), async (snapshot) => {
-            
             if (snapshot.empty) {
                 const defaultMandos = [
                     { id: "mando_1", nombre: "GENERAL J. MORALES", cargo: "COMANDANTE EN JEFE DEL EJÉRCITO", rama: "ejercito", desc: "Máxima autoridad terrestre. Especialista en tácticas de guerra acorazada y despliegue de infantería motorizada. Supervisa la defensa de fronteras y el teatro de operaciones norte." },
@@ -1394,7 +1406,6 @@
         }
     };
 
-    // ----- NUEVO: FUNCIONES CALENDARIO DE ENTRENAMIENTO -----
     window.programarEntrenamiento = async () => {
         window.playClick();
         const fecha = document.getElementById("calFecha").value;

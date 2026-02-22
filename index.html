@@ -1308,6 +1308,7 @@
         } catch(e) { window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error"); }
     };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarReclutamiento() {
         const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q); 
@@ -1326,6 +1327,7 @@
 
     window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     function cargarHangar() {
         let hAereoHTML = ""; let hTerrHTML = "";
         const generarCard = (v) => `
@@ -1340,6 +1342,7 @@
         document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
     }
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarDocumentos() {
         const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
         const snap = await getDocs(q); 
@@ -1442,6 +1445,7 @@
         if (vp) vp.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
     };
 
+    /* OPTIMIZACIÓN: Document Fragment para marcadores del mapa */
     function iniciarSyncMapa() {
         onSnapshot(collection(db, "mapa_estrategico"), (snapshot) => {
             const mapa = document.getElementById('mapaEstrategico');
@@ -1542,6 +1546,7 @@
         } catch(e) { window.showToast("ERROR AL PROGRAMAR", "error"); }
     };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarCalendario() {
         const q = query(collection(db, "entrenamientos"), orderBy("fecha", "asc"));
         const snap = await getDocs(q);
@@ -1582,6 +1587,7 @@
         } catch(e) { window.showToast("ERROR AL CANCELAR", "error"); }
     };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarLogsVisual() { 
         let htmlStr = ""; 
         window.cachedLogs.forEach(d => { 

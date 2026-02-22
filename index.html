@@ -74,7 +74,7 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px;}
         
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionAltosMandos, #seccionCalendario, #seccionComunicados, #seccionSolicitudes { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
 
@@ -166,35 +166,6 @@
         .map-nav-right { right: 15px; top: calc(50% - 20px); }
         .map-nav-up { top: 15px; left: calc(50% - 20px); }
         .map-nav-down { bottom: 15px; left: calc(50% - 20px); }
-
-        .lista-mandos-container { display: flex; flex-direction: column; gap: 20px; margin-top: 10px; }
-        .mando-row { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 20px 25px; display: flex; align-items: center; gap: 25px; transition: all 0.2s ease; position: relative; overflow: hidden; transform: translateZ(0);}
-        .mando-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; transition: width 0.2s ease; }
-        .mando-row:hover { background: rgba(255, 255, 255, 0.05); transform: translateX(5px); }
-        .mando-row:hover::before { width: 8px; }
-        
-        .mando-row.ejercito::before { background-color: #4df24d; box-shadow: 0 0 10px #4df24d; }
-        .mando-row.ejercito:hover { border-color: rgba(77, 242, 77, 0.3); }
-        .mando-row.armada::before { background-color: #4d90f2; box-shadow: 0 0 10px #4d90f2; }
-        .mando-row.armada:hover { border-color: rgba(77, 144, 242, 0.3); }
-        .mando-row.fach::before { background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff; }
-        .mando-row.fach:hover { border-color: rgba(0, 229, 255, 0.3); }
-        .mando-row.boe::before { background-color: var(--danger-red); box-shadow: 0 0 10px var(--danger-red); }
-        .mando-row.boe:hover { border-color: rgba(218, 41, 28, 0.3); }
-
-        .mando-avatar-lg { width: 85px; height: 85px; border-radius: 8px; object-fit: cover; border: 2px solid var(--glass-border); filter: grayscale(100%) contrast(120%); transition: 0.3s ease; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.5); will-change: transform, filter;}
-        .mando-row:hover .mando-avatar-lg { filter: grayscale(0%) contrast(100%); transform: scale(1.05); }
-        
-        .mando-content { flex: 1; }
-        .mando-tag { font-size: 10px; letter-spacing: 2px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; font-family: 'Share Tech Mono', monospace; }
-        .ejercito .mando-tag { color: #4df24d; background: rgba(77, 242, 77, 0.1); border: 1px solid rgba(77, 242, 77, 0.3); }
-        .armada .mando-tag { color: #4d90f2; background: rgba(77, 144, 242, 0.1); border: 1px solid rgba(77, 144, 242, 0.3); }
-        .fach .mando-tag { color: #00e5ff; background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); }
-        .boe .mando-tag { color: var(--danger-red); background: rgba(218, 41, 28, 0.1); border: 1px solid rgba(218, 41, 28, 0.3); }
-        
-        .mando-title { font-family: 'Jura', sans-serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; margin: 0; letter-spacing: 1px; text-transform: uppercase;}
-        .mando-subtitle { font-size: 13px; color: var(--alert-amber); font-family: 'Share Tech Mono', monospace; margin-top: 4px; margin-bottom: 12px; text-transform: uppercase;}
-        .mando-desc-text { font-size: 13px; color: #aaa; line-height: 1.6; text-align: justify; font-family: 'Share Tech Mono', monospace; border-top: 1px dashed var(--glass-border); padding-top: 12px; }
 
     </style>
 </head>
@@ -364,7 +335,6 @@
             
             <div class="menu-category">COMANDO SUPERIOR</div>
             <div class="menu-item" id="btnComunicados" onclick="switchTab('comunicados')" onmouseenter="playHover()"><span>📢</span> Comunicados Oficiales</div>
-            <div class="menu-item" id="btnAltosMandos" onclick="switchTab('altosmandos')" onmouseenter="playHover()"><span>🎖️</span> Altos Mandos</div>
             <div class="menu-item" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
             <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
 
@@ -517,35 +487,6 @@
                 </div>
 
                 <div id="listaComunicados" style="display: grid; gap: 15px;"></div>
-            </div>
-
-            <div id="seccionAltosMandos">
-                <h2 class="section-title"><span>🎖️</span> REGISTRO DE ALTOS MANDOS</h2>
-                <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">EXPEDIENTES CLASIFICADOS - NIVEL DE AUTORIZACIÓN: OMEGA</p>
-                
-                <div id="panelAdminMandos" class="glass-panel slide-up" style="display:none; padding: 25px; border-color: var(--alert-amber); margin-bottom: 30px;">
-                    <h4 style="margin-top:0; color:var(--alert-amber); font-size:14px; letter-spacing: 2px;">[ ⚙️ GESTIÓN DE ALTOS MANDOS - ACCESO CORONEL+ ]</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 2fr auto; gap: 10px;">
-                        <select id="amSelect" class="auth-input" style="margin:0;">
-                            <option value="mando_1">Puesto 1 (Ejército)</option>
-                            <option value="mando_2">Puesto 2 (Armada)</option>
-                            <option value="mando_3">Puesto 3 (FACH)</option>
-                            <option value="mando_4">Puesto 4 (BOE)</option>
-                        </select>
-                        <input type="text" id="amNombre" class="auth-input" placeholder="NUEVO NOMBRE" style="margin:0;">
-                        <select id="amRama" class="auth-input" style="margin:0;">
-                            <option value="ejercito">EJÉRCITO</option>
-                            <option value="armada">ARMADA</option>
-                            <option value="fach">FACH</option>
-                            <option value="boe">BOE</option>
-                        </select>
-                        <input type="text" id="amEspecialidad" class="auth-input" placeholder="DESCRIPCIÓN / ESPECIALIDAD" style="margin:0;">
-                        <button onclick="guardarAltoMando()" class="btn-tactical" style="background: rgba(255, 180, 0, 0.1); border-color: var(--alert-amber); color: var(--alert-amber);">MODIFICAR</button>
-                    </div>
-                </div>
-
-                <div class="lista-mandos-container" id="listaAltosMandos">
-                    </div>
             </div>
 
             <div id="seccionCalendario">
@@ -839,9 +780,158 @@
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
     window.verificarAdminAuth = () => { window.playClick(); if(document.getElementById("adminPassInput").value === "CHILE2026") { document.getElementById("modalAdminAuth").style.display = "none"; document.getElementById("adminTools").style.display = "block"; window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success"); } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); } };
 
+    // SISTEMA DE SOLICITUDES
+    window.enviarSolicitud = async () => {
+        window.playClick();
+        const tipo = document.getElementById("solTipo").value;
+        const detalle = document.getElementById("solDetalle").value;
+        if(!detalle) return window.showToast("DEBE JUSTIFICAR SU SOLICITUD EN EL RECUADRO", "error");
+
+        try {
+            await addDoc(collection(db, "solicitudes"), {
+                autor: window.currentUserName,
+                email: window.currentUserEmail,
+                rango: window.currentUserRank,
+                tipo: tipo,
+                detalle: detalle,
+                estado: "Pendiente",
+                fecha: new Date().toLocaleString('es-CL'),
+                timestamp: serverTimestamp()
+            });
+            registrarLog("NUEVA SOLICITUD", `Envió una petición formal de ${tipo}.`);
+            window.showToast("SOLICITUD ENVIADA AL MANDO", "success");
+            document.getElementById("solDetalle").value = "";
+            cargarSolicitudes();
+        } catch(e) { window.showToast("ERROR AL ENVIAR SOLICITUD", "error"); }
+    };
+
+    async function cargarSolicitudes() {
+        const q = query(collection(db, "solicitudes"), orderBy("timestamp", "desc"), limit(30));
+        const snap = await getDocs(q);
+        const lista = document.getElementById("listaSolicitudes");
+        if(!lista) return;
+        lista.innerHTML = "";
+        let count = 0;
+        
+        const isGestor = window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Mayor");
+        if(isGestor) {
+            const titulo = document.getElementById("tituloGestorSolicitudes");
+            if(titulo) titulo.style.display = "block";
+        }
+
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            if (d.email === window.currentUserEmail || isGestor) {
+                count++;
+                let estadoColor = d.estado === "Aprobada" ? "#4df24d" : (d.estado === "Rechazada" ? "var(--danger-red)" : "var(--alert-amber)");
+                
+                let botones = "";
+                if (isGestor && d.estado === "Pendiente") {
+                    botones = `
+                        <div style="display:flex; gap:10px; margin-top:15px; border-top:1px dashed var(--glass-border); padding-top:10px;">
+                            <button onclick="responderSolicitud('${docSnap.id}', 'Aprobada')" class="btn-tactical" style="background:rgba(77,242,77,0.1); border-color:#4df24d; color:#4df24d; padding: 5px 15px; font-size:11px;">✔️ APROBAR</button>
+                            <button onclick="responderSolicitud('${docSnap.id}', 'Rechazada')" class="btn-tactical" style="background:rgba(218,41,28,0.1); border-color:var(--danger-red); color:var(--danger-red); padding: 5px 15px; font-size:11px;">✖️ RECHAZAR</button>
+                        </div>
+                    `;
+                }
+
+                lista.innerHTML += `
+                    <div class="glass-panel slide-up" style="padding: 20px; border-left: 4px solid ${estadoColor};">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-start;">
+                            <div>
+                                <strong style="color:white; font-size:16px; letter-spacing:1px;">${d.tipo.toUpperCase()}</strong>
+                                <div style="font-size:11px; color:var(--theme-color); font-family:'Share Tech Mono'; margin-top:3px;">DE: ${d.rango} ${d.autor}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:10px; font-weight:bold; padding:4px 8px; border-radius:4px; background:rgba(255,255,255,0.05); border:1px solid ${estadoColor}; color:${estadoColor};">${d.estado.toUpperCase()}</span>
+                                <div style="font-size:10px; color:#666; margin-top:5px;">${d.fecha.split(',')[0]}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; color:#ccc; font-size:13px; line-height: 1.5;">"${d.detalle}"</div>
+                        ${botones}
+                    </div>
+                `;
+            }
+        });
+        if (count === 0) lista.innerHTML = "<div style='color:#555; font-style:italic; padding: 20px;'>No hay solicitudes en su bandeja de entrada.</div>";
+    }
+
+    window.responderSolicitud = async (id, estado) => {
+        window.playClick();
+        try {
+            await updateDoc(doc(db, "solicitudes", id), { estado: estado });
+            registrarLog("RESOLUCIÓN TÁCTICA", `Marcó una solicitud como ${estado}.`);
+            window.showToast(`SOLICITUD ${estado.toUpperCase()}`, estado === 'Aprobada' ? 'success' : 'error');
+            cargarSolicitudes();
+        } catch(e) { window.showToast("ERROR AL RESPONDER", "error"); }
+    };
+
+    // SISTEMA DE COMUNICADOS
+    window.publicarComunicado = async () => {
+        window.playClick();
+        const tipo = document.getElementById("comTipo").value;
+        const titulo = document.getElementById("comTitulo").value;
+        const contenido = document.getElementById("comContenido").value;
+
+        if(!titulo || !contenido) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error");
+
+        try {
+            await addDoc(collection(db, "comunicados"), {
+                tipo: tipo,
+                titulo: titulo,
+                contenido: contenido,
+                autor: window.currentUserName,
+                rangoAutor: window.currentUserRank,
+                fecha: new Date().toLocaleString('es-CL'),
+                timestamp: serverTimestamp()
+            });
+            registrarLog("NUEVO COMUNICADO", `Emitió un comunicado tipo ${tipo}: ${titulo}`);
+            window.showToast("COMUNICADO PUBLICADO CON ÉXITO", "success");
+            document.getElementById("comTitulo").value = "";
+            document.getElementById("comContenido").value = "";
+            cargarComunicados();
+        } catch(e) { window.showToast("ERROR AL PUBLICAR COMUNICADO", "error"); }
+    };
+
+    async function cargarComunicados() {
+        const q = query(collection(db, "comunicados"), orderBy("timestamp", "desc"), limit(30));
+        const snap = await getDocs(q);
+        const lista = document.getElementById("listaComunicados");
+        if(!lista) return;
+        lista.innerHTML = "";
+        let count = 0;
+
+        snap.forEach(docSnap => {
+            count++;
+            const d = docSnap.data();
+            let borderColor = "var(--theme-color)";
+            if(d.tipo === "Ascenso") borderColor = "#4df24d";
+            if(d.tipo === "Aviso") borderColor = "var(--danger-red)";
+            if(d.tipo === "Evento") borderColor = "var(--admin-blue)";
+
+            lista.innerHTML += `
+                <div class="glass-panel slide-up" style="padding: 20px; border-left: 4px solid ${borderColor};">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+                        <div>
+                            <span style="font-size:10px; padding:3px 8px; border-radius:4px; background:rgba(255,255,255,0.1); color:${borderColor}; font-weight:bold; letter-spacing:1px; margin-bottom:8px; display:inline-block;">${d.tipo.toUpperCase()}</span>
+                            <h3 style="margin:0; color:white; font-size:20px; letter-spacing:1px;">${d.titulo}</h3>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:11px; color:#aaa; font-family:'Share Tech Mono';">${d.fecha}</div>
+                            <div style="font-size:11px; color:var(--alert-amber); margin-top:4px;">EMITIDO POR: ${d.rangoAutor} ${d.autor}</div>
+                        </div>
+                    </div>
+                    <div style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; white-space: pre-wrap;">${d.contenido}</div>
+                </div>
+            `;
+        });
+
+        if (count === 0) lista.innerHTML = "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay comunicados recientes en la red.</div>";
+    }
+
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionAltosMandos", "seccionCalendario", "seccionComunicados", "seccionSolicitudes"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes"].forEach(id => {
             const el = document.getElementById(id); el.style.display = 'none'; el.classList.remove('fade-in');
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -858,7 +948,6 @@
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
         if(tab === 'reclutamiento') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
         if(tab === 'mapa') { targetId = 'seccionMapa'; btnId = 'btnMapa'; }
-        if(tab === 'altosmandos') { targetId = 'seccionAltosMandos'; btnId = 'btnAltosMandos'; }
         if(tab === 'calendario') { targetId = 'seccionCalendario'; btnId = 'btnCalendario'; }
         
         const targetEl = document.getElementById(targetId);
@@ -906,15 +995,10 @@
                 if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel")) {
                     document.getElementById("panelCalificaciones").style.display = "block";
                 }
-
-                if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Coronel")) {
-                    document.getElementById("panelAdminMandos").style.display = "block";
-                }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); if(window.isAdmin) cargarLogsVisual();
                 
                 iniciarSyncMapa();
-                iniciarSyncMandos();
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
@@ -928,7 +1012,6 @@
         try {
             const snap = await getDocs(collection(db, "usuarios"));
             
-            // Strings temporales para construir HTML de forma masiva (Súper rápido)
             let strPer = "", strLic = "", strCom = "", strIns = "", strCad = "", strMis = "";
             let strSelS = '<option value="">SELECCIONAR...</option>';
             let strSelMis = '<option value="">SELECCIONAR...</option>';
@@ -1029,7 +1112,6 @@
                 } catch (errLoop) { console.error("Error aislando perfil:", errLoop); }
             });
             
-            // Inyectar HTML masivo de una vez (Súper rápido)
             document.getElementById("listaSoldados").innerHTML = strPer;
             document.getElementById("listaUsuariosLicencias").innerHTML = strLic;
             document.getElementById("listaComandante").innerHTML = strCom;
@@ -1226,7 +1308,6 @@
         } catch(e) { window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error"); }
     };
 
-    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarReclutamiento() {
         const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q); 
@@ -1245,7 +1326,6 @@
 
     window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
 
-    /* OPTIMIZACIÓN: Construcción HTML masiva */
     function cargarHangar() {
         let hAereoHTML = ""; let hTerrHTML = "";
         const generarCard = (v) => `
@@ -1260,7 +1340,6 @@
         document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
     }
 
-    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarDocumentos() {
         const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
         const snap = await getDocs(q); 
@@ -1363,7 +1442,6 @@
         if (vp) vp.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
     };
 
-    /* OPTIMIZACIÓN: Document Fragment para marcadores del mapa */
     function iniciarSyncMapa() {
         onSnapshot(collection(db, "mapa_estrategico"), (snapshot) => {
             const mapa = document.getElementById('mapaEstrategico');
@@ -1446,80 +1524,6 @@
         });
     }, 1000);
 
-    /* OPTIMIZACIÓN: Construcción HTML masiva */
-    function iniciarSyncMandos() {
-        onSnapshot(collection(db, "altos_mandos"), async (snapshot) => {
-            if (snapshot.empty) {
-                const defaultMandos = [
-                    { id: "mando_1", nombre: "GENERAL J. MORALES", cargo: "COMANDANTE EN JEFE DEL EJÉRCITO", rama: "ejercito", desc: "Máxima autoridad terrestre. Especialista en tácticas de guerra acorazada y despliegue de infantería motorizada. Supervisa la defensa de fronteras y el teatro de operaciones norte." },
-                    { id: "mando_2", nombre: "ALMIRANTE A. VERGARA", cargo: "COMANDANTE EN JEFE DE LA ARMADA", rama: "armada", desc: "Director de inteligencia naval y operaciones anfibias. Encargado de mantener la soberanía marítima, flotas de submarinos y el control estratégico de costas e islas." },
-                    { id: "mando_3", nombre: "GENERAL DEL AIRE R. SALAZAR", cargo: "COMANDANTE EN JEFE DE LA FUERZA AÉREA", rama: "fach", desc: "Líder del Estado Mayor Aéreo. Control absoluto del espacio aéreo nacional, despliegue de escuadrones de cazas interceptores y redes de defensa antiaérea en tiempo real." },
-                    { id: "mando_4", nombre: "CORONEL M. SOTO", cargo: "COMANDANTE BRIGADA DE OPERACIONES ESPECIALES", rama: "boe", desc: "Especialista en guerra asimétrica, rescate de rehenes, infiltración profunda y operaciones clandestinas de alto riesgo. Responde directamente al Alto Mando Conjunto." }
-                ];
-                for (const m of defaultMandos) { await setDoc(doc(db, "altos_mandos", m.id), m); }
-                return; 
-            }
-
-            let mandosArray = [];
-            snapshot.forEach(doc => mandosArray.push(doc.data()));
-            let htmlStr = "";
-            
-            mandosArray.sort((a,b) => a.id.localeCompare(b.id)).forEach((m, idx) => {
-                let ramaTag = m.rama.toUpperCase();
-                if(m.rama === 'ejercito') ramaTag = "EJÉRCITO DE CHILE";
-                if(m.rama === 'armada') ramaTag = "ARMADA DE CHILE";
-                if(m.rama === 'fach') ramaTag = "FUERZA AÉREA (FACH)";
-                if(m.rama === 'boe') ramaTag = "B.O.E. (FUERZAS ESPECIALES)";
-
-                htmlStr += `
-                <div class="mando-row ${m.rama} slide-up" style="animation-delay: ${idx * 0.1}s;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="${ramaTag}">
-                    <div class="mando-content">
-                        <span class="mando-tag">${ramaTag}</span>
-                        <h3 class="mando-title">${m.nombre}</h3>
-                        <div class="mando-subtitle">${m.cargo}</div>
-                        <div class="mando-desc-text">${m.desc}</div>
-                    </div>
-                </div>`;
-            });
-            document.getElementById("listaAltosMandos").innerHTML = htmlStr;
-        });
-    }
-
-    window.guardarAltoMando = async () => {
-        window.playClick();
-        const id = document.getElementById("amSelect").value;
-        const nombre = document.getElementById("amNombre").value.toUpperCase();
-        const rama = document.getElementById("amRama").value;
-        const desc = document.getElementById("amEspecialidad").value;
-
-        if(!id) return window.showToast("SELECCIONE UN PUESTO DE MANDO", "error");
-        
-        const miIndice = RANGOS.indexOf(window.currentUserRank);
-        if (!window.isAdmin && miIndice < RANGOS.indexOf("Coronel")) return window.showToast("ACCESO DENEGADO. Rango insuficiente.", "error");
-
-        let updateData = {};
-        if(nombre) updateData.nombre = nombre;
-        if(rama) {
-            updateData.rama = rama;
-            if(rama === 'ejercito') updateData.cargo = "COMANDANTE EN JEFE DEL EJÉRCITO";
-            if(rama === 'armada') updateData.cargo = "COMANDANTE EN JEFE DE LA ARMADA";
-            if(rama === 'fach') updateData.cargo = "COMANDANTE EN JEFE DE LA FUERZA AÉREA";
-            if(rama === 'boe') updateData.cargo = "COMANDANTE BRIGADA DE OPERACIONES ESPECIALES";
-        }
-        if(desc) updateData.desc = desc;
-
-        if(Object.keys(updateData).length === 0) return window.showToast("NO SE INGRESARON CAMBIOS", "error");
-
-        try {
-            await updateDoc(doc(db, "altos_mandos", id), updateData);
-            registrarLog("ALTOS MANDOS", `Actualizó la estructura del Alto Mando (${id}).`);
-            window.showToast("EXPEDIENTE DE MANDO ACTUALIZADO", "success");
-            document.getElementById("amNombre").value = "";
-            document.getElementById("amEspecialidad").value = "";
-        } catch(e) { window.showToast("ERROR AL ACTUALIZAR", "error"); }
-    };
-
     window.programarEntrenamiento = async () => {
         window.playClick();
         const fecha = document.getElementById("calFecha").value;
@@ -1538,7 +1542,6 @@
         } catch(e) { window.showToast("ERROR AL PROGRAMAR", "error"); }
     };
 
-    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarCalendario() {
         const q = query(collection(db, "entrenamientos"), orderBy("fecha", "asc"));
         const snap = await getDocs(q);
@@ -1579,7 +1582,6 @@
         } catch(e) { window.showToast("ERROR AL CANCELAR", "error"); }
     };
 
-    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarLogsVisual() { 
         let htmlStr = ""; 
         window.cachedLogs.forEach(d => { 

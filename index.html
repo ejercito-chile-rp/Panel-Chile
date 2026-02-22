@@ -58,21 +58,7 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
-        /* --- SIDEBAR ACTUALIZADA --- */
-        .sidebar { 
-            width: 310px; /* Aumentado ligeramente para el Alto Mando */
-            background: rgba(8, 12, 18, 0.85); 
-            border-right: 1px solid var(--glass-border); 
-            display: flex; 
-            flex-direction: column; 
-            padding: 25px 0; 
-            z-index: 10; 
-            backdrop-filter: blur(20px); 
-            border-radius: 0 15px 15px 0; 
-            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-            overflow-y: auto; /* Scroll habilitado */
-            overflow-x: hidden;
-        }
+        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(20px); border-radius: 0 15px 15px 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5); overflow-y: auto;}
         .menu-category { font-size: 11px; color: #888; padding: 10px 25px; letter-spacing: 2px; font-weight: 700; margin-top: 10px;}
         .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
         .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); color: var(--theme-color); padding-left: 30px; }
@@ -81,63 +67,10 @@
         .btn-alert:hover { color: var(--danger-red); background: rgba(255, 59, 59, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
 
-        /* --- NUEVO: ESTILOS TARJETAS ALTO MANDO --- */
-        .mando-card {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            padding: 12px;
-            margin: 0 20px 15px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            cursor: default;
-        }
-        .mando-card::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; transition: width 0.3s ease;
-        }
-        .mando-card:hover { background: rgba(255, 255, 255, 0.05); transform: translateX(5px); }
-        .mando-card:hover::before { width: 6px; }
-
-        /* Colores por rama */
-        .ejercito::before { background-color: #4df24d; box-shadow: 0 0 10px #4df24d; }
-        .armada::before { background-color: #4d90f2; box-shadow: 0 0 10px #4d90f2; }
-        .fach::before { background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff; }
-
-        .mando-card:hover.ejercito { border-color: rgba(77, 242, 77, 0.3); box-shadow: -5px 5px 15px rgba(77, 242, 77, 0.1); }
-        .mando-card:hover.armada { border-color: rgba(77, 144, 242, 0.3); box-shadow: -5px 5px 15px rgba(77, 144, 242, 0.1); }
-        .mando-card:hover.fach { border-color: rgba(0, 229, 255, 0.3); box-shadow: -5px 5px 15px rgba(0, 229, 255, 0.1); }
-
-        .mando-flex { display: flex; align-items: center; gap: 12px; }
-        .mando-avatar {
-            width: 45px; height: 45px; border-radius: 6px; object-fit: cover;
-            border: 1px solid var(--glass-border);
-            filter: grayscale(100%) contrast(120%);
-            transition: 0.4s ease;
-        }
-        .mando-card:hover .mando-avatar { filter: grayscale(0%) contrast(100%); transform: scale(1.05); }
-        
-        .mando-info { flex: 1; }
-        .mando-rama {
-            font-size: 9px; letter-spacing: 1px; font-weight: bold; padding: 2px 5px;
-            border-radius: 3px; display: inline-block; margin-bottom: 4px; font-family: 'Share Tech Mono', monospace;
-        }
-        .ejercito .mando-rama { color: #4df24d; background: rgba(77, 242, 77, 0.1); }
-        .armada .mando-rama { color: #4d90f2; background: rgba(77, 144, 242, 0.1); }
-        .fach .mando-rama { color: #00e5ff; background: rgba(0, 229, 255, 0.1); }
-
-        .mando-nombre { font-family: 'Jura', sans-serif; font-size: 15px; font-weight: 700; color: #fff; line-height: 1.1; }
-        .mando-rango { font-size: 11px; color: #aaa; font-family: 'Share Tech Mono', monospace; margin-top: 2px; }
-        .mando-desc {
-            font-size: 11px; color: #888; line-height: 1.4; border-top: 1px dashed var(--glass-border);
-            padding-top: 8px; font-family: 'Share Tech Mono', monospace;
-        }
-
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative;}
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa { display: none; }
+        
+        /* Ocultar secciones por defecto */
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionAltosMandos { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
 
@@ -199,7 +132,7 @@
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        /* ESTILOS DEL MAPA INTERACTIVO (VIEWPORT + ZOOM + FLECHAS) */
+        /* ESTILOS DEL MAPA INTERACTIVO */
         .drag-icon { font-size: 24px; cursor: grab; transition: transform 0.2s, filter 0.2s; user-select: none; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); display: flex; justify-content: center; width: 100%; }
         .drag-icon:active { cursor: grabbing; transform: scale(0.9); }
         .drag-icon:hover { transform: scale(1.3); filter: drop-shadow(0 0 10px var(--theme-color)); }
@@ -216,6 +149,64 @@
         .map-nav-right { right: 15px; top: calc(50% - 20px); }
         .map-nav-up { top: 15px; left: calc(50% - 20px); }
         .map-nav-down { bottom: 15px; left: calc(50% - 20px); }
+
+        /* --- ESTILOS EXCLUSIVOS PARA SECCIÓN ALTOS MANDOS --- */
+        .lista-mandos-container { 
+            display: flex; flex-direction: column; gap: 20px; margin-top: 10px; 
+        }
+        .mando-row {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .mando-row::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; transition: width 0.3s ease;
+        }
+        .mando-row:hover { background: rgba(255, 255, 255, 0.05); transform: translateX(8px); }
+        .mando-row:hover::before { width: 8px; }
+        
+        .mando-row.ejercito::before { background-color: #4df24d; box-shadow: 0 0 10px #4df24d; }
+        .mando-row.ejercito:hover { border-color: rgba(77, 242, 77, 0.3); }
+        
+        .mando-row.armada::before { background-color: #4d90f2; box-shadow: 0 0 10px #4d90f2; }
+        .mando-row.armada:hover { border-color: rgba(77, 144, 242, 0.3); }
+        
+        .mando-row.fach::before { background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff; }
+        .mando-row.fach:hover { border-color: rgba(0, 229, 255, 0.3); }
+
+        .mando-row.boe::before { background-color: var(--danger-red); box-shadow: 0 0 10px var(--danger-red); }
+        .mando-row.boe:hover { border-color: rgba(255, 59, 59, 0.3); }
+
+        .mando-avatar-lg {
+            width: 85px; height: 85px; border-radius: 8px; object-fit: cover;
+            border: 2px solid var(--glass-border); filter: grayscale(100%) contrast(120%); 
+            transition: 0.4s ease; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .mando-row:hover .mando-avatar-lg { filter: grayscale(0%) contrast(100%); transform: scale(1.08); }
+        
+        .mando-content { flex: 1; }
+        .mando-tag { 
+            font-size: 10px; letter-spacing: 2px; font-weight: bold; padding: 3px 8px; 
+            border-radius: 4px; display: inline-block; margin-bottom: 8px; font-family: 'Share Tech Mono', monospace; 
+        }
+        .ejercito .mando-tag { color: #4df24d; background: rgba(77, 242, 77, 0.1); border: 1px solid rgba(77, 242, 77, 0.3); }
+        .armada .mando-tag { color: #4d90f2; background: rgba(77, 144, 242, 0.1); border: 1px solid rgba(77, 144, 242, 0.3); }
+        .fach .mando-tag { color: #00e5ff; background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); }
+        .boe .mando-tag { color: var(--danger-red); background: rgba(255, 59, 59, 0.1); border: 1px solid rgba(255, 59, 59, 0.3); }
+        
+        .mando-title { font-family: 'Jura', sans-serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; margin: 0; letter-spacing: 1px; }
+        .mando-subtitle { font-size: 13px; color: var(--alert-amber); font-family: 'Share Tech Mono', monospace; margin-top: 4px; margin-bottom: 12px; }
+        .mando-desc-text { 
+            font-size: 13px; color: #aaa; line-height: 1.6; text-align: justify; 
+            font-family: 'Share Tech Mono', monospace; border-top: 1px dashed var(--glass-border); padding-top: 12px;
+        }
 
     </style>
 </head>
@@ -357,6 +348,9 @@
         <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
         <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
         <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
+        
+        <div class="menu-item" id="btnAltosMandos" onclick="switchTab('altosmandos')" onmouseenter="playHover()"><span>🎖️</span> Altos Mandos</div>
+        
         <div class="menu-item" id="btnLicencias" onclick="switchTab('licencias')" onmouseenter="playHover()"><span>🪪</span> Licencias</div>
         <div class="menu-item" id="btnHangar" onclick="switchTab('hangar')" onmouseenter="playHover()"><span>🛠️</span> Hangar / Flota</div>
         <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
@@ -370,43 +364,6 @@
         <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
         <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
         
-        <div class="menu-category" style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">🎖️ ALTOS MANDOS</div>
-        
-        <div class="mando-card ejercito">
-            <div class="mando-flex">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar">
-                <div class="mando-info">
-                    <span class="mando-rama">EJÉRCITO</span>
-                    <div class="mando-nombre">J. Morales</div>
-                    <div class="mando-rango">Gral. de Ejército</div>
-                </div>
-            </div>
-            <div class="mando-desc">Comandante en Jefe. Estrategia y despliegue de divisiones blindadas.</div>
-        </div>
-
-        <div class="mando-card armada">
-            <div class="mando-flex">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar">
-                <div class="mando-info">
-                    <span class="mando-rama">ARMADA</span>
-                    <div class="mando-nombre">A. Vergara</div>
-                    <div class="mando-rango">Almirante</div>
-                </div>
-            </div>
-            <div class="mando-desc">Dirección Naval. Supervisión de infantería de marina y control costero.</div>
-        </div>
-
-        <div class="mando-card fach">
-            <div class="mando-flex">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar">
-                <div class="mando-info">
-                    <span class="mando-rama">FUERZA AÉREA</span>
-                    <div class="mando-nombre">R. Salazar</div>
-                    <div class="mando-rango">Gral. del Aire</div>
-                </div>
-            </div>
-            <div class="mando-desc">Estado Mayor. Escuadrones de interceptores y supremacía aérea.</div>
-        </div>
         <div class="menu-item btn-alert" id="btnDefcon" onclick="intentarCambioDefcon()" onmouseenter="playHover()" style="margin-top:20px;"><span>🚨</span> NIVEL DEFCON 5</div>
 
         <button onclick="logout()" class="btn-tactical" style="margin: 20px 20px 0; background: rgba(255,59,59,0.1); border-color: var(--danger-red); color: var(--danger-red); font-size:12px;">DESCONECTAR</button>
@@ -499,6 +456,63 @@
             <div id="listaSoldados" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;"></div>
         </div>
 
+        <div id="seccionAltosMandos">
+            <h2 class="section-title"><span>🎖️</span> REGISTRO DE ALTOS MANDOS</h2>
+            <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">EXPEDIENTES CLASIFICADOS - NIVEL DE AUTORIZACIÓN: OMEGA</p>
+            
+            <div class="lista-mandos-container">
+                
+                <div class="mando-row ejercito slide-up">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="General Ejército">
+                    <div class="mando-content">
+                        <span class="mando-tag">EJÉRCITO DE CHILE</span>
+                        <h3 class="mando-title">GENERAL J. MORALES</h3>
+                        <div class="mando-subtitle">COMANDANTE EN JEFE DEL EJÉRCITO</div>
+                        <div class="mando-desc-text">
+                            Máxima autoridad terrestre. Especialista en tácticas de guerra acorazada y despliegue de infantería motorizada. Supervisa la defensa de fronteras y el teatro de operaciones norte. 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mando-row armada slide-up" style="animation-delay: 0.1s;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="Almirante Armada">
+                    <div class="mando-content">
+                        <span class="mando-tag">ARMADA DE CHILE</span>
+                        <h3 class="mando-title">ALMIRANTE A. VERGARA</h3>
+                        <div class="mando-subtitle">COMANDANTE EN JEFE DE LA ARMADA</div>
+                        <div class="mando-desc-text">
+                            Director de inteligencia naval y operaciones anfibias. Encargado de mantener la soberanía marítima, flotas de submarinos y el control estratégico de costas e islas.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mando-row fach slide-up" style="animation-delay: 0.2s;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="General FACH">
+                    <div class="mando-content">
+                        <span class="mando-tag">FUERZA AÉREA (FACH)</span>
+                        <h3 class="mando-title">GENERAL DEL AIRE R. SALAZAR</h3>
+                        <div class="mando-subtitle">COMANDANTE EN JEFE DE LA FUERZA AÉREA</div>
+                        <div class="mando-desc-text">
+                            Líder del Estado Mayor Aéreo. Control absoluto del espacio aéreo nacional, despliegue de escuadrones de cazas interceptores y redes de defensa antiaérea en tiempo real.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mando-row boe slide-up" style="animation-delay: 0.3s;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="Comandante BOE">
+                    <div class="mando-content">
+                        <span class="mando-tag">B.O.E. (FUERZAS ESPECIALES)</span>
+                        <h3 class="mando-title">CORONEL M. SOTO</h3>
+                        <div class="mando-subtitle">COMANDANTE BRIGADA DE OPERACIONES ESPECIALES</div>
+                        <div class="mando-desc-text">
+                            Especialista en guerra asimétrica, rescate de rehenes, infiltración profunda y operaciones clandestinas de alto riesgo. Responde directamente al Alto Mando Conjunto.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div id="seccionMapa">
             <h2 class="section-title"><span>🗺️</span> MAPA ESTRATÉGICO GLOBAL (SAN ANDREAS)</h2>
             <div style="display: flex; gap: 15px; height: 65vh; min-height: 500px; width: 100%;">
@@ -526,11 +540,10 @@
                 </div>
 
                 <div style="position: relative; flex: 1; border-radius: 12px; border: 1px solid var(--glass-border); overflow: hidden; display: flex;">
-                    
                     <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
                         <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
                             <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none;"></div>
-                            </div>
+                        </div>
                     </div>
 
                     <button onclick="scrollMap(-250, 0)" class="map-nav-btn map-nav-left" title="Deslizar Izquierda">◀</button>
@@ -767,9 +780,10 @@
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
     window.verificarAdminAuth = () => { window.playClick(); if(document.getElementById("adminPassInput").value === "CHILE2026") { document.getElementById("modalAdminAuth").style.display = "none"; document.getElementById("adminTools").style.display = "block"; window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success"); } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); } };
 
+    // FUNCIÓN DE PESTAÑAS ACTUALIZADA
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionAltosMandos"].forEach(id => {
             const el = document.getElementById(id); el.style.display = 'none'; el.classList.remove('fade-in');
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -784,6 +798,7 @@
         if(tab === 'licencias') { targetId = 'seccionLicencias'; btnId = 'btnLicencias'; }
         if(tab === 'reclutamiento') { targetId = 'seccionReclutamiento'; btnId = 'btnReclutamiento'; cargarReclutamiento(); }
         if(tab === 'mapa') { targetId = 'seccionMapa'; btnId = 'btnMapa'; }
+        if(tab === 'altosmandos') { targetId = 'seccionAltosMandos'; btnId = 'btnAltosMandos'; }
         
         const targetEl = document.getElementById(targetId);
         targetEl.style.display = 'block';

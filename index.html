@@ -69,7 +69,6 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative;}
         
-        /* Ocultar secciones por defecto */
         #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionAltosMandos { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
@@ -201,8 +200,8 @@
         .fach .mando-tag { color: #00e5ff; background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); }
         .boe .mando-tag { color: var(--danger-red); background: rgba(255, 59, 59, 0.1); border: 1px solid rgba(255, 59, 59, 0.3); }
         
-        .mando-title { font-family: 'Jura', sans-serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; margin: 0; letter-spacing: 1px; }
-        .mando-subtitle { font-size: 13px; color: var(--alert-amber); font-family: 'Share Tech Mono', monospace; margin-top: 4px; margin-bottom: 12px; }
+        .mando-title { font-family: 'Jura', sans-serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; margin: 0; letter-spacing: 1px; text-transform: uppercase;}
+        .mando-subtitle { font-size: 13px; color: var(--alert-amber); font-family: 'Share Tech Mono', monospace; margin-top: 4px; margin-bottom: 12px; text-transform: uppercase;}
         .mando-desc-text { 
             font-size: 13px; color: #aaa; line-height: 1.6; text-align: justify; 
             font-family: 'Share Tech Mono', monospace; border-top: 1px dashed var(--glass-border); padding-top: 12px;
@@ -460,57 +459,29 @@
             <h2 class="section-title"><span>🎖️</span> REGISTRO DE ALTOS MANDOS</h2>
             <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">EXPEDIENTES CLASIFICADOS - NIVEL DE AUTORIZACIÓN: OMEGA</p>
             
-            <div class="lista-mandos-container">
-                
-                <div class="mando-row ejercito slide-up">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="General Ejército">
-                    <div class="mando-content">
-                        <span class="mando-tag">EJÉRCITO DE CHILE</span>
-                        <h3 class="mando-title">GENERAL J. MORALES</h3>
-                        <div class="mando-subtitle">COMANDANTE EN JEFE DEL EJÉRCITO</div>
-                        <div class="mando-desc-text">
-                            Máxima autoridad terrestre. Especialista en tácticas de guerra acorazada y despliegue de infantería motorizada. Supervisa la defensa de fronteras y el teatro de operaciones norte. 
-                        </div>
-                    </div>
+            <div id="panelAdminMandos" class="glass-panel slide-up" style="display:none; padding: 25px; border-color: var(--alert-amber); margin-bottom: 30px;">
+                <h4 style="margin-top:0; color:var(--alert-amber); font-size:14px; letter-spacing: 2px;">[ ⚙️ GESTIÓN DE ALTOS MANDOS - ACCESO CORONEL+ ]</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 2fr auto; gap: 10px;">
+                    <select id="amSelect" class="auth-input" style="margin:0;">
+                        <option value="mando_1">Puesto 1 (Ejército)</option>
+                        <option value="mando_2">Puesto 2 (Armada)</option>
+                        <option value="mando_3">Puesto 3 (FACH)</option>
+                        <option value="mando_4">Puesto 4 (BOE)</option>
+                    </select>
+                    <input type="text" id="amNombre" class="auth-input" placeholder="NUEVO NOMBRE" style="margin:0;">
+                    <select id="amRama" class="auth-input" style="margin:0;">
+                        <option value="ejercito">EJÉRCITO</option>
+                        <option value="armada">ARMADA</option>
+                        <option value="fach">FACH</option>
+                        <option value="boe">BOE</option>
+                    </select>
+                    <input type="text" id="amEspecialidad" class="auth-input" placeholder="DESCRIPCIÓN / ESPECIALIDAD" style="margin:0;">
+                    <button onclick="guardarAltoMando()" class="btn-tactical" style="background: rgba(255, 180, 0, 0.1); border-color: var(--alert-amber); color: var(--alert-amber);">MODIFICAR</button>
                 </div>
-
-                <div class="mando-row armada slide-up" style="animation-delay: 0.1s;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="Almirante Armada">
-                    <div class="mando-content">
-                        <span class="mando-tag">ARMADA DE CHILE</span>
-                        <h3 class="mando-title">ALMIRANTE A. VERGARA</h3>
-                        <div class="mando-subtitle">COMANDANTE EN JEFE DE LA ARMADA</div>
-                        <div class="mando-desc-text">
-                            Director de inteligencia naval y operaciones anfibias. Encargado de mantener la soberanía marítima, flotas de submarinos y el control estratégico de costas e islas.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mando-row fach slide-up" style="animation-delay: 0.2s;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="General FACH">
-                    <div class="mando-content">
-                        <span class="mando-tag">FUERZA AÉREA (FACH)</span>
-                        <h3 class="mando-title">GENERAL DEL AIRE R. SALAZAR</h3>
-                        <div class="mando-subtitle">COMANDANTE EN JEFE DE LA FUERZA AÉREA</div>
-                        <div class="mando-desc-text">
-                            Líder del Estado Mayor Aéreo. Control absoluto del espacio aéreo nacional, despliegue de escuadrones de cazas interceptores y redes de defensa antiaérea en tiempo real.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mando-row boe slide-up" style="animation-delay: 0.3s;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="Comandante BOE">
-                    <div class="mando-content">
-                        <span class="mando-tag">B.O.E. (FUERZAS ESPECIALES)</span>
-                        <h3 class="mando-title">CORONEL M. SOTO</h3>
-                        <div class="mando-subtitle">COMANDANTE BRIGADA DE OPERACIONES ESPECIALES</div>
-                        <div class="mando-desc-text">
-                            Especialista en guerra asimétrica, rescate de rehenes, infiltración profunda y operaciones clandestinas de alto riesgo. Responde directamente al Alto Mando Conjunto.
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <div class="lista-mandos-container" id="listaAltosMandos">
+                </div>
         </div>
 
         <div id="seccionMapa">
@@ -780,7 +751,6 @@
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
     window.verificarAdminAuth = () => { window.playClick(); if(document.getElementById("adminPassInput").value === "CHILE2026") { document.getElementById("modalAdminAuth").style.display = "none"; document.getElementById("adminTools").style.display = "block"; window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success"); } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); } };
 
-    // FUNCIÓN DE PESTAÑAS ACTUALIZADA
     window.switchTab = (tab) => {
         window.playClick();
         ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionAltosMandos"].forEach(id => {
@@ -840,10 +810,16 @@
                 if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel")) {
                     document.getElementById("panelCalificaciones").style.display = "block";
                 }
+
+                // MOSTRAR PANEL DE ALTOS MANDOS SÓLO A CORONEL HACIA ARRIBA
+                if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Coronel")) {
+                    document.getElementById("panelAdminMandos").style.display = "block";
+                }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); if(window.isAdmin) cargarLogsVisual();
                 
                 iniciarSyncMapa();
+                iniciarSyncMandos(); // INICIAR SYNC DE ALTOS MANDOS
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
@@ -1230,6 +1206,7 @@
         cargarDatos(); 
     };
 
+    // ----- FUNCIONES: MAPA TÁCTICO -----
     let mapBaseSize = 1200; 
     let currentMapZoom = 1;
 
@@ -1340,6 +1317,93 @@
             iconToDrop = null; 
         });
     }, 1000);
+
+    // ----- NUEVO: FUNCIONES ALTOS MANDOS (FIREBASE SYNC Y EDICIÓN) -----
+    function iniciarSyncMandos() {
+        onSnapshot(collection(db, "altos_mandos"), async (snapshot) => {
+            
+            // Si la base de datos está vacía, creamos los 4 puestos por defecto
+            if (snapshot.empty) {
+                const defaultMandos = [
+                    { id: "mando_1", nombre: "GENERAL J. MORALES", cargo: "COMANDANTE EN JEFE DEL EJÉRCITO", rama: "ejercito", desc: "Máxima autoridad terrestre. Especialista en tácticas de guerra acorazada y despliegue de infantería motorizada. Supervisa la defensa de fronteras y el teatro de operaciones norte." },
+                    { id: "mando_2", nombre: "ALMIRANTE A. VERGARA", cargo: "COMANDANTE EN JEFE DE LA ARMADA", rama: "armada", desc: "Director de inteligencia naval y operaciones anfibias. Encargado de mantener la soberanía marítima, flotas de submarinos y el control estratégico de costas e islas." },
+                    { id: "mando_3", nombre: "GENERAL DEL AIRE R. SALAZAR", cargo: "COMANDANTE EN JEFE DE LA FUERZA AÉREA", rama: "fach", desc: "Líder del Estado Mayor Aéreo. Control absoluto del espacio aéreo nacional, despliegue de escuadrones de cazas interceptores y redes de defensa antiaérea en tiempo real." },
+                    { id: "mando_4", nombre: "CORONEL M. SOTO", cargo: "COMANDANTE BRIGADA DE OPERACIONES ESPECIALES", rama: "boe", desc: "Especialista en guerra asimétrica, rescate de rehenes, infiltración profunda y operaciones clandestinas de alto riesgo. Responde directamente al Alto Mando Conjunto." }
+                ];
+                for (const m of defaultMandos) {
+                    await setDoc(doc(db, "altos_mandos", m.id), m);
+                }
+                return; // Se volverá a ejecutar el onSnapshot tras crear
+            }
+
+            const container = document.getElementById("listaAltosMandos");
+            if (!container) return;
+            container.innerHTML = "";
+            
+            let mandosArray = [];
+            snapshot.forEach(doc => mandosArray.push(doc.data()));
+            
+            // Renderizar ordenados por ID (mando_1, mando_2...)
+            mandosArray.sort((a,b) => a.id.localeCompare(b.id)).forEach((m, idx) => {
+                let ramaTag = m.rama.toUpperCase();
+                if(m.rama === 'ejercito') ramaTag = "EJÉRCITO DE CHILE";
+                if(m.rama === 'armada') ramaTag = "ARMADA DE CHILE";
+                if(m.rama === 'fach') ramaTag = "FUERZA AÉREA (FACH)";
+                if(m.rama === 'boe') ramaTag = "B.O.E. (FUERZAS ESPECIALES)";
+
+                container.innerHTML += `
+                <div class="mando-row ${m.rama} slide-up" style="animation-delay: ${idx * 0.1}s;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" class="mando-avatar-lg" alt="${ramaTag}">
+                    <div class="mando-content">
+                        <span class="mando-tag">${ramaTag}</span>
+                        <h3 class="mando-title">${m.nombre}</h3>
+                        <div class="mando-subtitle">${m.cargo}</div>
+                        <div class="mando-desc-text">${m.desc}</div>
+                    </div>
+                </div>`;
+            });
+        });
+    }
+
+    // Función exclusiva de edición de Altos Mandos
+    window.guardarAltoMando = async () => {
+        window.playClick();
+        const id = document.getElementById("amSelect").value;
+        const nombre = document.getElementById("amNombre").value.toUpperCase();
+        const rama = document.getElementById("amRama").value;
+        const desc = document.getElementById("amEspecialidad").value;
+
+        if(!id) return window.showToast("SELECCIONE UN PUESTO DE MANDO", "error");
+        
+        // Verificación doble de seguridad
+        const miIndice = RANGOS.indexOf(window.currentUserRank);
+        if (!window.isAdmin && miIndice < RANGOS.indexOf("Coronel")) {
+            return window.showToast("ACCESO DENEGADO. Rango insuficiente.", "error");
+        }
+
+        let updateData = {};
+        if(nombre) updateData.nombre = nombre;
+        if(rama) {
+            updateData.rama = rama;
+            if(rama === 'ejercito') updateData.cargo = "COMANDANTE EN JEFE DEL EJÉRCITO";
+            if(rama === 'armada') updateData.cargo = "COMANDANTE EN JEFE DE LA ARMADA";
+            if(rama === 'fach') updateData.cargo = "COMANDANTE EN JEFE DE LA FUERZA AÉREA";
+            if(rama === 'boe') updateData.cargo = "COMANDANTE BRIGADA DE OPERACIONES ESPECIALES";
+        }
+        if(desc) updateData.desc = desc;
+
+        if(Object.keys(updateData).length === 0) return window.showToast("NO SE INGRESARON CAMBIOS", "error");
+
+        try {
+            await updateDoc(doc(db, "altos_mandos", id), updateData);
+            registrarLog("ALTOS MANDOS", `Actualizó la estructura del Alto Mando (${id}).`);
+            window.showToast("EXPEDIENTE DE MANDO ACTUALIZADO", "success");
+            document.getElementById("amNombre").value = "";
+            document.getElementById("amEspecialidad").value = "";
+        } catch(e) {
+            window.showToast("ERROR AL ACTUALIZAR", "error");
+        }
+    };
 
     async function cargarLogsVisual() { const lCont = document.getElementById("listaLogsContainer"); lCont.innerHTML = ""; window.cachedLogs.forEach(d => { lCont.innerHTML += `<div style="font-size: 13px; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: #bbb; font-family:'Share Tech Mono';"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}</div>`; }); }
     window.logout = () => signOut(auth).then(() => location.reload());

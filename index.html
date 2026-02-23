@@ -59,16 +59,7 @@
         ::-webkit-scrollbar-thumb { background: var(--theme-dim); border-radius: 10px; border: 1px solid var(--army-dark); }
         ::-webkit-scrollbar-thumb:hover { background: var(--theme-color); }
 
-        .glass-panel { 
-            background: var(--glass-bg); 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 12px; 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); 
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; 
-            transform: translateZ(0); 
-        }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; transform: translateZ(0); }
         .glass-panel:hover { border-color: var(--theme-dim); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
 
         .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(15px); border-radius: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5); overflow-y: auto; margin-top: 4px; transform: translateZ(0);}
@@ -220,9 +211,7 @@
     <audio id="sndAlert" src="https://www.soundjay.com/mechanical/sounds/smoke-detector-1.mp3" preload="auto" loop></audio>
     <audio id="sndError" src="https://www.soundjay.com/buttons/sounds/beep-03.mp3" preload="auto"></audio>
     <audio id="sndStartup" src="https://www.soundjay.com/computers/sounds/computer-startup-1.mp3" preload="auto"></audio>
-    
     <audio id="sndTypewriter" src="https://www.soundjay.com/mechanical/sounds/keyboard-typing-1.mp3" preload="auto" loop></audio>
-    <audio id="sndRadio" src="https://assets.mixkit.co/active_storage/sfx/1006/1006-preview.mp3" preload="auto" loop></audio>
 
     <div style="position: fixed; bottom: 15px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.2); z-index: 50000; letter-spacing: 1px; pointer-events: none; display: flex; align-items: center; gap: 5px;">
         Desarrollado por: Lukas Brown 🇨🇱
@@ -391,10 +380,7 @@
 
             <div class="menu-category">SISTEMA E INMERSIÓN</div>
             <div class="menu-item" id="btnCalendario" onclick="switchTab('calendario')" onmouseenter="playHover()"><span>📅</span> Calendario Entrenamientos</div>
-            
-            <div class="menu-item" id="btnRadioToggle" onclick="toggleRadio()" onmouseenter="playHover()"><span>📻</span> Radio Táctica: <strong style="color:var(--danger-red); margin-left:5px;">OFF</strong></div>
             <div class="menu-item" id="btnCRTToggle" onclick="toggleCRT()" onmouseenter="playHover()"><span>📺</span> Filtro CRT: <strong style="color:var(--danger-red); margin-left:5px;">OFF</strong></div>
-
             <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
             <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
             
@@ -597,9 +583,24 @@
                     </div>
 
                     <div style="position: relative; flex: 1; border-radius: 12px; border: 1px solid var(--glass-border); overflow: hidden; display: flex;">
+                        
+                        <div class="glass-panel" style="position: absolute; top: 15px; right: 15px; z-index: 50; padding: 10px; display: none;" id="panelClima">
+                            <div style="font-size: 10px; color: var(--theme-color); margin-bottom: 5px; text-align:center; font-weight:bold;">CTRL CLIMA</div>
+                            <select id="mapTime" class="auth-input" style="padding: 5px; font-size: 11px; margin-bottom: 5px;" onchange="cambiarClima()">
+                                <option value="dia">☀️ DÍA</option>
+                                <option value="noche">🌙 NOCHE</option>
+                            </select>
+                            <select id="mapWeather" class="auth-input" style="padding: 5px; font-size: 11px; margin-bottom: 0;" onchange="cambiarClima()">
+                                <option value="despejado">☁️ DESPEJADO</option>
+                                <option value="lluvia">🌧️ LLUVIA</option>
+                                <option value="tormenta">🌪️ T. ARENA</option>
+                            </select>
+                        </div>
+
                         <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
                             <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
-                                <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none;"></div>
+                                <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
+                                <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 5; opacity: 0; transition: 1s ease;"></div>
                             </div>
                         </div>
 
@@ -707,7 +708,10 @@
 
             <div id="seccionMisiones">
                 <h2 class="section-title"><span>🎯</span> ESTADO DE OPERACIONES ACTIVAS</h2>
-                <div id="listaMisiones" style="display: grid; grid-template-columns: 1fr; gap: 20px;"></div>
+                <div id="listaMisiones" class="responsive-grid"></div>
+
+                <h2 class="section-title" style="margin-top: 50px; color: #888; border-color: #333;"><span>🗂️</span> HISTORIAL DE OPERACIONES PASADAS</h2>
+                <div id="listaHistorialMisiones" class="responsive-grid"></div>
             </div>
 
             <div id="seccionDocumentos">
@@ -789,24 +793,6 @@
             zulu.innerText = now.toISOString().substr(11, 8) + " ZULU";
         }
     }, 1000);
-
-    let radioOn = false;
-    window.toggleRadio = () => {
-        window.playClick();
-        const audio = document.getElementById("sndRadio");
-        const btn = document.getElementById("btnRadioToggle");
-        radioOn = !radioOn;
-        if(radioOn) {
-            audio.volume = 0.15;
-            audio.play().catch(()=>{});
-            btn.innerHTML = "<span>📻</span> Radio Táctica: <strong style='color:#4df24d; margin-left:5px;'>ON</strong>";
-            btn.classList.add("active");
-        } else {
-            audio.pause();
-            btn.innerHTML = "<span>📻</span> Radio Táctica: <strong style='color:var(--danger-red); margin-left:5px;'>OFF</strong>";
-            btn.classList.remove("active");
-        }
-    };
 
     let crtOn = false;
     window.toggleCRT = () => {
@@ -1091,6 +1077,53 @@
         document.getElementById(btnId).classList.add('active');
     };
 
+    // FUNCION DE CLIMA DEL MAPA
+    window.cambiarClima = async () => {
+        window.playClick();
+        const time = document.getElementById('mapTime').value;
+        const weather = document.getElementById('mapWeather').value;
+        await setDoc(doc(db, "mapa_config", "estado"), { time: time, weather: weather, timestamp: serverTimestamp() });
+        registrarLog("SISTEMA SATELITAL", `Cambió las condiciones del mapa a ${time.toUpperCase()} / ${weather.toUpperCase()}.`);
+    };
+
+    function iniciarSyncClima() {
+        onSnapshot(doc(db, "mapa_config", "estado"), (docSnap) => {
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                aplicarFiltrosClima(data.time, data.weather);
+                const pTime = document.getElementById('mapTime');
+                const pWeather = document.getElementById('mapWeather');
+                if(pTime) pTime.value = data.time;
+                if(pWeather) pWeather.value = data.weather;
+            }
+        });
+    }
+
+    function aplicarFiltrosClima(time, weather) {
+        const bg = document.querySelector('.map-bg');
+        const overlay = document.getElementById('mapWeatherOverlay');
+        if(!bg || !overlay) return;
+
+        let filter = ""; let overlayCss = ""; let overlayOp = 0;
+
+        if (time === 'noche') filter += "brightness(0.3) sepia(0.4) hue-rotate(180deg) ";
+        else filter += "brightness(0.9) ";
+
+        if (weather === 'lluvia') {
+            filter += "grayscale(0.4) blur(1px) ";
+            overlayCss = "repeating-linear-gradient(160deg, transparent, transparent 15px, rgba(255,255,255,0.2) 15px, rgba(255,255,255,0.2) 16px)";
+            overlayOp = time === 'noche' ? 0.3 : 0.6;
+        } else if (weather === 'tormenta') {
+            filter += "sepia(0.8) hue-rotate(-15deg) contrast(0.8) blur(1px) ";
+            overlayCss = "rgba(194, 178, 128, 0.5)";
+            overlayOp = 1;
+        }
+
+        bg.style.filter = filter.trim() || "none";
+        overlay.style.background = overlayCss || "transparent";
+        overlay.style.opacity = overlayOp;
+    }
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             sndStartup.play().catch(()=>{});
@@ -1128,11 +1161,13 @@
 
                 if (window.isAdmin || RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel")) {
                     document.getElementById("panelCalificaciones").style.display = "block";
+                    document.getElementById("panelClima").style.display = "block";
                 }
                 
-                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); if(window.isAdmin) cargarLogsVisual();
+                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); if(window.isAdmin) cargarLogsVisual();
                 
                 iniciarSyncMapa();
+                iniciarSyncClima();
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
@@ -1263,6 +1298,29 @@
             document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
             document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
         } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
+    }
+
+    // HISTORIAL DE MISIONES
+    async function cargarHistorialMisiones() {
+        const q = query(collection(db, "misiones_pasadas"), orderBy("timestamp", "desc"), limit(20));
+        const snap = await getDocs(q);
+        let htmlStr = ""; let count = 0;
+        snap.forEach(docSnap => {
+            count++;
+            const d = docSnap.data();
+            htmlStr += `
+                <div class="glass-panel slide-up" style="border-left: 4px solid #555; padding: 20px; opacity: 0.85;">
+                    <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+                        <strong style="color: #aaa; font-size:16px; letter-spacing:1px;">✔️ OP FINALIZADA: ${d.tipo.toUpperCase()}</strong>
+                        <span style="font-size: 10px; color: #888; font-family:'Share Tech Mono';">INICIO: ${d.fechaInicio} | FIN: ${d.fechaFin}</span>
+                    </div>
+                    <div style="color: #bbb; margin-top: 12px; font-size: 14px; line-height: 1.5;">
+                        <span style="color:var(--theme-color);">[AGENTE ASIGNADO]:</span> ${d.rango} ${d.soldado} (${d.division})<br>
+                        <span style="color:var(--alert-amber);">[REPORTE DE OBJETIVO]:</span> ${d.detalle}
+                    </div>
+                </div>`;
+        });
+        document.getElementById("listaHistorialMisiones").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>El archivo histórico de operaciones está vacío.</div>" : htmlStr;
     }
 
     function getColorTiro(v) { return v==="Experto"?"#4df24d":v==="Calificado"?"#ffb400":"#aaa"; }
@@ -1526,8 +1584,40 @@
     }
 
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
+    
+    // FUNCION MODIFICADA: Ahora guarda el historial al finalizar
     window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "EN OPERACIÓN" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
-    window.finalizarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: null, estado: "ACTIVO" }); registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); window.showToast("SOLDADO RETIRADO", "success"); cargarDatos(); };
+    
+    window.finalizarMision = async () => { 
+        window.playClick(); 
+        const email = document.getElementById("targetSoldadoMision").value; 
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
+
+        const userRef = doc(db, "usuarios", email);
+        const userSnap = await getDoc(userRef);
+        
+        if(userSnap.exists()) {
+            const userData = userSnap.data();
+            if(userData.misionActiva) {
+                await addDoc(collection(db, "misiones_pasadas"), {
+                    soldado: userData.nombre,
+                    rango: userData.rango,
+                    division: userData.division || 'EJÉRCITO',
+                    tipo: userData.misionActiva.tipo,
+                    detalle: userData.misionActiva.detalle,
+                    fechaInicio: userData.misionActiva.fecha,
+                    fechaFin: new Date().toLocaleDateString('es-CL'),
+                    timestamp: serverTimestamp()
+                });
+            }
+        }
+
+        await updateDoc(userRef, { misionActiva: null, estado: "ACTIVO" }); 
+        registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); 
+        window.showToast("SOLDADO RETIRADO Y ARCHIVADO", "success"); 
+        cargarDatos(); 
+        cargarHistorialMisiones();
+    };
     
     window.procesarCambiosAdmin = async () => { 
         window.playClick(); 

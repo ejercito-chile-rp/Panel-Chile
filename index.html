@@ -32,6 +32,16 @@
             transition: background-color 0.5s ease, color 0.5s ease; 
         }
 
+        /* FILTRO DE TERMINAL ANTIGUO (CRT SCANLINES) */
+        .crt-scanlines {
+            position: fixed; inset: 0; z-index: 99999; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+        }
+        @keyframes crtFlicker { 0% { opacity: 0.95; } 5% { opacity: 0.85; } 10% { opacity: 0.95; } 100% { opacity: 0.95; } }
+        body.crt-on .crt-scanlines { opacity: 0.6; }
+        body.crt-on { animation: crtFlicker 0.15s infinite; text-shadow: 0 0 3px rgba(0, 229, 255, 0.4); }
+
         .chile-flag-top { height: 4px; width: 100%; display: flex; position: absolute; top: 0; left: 0; z-index: 10000; }
         .chile-flag-top .blue { flex: 1; background-color: var(--admin-blue); }
         .chile-flag-top .white { flex: 1; background-color: #ffffff; }
@@ -66,7 +76,7 @@
         .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.2s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
         .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); color: var(--theme-color); padding-left: 30px; }
         .menu-item.active { background: linear-gradient(90deg, var(--theme-dim), transparent); border-left-color: var(--theme-color); color: white; padding-left: 30px; }
-        .btn-alert { color: var(--danger-red); border-left-color: transparent; margin-top: auto; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        .btn-alert { color: var(--danger-red); border-left-color: transparent; margin-top: 10px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
         .btn-alert:hover { color: var(--danger-red); background: rgba(218, 41, 28, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
 
@@ -81,7 +91,7 @@
         .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: all 0.2s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px); transform: translateZ(0);}
         .btn-tactical:hover { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); transform: translateY(-2px); }
 
-        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 3000; display: flex; justify-content: center; align-items: center; }
+        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 30000; display: flex; justify-content: center; align-items: center; }
         #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
         .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 4px solid var(--danger-red); }
         .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/contain no-repeat; background-color: rgba(0,0,0,0.8); box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
@@ -119,9 +129,6 @@
         @keyframes insigniaGlow { from { box-shadow: 0 0 5px currentColor; } to { box-shadow: 0 0 15px currentColor; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-
-        .insignia::after { content: attr(data-tooltip); position: absolute; bottom: -25px; background: rgba(0,0,0,0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'Share Tech Mono'; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; border: 1px solid var(--glass-border); z-index: 20; transform: translateZ(0);}
-        .insignia:hover::after { opacity: 1; bottom: -30px; }
 
         .censurado-bar { background-color: #050a0f !important; color: #050a0f !important; position: relative; overflow: hidden; border-color: #050a0f !important; user-select: none; border-radius: 4px; display: inline-block;}
         .censurado-bar::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px); pointer-events: none; }
@@ -163,21 +170,16 @@
         .map-nav-up { top: 15px; left: calc(50% - 20px); }
         .map-nav-down { bottom: 15px; left: calc(50% - 20px); }
 
-        /* Clases auxiliares para controlar grids responsivos */
         .responsive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; gap: 15px; margin-bottom: 25px; }
         .form-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-bottom: 15px; }
         .calif-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; }
 
-        /* SISTEMA RESPONSIVO TÁCTICO (MÓVILES Y TABLETS) */
         @media (max-width: 900px) {
             body { height: 100vh; overflow-y: auto; overflow-x: hidden; } 
-            
             .top-bar { flex-direction: column !important; height: auto !important; padding: 15px !important; gap: 12px; text-align: center; }
-            .top-bar .spacer { display: none !important; }
-            
+            .tactical-clock { width: 100% !important; text-align: center !important; margin-top: 5px; border-left: none !important; padding-left: 0 !important; }
             .main-wrapper { flex-direction: column !important; overflow: visible !important; height: auto !important; }
-            
             .sidebar { width: 100% !important; max-height: none !important; height: auto; overflow-y: visible; flex-direction: row !important; flex-wrap: wrap; padding: 10px !important; border-right: none !important; border-bottom: 2px solid var(--theme-color) !important; box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; z-index: 100;}
             .sidebar-header { width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border) !important; padding: 0 10px 10px !important; margin-bottom: 10px !important; text-align: left;}
             .sidebar-header select { width: auto !important; padding: 5px !important; font-size: 11px !important; margin: 0 !important;}
@@ -185,23 +187,17 @@
             .menu-item { flex: 1 1 45%; justify-content: center; padding: 10px !important; font-size: 11px !important; border-left: none !important; border-bottom: 2px solid transparent; gap: 8px !important; }
             .menu-item.active { border-left: none !important; border-bottom-color: var(--theme-color) !important; padding-left: 10px !important; background: var(--theme-dim); }
             .btn-alert, .btn-logout { flex: 1 1 100% !important; margin-top: 10px !important; justify-content: center;}
-            
             .main-content { padding: 15px !important; overflow: visible !important; height: auto !important; }
-            
             .responsive-grid, .admin-grid, .form-grid, .calif-grid, .hangar-grid-new { grid-template-columns: 1fr !important; gap: 10px !important; }
-            
             .perfil-container { width: 95vw !important; max-height: 90vh; overflow-y: auto; }
             .perfil-body { grid-template-columns: 1fr !important; }
             .perfil-col-izq { border-right: none !important; border-bottom: 1px solid var(--glass-border); padding: 20px !important; }
             .perfil-data-grid { grid-template-columns: 1fr !important; }
-            
             .fach-layout { grid-template-columns: 1fr !important; height: auto !important; gap: 15px !important; }
             .flight-display { padding: 30px 10px !important; }
             .radar-realista { width: 180px !important; height: 180px !important; margin-bottom: 20px !important;}
             #vPilot { font-size: 24px !important; }
-            
             .login-box { width: 90% !important; padding: 30px 20px !important; margin-top: 20px; }
-            
             .map-layout { flex-direction: column !important; height: 75vh !important; min-height: 400px !important;}
             .map-tools { width: 100% !important; flex-direction: row !important; height: auto !important; flex-wrap: wrap; padding: 10px !important; justify-content: center; }
             .map-tools > div { width: 100%; margin: 5px 0;}
@@ -210,6 +206,8 @@
     </style>
 </head>
 <body class="defcon-5">
+
+    <div class="crt-scanlines"></div>
 
     <div class="chile-flag-top">
         <div class="blue"></div>
@@ -222,8 +220,11 @@
     <audio id="sndAlert" src="https://www.soundjay.com/mechanical/sounds/smoke-detector-1.mp3" preload="auto" loop></audio>
     <audio id="sndError" src="https://www.soundjay.com/buttons/sounds/beep-03.mp3" preload="auto"></audio>
     <audio id="sndStartup" src="https://www.soundjay.com/computers/sounds/computer-startup-1.mp3" preload="auto"></audio>
+    
+    <audio id="sndTypewriter" src="https://www.soundjay.com/mechanical/sounds/keyboard-typing-1.mp3" preload="auto" loop></audio>
+    <audio id="sndRadio" src="https://assets.mixkit.co/active_storage/sfx/1006/1006-preview.mp3" preload="auto" loop></audio>
 
-    <div style="position: fixed; bottom: 15px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.2); z-index: 5000; letter-spacing: 1px; pointer-events: none; display: flex; align-items: center; gap: 5px;">
+    <div style="position: fixed; bottom: 15px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.2); z-index: 50000; letter-spacing: 1px; pointer-events: none; display: flex; align-items: center; gap: 5px;">
         Desarrollado por: Lukas Brown 🇨🇱
     </div>
 
@@ -235,7 +236,11 @@
             <div style="font-size: 22px; font-weight: bold; letter-spacing: 4px; color: white; text-shadow: 0 0 15px var(--theme-color);">🇨🇱 EJÉRCITO DE CHILE RP 🇨🇱</div>
             <div style="font-size: 10px; color: #aaa; letter-spacing: 2px; margin-top: -2px; font-family: 'Share Tech Mono';">"POR LA RAZÓN O LA FUERZA"</div>
         </div>
-        <div class="spacer" style="width: 150px;"></div> 
+        
+        <div class="tactical-clock" style="text-align: right; width: 150px; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--glass-border); padding-left: 20px;">
+            <div id="relojLocal" style="color: white; font-weight: bold; font-size: 16px; letter-spacing: 2px; text-shadow: 0 0 10px var(--theme-color);">00:00:00</div>
+            <div id="relojZulu" style="color: var(--alert-amber); font-size: 10px; font-family: 'Share Tech Mono'; letter-spacing: 1px;">00:00:00 Z</div>
+        </div>
     </div>
 
     <div class="main-wrapper" style="display: flex; flex: 1; overflow: hidden;">
@@ -275,7 +280,7 @@
                         <div id="p_foto" class="perfil-foto-hd"></div>
                         <div style="margin-top: 10px; text-align: center; width: 100%;">
                             <div style="font-size: 10px; color: #888; margin-bottom: 15px; letter-spacing: 1px;">SEÑAL VITAL (EN LÍNEA)</div>
-                            <div class="radar-realista">
+                            <div class="radar-realista" style="width: 130px; height: 130px;">
                                 <div class="radar-sweep"></div>
                                 <div class="blip" style="top: 25%; left: 55%; animation-delay: 0.2s;"></div>
                                 <div class="blip" style="top: 65%; left: 35%; animation-delay: 1.4s;"></div>
@@ -287,7 +292,6 @@
                         <div id="p_insignia_desc" style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px dashed var(--glass-border); border-radius: 6px; font-size: 11px; color: #aaa; text-align: center; min-height: 40px; font-family: 'Share Tech Mono'; display: flex; align-items: center; justify-content: center; line-height: 1.4; width: 100%; box-sizing: border-box; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
                             [ INFO. MEDALLA: ESPERANDO SELECCIÓN ]
                         </div>
-
                     </div>
                     
                     <div class="perfil-col-der">
@@ -385,8 +389,12 @@
             <div class="menu-item" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
             <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
 
-            <div class="menu-category">SISTEMA</div>
+            <div class="menu-category">SISTEMA E INMERSIÓN</div>
             <div class="menu-item" id="btnCalendario" onclick="switchTab('calendario')" onmouseenter="playHover()"><span>📅</span> Calendario Entrenamientos</div>
+            
+            <div class="menu-item" id="btnRadioToggle" onclick="toggleRadio()" onmouseenter="playHover()"><span>📻</span> Radio Táctica: <strong style="color:var(--danger-red); margin-left:5px;">OFF</strong></div>
+            <div class="menu-item" id="btnCRTToggle" onclick="toggleCRT()" onmouseenter="playHover()"><span>📺</span> Filtro CRT: <strong style="color:var(--danger-red); margin-left:5px;">OFF</strong></div>
+
             <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
             <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
             
@@ -771,6 +779,78 @@
         setTimeout(() => { toast.style.animation = "fadeOut 0.4s forwards"; setTimeout(() => toast.remove(), 400); }, 3000);
     };
 
+    // FUNCIONES INMERSIVAS
+    setInterval(() => {
+        const now = new Date();
+        const local = document.getElementById('relojLocal');
+        const zulu = document.getElementById('relojZulu');
+        if(local && zulu) {
+            local.innerText = now.toLocaleTimeString('es-CL', { hour12: false });
+            zulu.innerText = now.toISOString().substr(11, 8) + " ZULU";
+        }
+    }, 1000);
+
+    let radioOn = false;
+    window.toggleRadio = () => {
+        window.playClick();
+        const audio = document.getElementById("sndRadio");
+        const btn = document.getElementById("btnRadioToggle");
+        radioOn = !radioOn;
+        if(radioOn) {
+            audio.volume = 0.15;
+            audio.play().catch(()=>{});
+            btn.innerHTML = "<span>📻</span> Radio Táctica: <strong style='color:#4df24d; margin-left:5px;'>ON</strong>";
+            btn.classList.add("active");
+        } else {
+            audio.pause();
+            btn.innerHTML = "<span>📻</span> Radio Táctica: <strong style='color:var(--danger-red); margin-left:5px;'>OFF</strong>";
+            btn.classList.remove("active");
+        }
+    };
+
+    let crtOn = false;
+    window.toggleCRT = () => {
+        window.playClick();
+        crtOn = !crtOn;
+        const btn = document.getElementById("btnCRTToggle");
+        if(crtOn) {
+            document.body.classList.add("crt-on");
+            btn.innerHTML = "<span>📺</span> Filtro CRT: <strong style='color:#4df24d; margin-left:5px;'>ON</strong>";
+            btn.classList.add("active");
+        } else {
+            document.body.classList.remove("crt-on");
+            btn.innerHTML = "<span>📺</span> Filtro CRT: <strong style='color:var(--danger-red); margin-left:5px;'>OFF</strong>";
+            btn.classList.remove("active");
+        }
+    };
+
+    window.descifrarTexto = (btn) => {
+        window.playClick();
+        const container = btn.parentElement;
+        const rawText = container.querySelector('.raw-text').value;
+        const outputDiv = container.querySelector('.contenido-descifrado');
+        
+        btn.style.display = 'none';
+        outputDiv.style.display = 'block';
+        outputDiv.innerHTML = '';
+        
+        let i = 0;
+        const sndType = document.getElementById("sndTypewriter");
+        sndType.volume = 0.4;
+        sndType.play().catch(()=>{});
+        
+        const typeInterval = setInterval(() => {
+            if(i < rawText.length) {
+                outputDiv.innerHTML += rawText.charAt(i);
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                sndType.pause();
+                sndType.currentTime = 0;
+            }
+        }, 15);
+    };
+
     let isLoginMode = true;
     window.toggleAuthMode = () => {
         window.playClick();
@@ -973,7 +1053,9 @@
                             <div style="font-size:11px; color:var(--alert-amber); margin-top:4px;">EMITIDO POR: ${d.rangoAutor} ${d.autor}</div>
                         </div>
                     </div>
-                    <div style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; white-space: pre-wrap;">${d.contenido}</div>
+                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 15px; font-size: 11px; padding: 6px 15px; border-color:${borderColor}; color:${borderColor};">📡 RECIBIR TRANSMISIÓN</button>
+                    <div class="contenido-descifrado" style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; display:none; white-space: pre-wrap; margin-top: 15px;"></div>
+                    <textarea class="raw-text" style="display:none;">${d.contenido.replace(/'/g, "&#39;").replace(/"/g, "&quot;")}</textarea>
                 </div>
             `;
         });
@@ -1208,7 +1290,6 @@
 
         let insigniasHTML = "";
         
-        // FUNCIÓN AUXILIAR PARA GENERAR MEDALLAS CLICKEABLES
         const getOnClick = (desc) => `onclick="document.getElementById('p_insignia_desc').innerHTML = '<span style=\\'color:white;\\'>INFO:</span> ${desc}'; window.playClick();"`;
 
         insigniasHTML += `<div class="insignia insignia-float" style="color:var(--theme-color); border-color:var(--theme-color);" data-tooltip="Servicio Activo" ${getOnClick('Medalla base otorgada por pertenecer al servicio activo de las Fuerzas Armadas.')}>🎖️</div>`;
@@ -1227,7 +1308,6 @@
         }
         document.getElementById("p_insignias").innerHTML = insigniasHTML;
         
-        // RESETEAR EL TEXTO DE LA MEDALLA
         const descBox = document.getElementById("p_insignia_desc");
         if(descBox) descBox.innerHTML = "[ INFO. MEDALLA: ESPERANDO SELECCIÓN ]";
 
@@ -1370,6 +1450,7 @@
         } catch(e) { window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error"); }
     };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarReclutamiento() {
         const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q); 
@@ -1388,6 +1469,7 @@
 
     window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     function cargarHangar() {
         let hAereoHTML = ""; let hTerrHTML = "";
         const generarCard = (v) => `
@@ -1402,6 +1484,7 @@
         document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
     }
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarDocumentos() {
         const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
         const snap = await getDocs(q); 
@@ -1420,9 +1503,9 @@
                         <span class="censurado-bar">██/██/████ | AUTOR: ██████</span>
                     </div>
                     <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;" class="censurado-bar">██████████████████████</div>
-                    <div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);" class="censurado-blur">
-                        ████████ ██████ ███████████ ███ █████████ ████ ███████ █████ ████████ ███████ ██████████.
-                    </div>
+                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 10px; font-size: 11px; padding: 6px 15px; border-color:var(--danger-red); color:var(--danger-red);">🔓 INTENTAR DESCIFRAR</button>
+                    <div class="contenido-descifrado censurado-blur" style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border); display:none; margin-top:15px;"></div>
+                    <textarea class="raw-text" style="display:none;">████████ ██████ ███████████ ███ █████████ ████ ███████ █████ ████████ ███████ ██████████.</textarea>
                     <div class="sello-clasificado" style="font-size: 16px; top: 50%; opacity: 0.9;">INFO. CLASIFICADA</div>
                 </div>`;
             } else {
@@ -1433,7 +1516,9 @@
                         <span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span>
                     </div>
                     <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div>
-                    <div style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border);">${d.contenido}</div>
+                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 10px; font-size: 11px; padding: 6px 15px; border-color:${color}; color:${color};">🔓 DESCIFRAR ARCHIVO</button>
+                    <div class="contenido-descifrado" style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; display:none; white-space: pre-wrap; margin-top: 15px;"></div>
+                    <textarea class="raw-text" style="display:none;">${d.contenido.replace(/'/g, "&#39;").replace(/"/g, "&quot;")}</textarea>
                 </div>`;
             }
         });
@@ -1504,6 +1589,7 @@
         if (vp) vp.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
     };
 
+    /* OPTIMIZACIÓN: Document Fragment para marcadores del mapa */
     function iniciarSyncMapa() {
         onSnapshot(collection(db, "mapa_estrategico"), (snapshot) => {
             const mapa = document.getElementById('mapaEstrategico');
@@ -1604,6 +1690,7 @@
         } catch(e) { window.showToast("ERROR AL PROGRAMAR", "error"); }
     };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarCalendario() {
         const q = query(collection(db, "entrenamientos"), orderBy("fecha", "asc"));
         const snap = await getDocs(q);
@@ -1644,6 +1731,7 @@
         } catch(e) { window.showToast("ERROR AL CANCELAR", "error"); }
     };
 
+    /* OPTIMIZACIÓN: Construcción HTML masiva */
     async function cargarLogsVisual() { 
         let htmlStr = ""; 
         window.cachedLogs.forEach(d => { 

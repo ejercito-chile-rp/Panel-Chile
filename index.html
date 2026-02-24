@@ -198,12 +198,16 @@
         .squad-item.is-leader { border-color: var(--alert-amber); box-shadow: inset 0 0 15px rgba(255,180,0,0.2); background: rgba(255,180,0,0.05);}
 
         /* ZONAS DE CONTROL EN MAPA */
-        #mapGridOverlay { position: absolute; inset: 0; z-index: 6; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); pointer-events: none; opacity: 0.8; transition: opacity 0.3s; }
-        .grid-sector { border: 1px solid rgba(255,255,255,0.07); display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.15); font-family: 'Share Tech Mono', monospace; font-size: 18px; font-weight: bold; transition: all 0.3s; user-select: none; }
-        .grid-sector:hover { border: 1px solid rgba(255,255,255,0.8); color: white; background: rgba(255,255,255,0.1); cursor: crosshair; }
-        .sector-blue { background: rgba(0, 51, 160, 0.45) !important; box-shadow: inset 0 0 25px rgba(0,51,160,0.7) !important; color: rgba(255,255,255,0.8) !important; border: 1px solid rgba(0,51,160,0.8) !important; }
-        .sector-yellow { background: rgba(255, 180, 0, 0.45) !important; box-shadow: inset 0 0 25px rgba(255,180,0,0.7) !important; color: rgba(255,255,255,0.8) !important; border: 1px solid rgba(255,180,0,0.8) !important; }
-        .sector-red { background: rgba(218, 41, 28, 0.45) !important; box-shadow: inset 0 0 25px rgba(218,41,28,0.7) !important; color: rgba(255,255,255,0.9) !important; border: 1px solid rgba(218,41,28,0.8) !important; }
+        #mapGridOverlay { position: absolute; inset: 0; z-index: 6; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+        .grid-sector { border: 1px solid rgba(255,255,255,0.3); display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.7); font-family: 'Share Tech Mono', monospace; font-size: 24px; font-weight: bold; transition: all 0.2s; user-select: none; }
+        .grid-sector:hover { border: 2px solid rgba(255,255,255,1); background: rgba(255,255,255,0.15); cursor: crosshair; }
+        
+        .sector-blue { background: rgba(0, 51, 160, 0.5) !important; box-shadow: inset 0 0 30px rgba(0,51,160,0.8) !important; color: white !important; border: 1px solid rgba(0,51,160,1) !important; text-shadow: 0 0 5px black;}
+        .sector-yellow { background: rgba(255, 180, 0, 0.5) !important; box-shadow: inset 0 0 30px rgba(255,180,0,0.8) !important; color: white !important; border: 1px solid rgba(255,180,0,1) !important; text-shadow: 0 0 5px black;}
+        .sector-red { background: rgba(218, 41, 28, 0.5) !important; box-shadow: inset 0 0 30px rgba(218,41,28,0.8) !important; color: white !important; border: 1px solid rgba(218,41,28,1) !important; text-shadow: 0 0 5px black;}
+
+        /* Oscurece el mapa durante la edición para resaltar las zonas */
+        #mapaEstrategico.edit-mode .map-bg { filter: brightness(0.2) grayscale(0.8) !important; }
 
         @media (max-width: 900px) {
             body { height: 100vh; overflow-y: auto; overflow-x: hidden; } 
@@ -715,7 +719,7 @@
                         
                         <div style="font-size: 10px; color: var(--theme-color); text-align: center; line-height: 1; font-weight: bold;">ZONAS</div>
                         <button onclick="toggleGridVisibility()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Ver/Ocultar Cuadrícula">👁️</button>
-                        <div id="territoryTools" style="display:none; width:100%; flex-direction:column; align-items:center; gap:10px;">
+                        <div id="territoryTools" style="display:none; width:100%; flex-direction:column; align-items:center; gap:10px; margin-top:5px;">
                             <button id="btnGridEdit" onclick="toggleGridEditMode()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Editar Territorios (Clic en las zonas)">🗺️</button>
                         </div>
 
@@ -761,11 +765,12 @@
 
                         <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
                             <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
-                                <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
+                                <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 0.5s ease;"></div>
                                 
                                 <div id="mapGridOverlay"></div>
 
                                 <canvas id="mapCanvas" width="1200" height="1200" style="position: absolute; inset: 0; z-index: 8; pointer-events: none;"></canvas>
+                                
                                 <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; opacity: 0; transition: 1s ease;"></div>
                             </div>
                         </div>
@@ -1570,13 +1575,20 @@
     }
 
     let isGridEditMode = false;
-    let isGridVisible = true;
+    let isGridVisible = false; // Se inicia oculto
 
     window.toggleGridVisibility = () => {
         window.playClick();
         isGridVisible = !isGridVisible;
-        document.getElementById('mapGridOverlay').style.opacity = isGridVisible ? '0.8' : '0';
-        window.showToast(isGridVisible ? "CUADRÍCULA DE TERRITORIOS VISIBLE" : "CUADRÍCULA OCULTA", "success");
+        const grid = document.getElementById('mapGridOverlay');
+        if(isGridVisible) {
+            grid.style.opacity = '1';
+            window.showToast("CUADRÍCULA DE TERRITORIOS ACTIVADA", "success");
+        } else {
+            grid.style.opacity = '0';
+            if(isGridEditMode) window.toggleGridEditMode();
+            window.showToast("CUADRÍCULA OCULTA", "error");
+        }
     };
 
     window.toggleGridEditMode = () => {
@@ -1589,17 +1601,20 @@
 
         const btn = document.getElementById("btnGridEdit");
         const grid = document.getElementById("mapGridOverlay");
+        const mapContainer = document.getElementById("mapaEstrategico");
         
         if(isGridEditMode) {
+            if(!isGridVisible) window.toggleGridVisibility();
             btn.style.background = "var(--theme-color)";
             btn.style.color = "#000";
             grid.style.pointerEvents = "auto";
-            if(!isGridVisible) window.toggleGridVisibility();
-            window.showToast("EDICIÓN DE TERRITORIOS ACTIVADA (Clic en las zonas)", "success");
+            mapContainer.classList.add("edit-mode");
+            window.showToast("EDICIÓN DE TERRITORIOS ACTIVADA", "success");
         } else {
             btn.style.background = "transparent";
             btn.style.color = "white";
             grid.style.pointerEvents = "none";
+            mapContainer.classList.remove("edit-mode");
             window.showToast("EDICIÓN DE TERRITORIOS DESACTIVADA", "error");
         }
     };

@@ -86,7 +86,7 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px;}
         
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
 
@@ -187,6 +187,16 @@
         /* EFECTO TEXTO ENCRIPTADO */
         .encrypted-text { font-family: 'Share Tech Mono', monospace; word-break: break-all; color: var(--theme-color); filter: brightness(0.7); }
 
+        /* ESTILOS DE ESCUADRONES */
+        .squad-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; min-height: 500px; margin-bottom: 30px;}
+        .squad-col { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 8px; display: flex; flex-direction: column; }
+        .squad-header { padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px dashed var(--glass-border); letter-spacing: 1px; font-size: 14px;}
+        .squad-body { padding: 10px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 300px; }
+        .squad-item { background: rgba(255,255,255,0.05); border: 1px solid var(--theme-dim); padding: 10px; border-radius: 6px; cursor: grab; display: flex; justify-content: space-between; align-items: center; transition: 0.2s;}
+        .squad-item:active { cursor: grabbing; opacity: 0.5; }
+        .squad-item:hover { background: rgba(0,229,255,0.1); }
+        .squad-item.is-leader { border-color: var(--alert-amber); box-shadow: inset 0 0 15px rgba(255,180,0,0.2); background: rgba(255,180,0,0.05);}
+
         @media (max-width: 900px) {
             body { height: 100vh; overflow-y: auto; overflow-x: hidden; } 
             .top-bar { flex-direction: column !important; height: auto !important; padding: 15px !important; gap: 12px; text-align: center; }
@@ -201,6 +211,7 @@
             .btn-alert, .btn-logout { flex: 1 1 100% !important; margin-top: 10px !important; justify-content: center;}
             .main-content { padding: 15px !important; overflow: visible !important; height: auto !important; }
             .responsive-grid, .admin-grid, .form-grid, .calif-grid, .hangar-grid-new { grid-template-columns: 1fr !important; gap: 10px !important; }
+            .squad-board { grid-template-columns: 1fr !important; }
             .perfil-container { width: 95vw !important; max-height: 90vh; overflow-y: auto; }
             .perfil-body { grid-template-columns: 1fr !important; }
             .perfil-col-izq { border-right: none !important; border-bottom: 1px solid var(--glass-border); padding: 20px !important; }
@@ -413,6 +424,7 @@
             
             <div class="menu-category">PANEL CENTRAL</div>
             <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
+            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Escuadrones (Drag & Drop)</div>
             <div class="menu-item" id="btnSolicitudes" onclick="switchTab('solicitudes')" onmouseenter="playHover()"><span>📝</span> Solicitudes</div>
             <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
             <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
@@ -540,6 +552,29 @@
             <div id="seccionPersonal">
                 <h2 class="section-title"><span>📋</span> PERSONAL REGISTRADO</h2>
                 <div id="listaSoldados" class="responsive-grid"></div>
+            </div>
+
+            <div id="seccionEscuadrones">
+                <h2 class="section-title"><span>🧩</span> GESTOR DE ESCUADRONES TÁCTICOS</h2>
+                <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">Arrastre la tarjeta de un soldado hacia un escuadrón. Haga clic en la ⭐ para nombrar a un Líder.</p>
+                <div class="squad-board">
+                    <div class="squad-col" style="border-color: #555;">
+                        <div class="squad-header" style="color: #aaa;">DISPONIBLES EN BASE</div>
+                        <div class="squad-body" id="sq_base" ondragover="allowDropSquad(event)" ondrop="onDropSquad(event, 'base')"></div>
+                    </div>
+                    <div class="squad-col" style="border-color: var(--danger-red);">
+                        <div class="squad-header" style="color: var(--danger-red);">ESCUADRÓN ALPHA</div>
+                        <div class="squad-body" id="sq_alpha" ondragover="allowDropSquad(event)" ondrop="onDropSquad(event, 'alpha')"></div>
+                    </div>
+                    <div class="squad-col" style="border-color: var(--theme-color);">
+                        <div class="squad-header" style="color: var(--theme-color);">ESCUADRÓN BRAVO</div>
+                        <div class="squad-body" id="sq_bravo" ondragover="allowDropSquad(event)" ondrop="onDropSquad(event, 'bravo')"></div>
+                    </div>
+                    <div class="squad-col" style="border-color: var(--alert-amber);">
+                        <div class="squad-header" style="color: var(--alert-amber);">FUERZAS ESPECIALES</div>
+                        <div class="squad-body" id="sq_especial" ondragover="allowDropSquad(event)" ondrop="onDropSquad(event, 'especial')"></div>
+                    </div>
+                </div>
             </div>
             
             <div id="seccionRadiogramas">
@@ -948,7 +983,6 @@
         }, 15);
     };
 
-    // RADIOGRAMAS ANIMACION
     window.descifrarRadiograma = async (id, btn, realMsg) => {
         window.playClick();
         const container = btn.parentElement.querySelector('.msg-content');
@@ -1007,7 +1041,9 @@
                 licencias: {}, 
                 misionActiva: null, 
                 aeronave: null,
-                notasPersonales: ""
+                notasPersonales: "",
+                escuadron: "base",
+                liderEscuadron: false
             });
             registrarLog("NUEVO INGRESO", `El soldado ${n} (${e}) ha sido registrado y dado de alta.`); window.showToast("EXPEDIENTE CREADO. BIENVENIDO AL SISTEMA.", "success");
         } catch (error) { window.showToast("ERROR AL REGISTRAR: Verifica formato o clave.", "error"); }
@@ -1067,7 +1103,6 @@
         } catch(e) { window.showToast("ERROR AL ENVIAR DENUNCIA", "error"); }
     };
 
-    // ENVIO DE RADIOGRAMAS P2P
     window.enviarRadiograma = async () => {
         window.playClick();
         const texto = document.getElementById("p_radiograma_txt").value;
@@ -1183,7 +1218,6 @@
         }
     }
 
-    // SYNC EN TIEMPO REAL RADIOGRAMAS
     function iniciarSyncRadiogramas() {
         const q = query(collection(db, "radiogramas"), orderBy("timestamp", "desc"), limit(50));
         onSnapshot(q, (snap) => {
@@ -1320,7 +1354,7 @@
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes", "seccionAsuntosInternos", "seccionRadiogramas"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes", "seccionAsuntosInternos", "seccionRadiogramas", "seccionEscuadrones"].forEach(id => {
             const el = document.getElementById(id); if(el) { el.style.display = 'none'; el.classList.remove('fade-in'); }
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -1340,6 +1374,7 @@
         if(tab === 'mapa') { targetId = 'seccionMapa'; btnId = 'btnMapa'; }
         if(tab === 'calendario') { targetId = 'seccionCalendario'; btnId = 'btnCalendario'; }
         if(tab === 'asuntos') { targetId = 'seccionAsuntosInternos'; btnId = 'btnAsuntosInternos'; cargarDenuncias(); }
+        if(tab === 'escuadrones') { targetId = 'seccionEscuadrones'; btnId = 'btnEscuadrones'; }
         
         const targetEl = document.getElementById(targetId);
         if(targetEl) {
@@ -1505,6 +1540,47 @@
         });
     }
 
+    // DRAG AND DROP ESCUADRONES LOGICA
+    window.allowDropSquad = (e) => { e.preventDefault(); };
+    window.dragStartSquad = (e, email) => { e.dataTransfer.setData("email", email); };
+    
+    window.onDropSquad = async (e, squadId) => {
+        e.preventDefault();
+        window.playClick();
+        const email = e.dataTransfer.getData("email");
+        if(!email) return;
+        const isAltoMando = window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver);
+        if(!isAltoMando) return window.showToast("ACCESO DENEGADO. Solo Oficiales pueden organizar tropas.", "error");
+
+        try {
+            await updateDoc(doc(db, "usuarios", email), { 
+                escuadron: squadId,
+                liderEscuadron: false 
+            });
+            registrarLog("ESCUADRONES", `Movió a un soldado al escuadrón ${squadId.toUpperCase()}.`);
+            cargarDatos();
+        } catch(err) { window.showToast("ERROR AL MOVER SOLDADO", "error"); }
+    };
+
+    window.setSquadLeader = async (email, squadId) => {
+        window.playClick();
+        try {
+            const updates = [];
+            for(let userEmail in windowUsersData) {
+                let u = windowUsersData[userEmail];
+                if(u.escuadron === squadId && u.liderEscuadron && userEmail !== email) {
+                    updates.push(updateDoc(doc(db, "usuarios", userEmail), { liderEscuadron: false }));
+                }
+            }
+            updates.push(updateDoc(doc(db, "usuarios", email), { liderEscuadron: true }));
+            await Promise.all(updates);
+            
+            registrarLog("MANDO ESCUADRA", `Designó a un nuevo líder del escuadrón ${squadId.toUpperCase()}.`);
+            window.showToast("LÍDER ASIGNADO AL ESCUADRÓN", "success");
+            cargarDatos();
+        } catch(err) { window.showToast("ERROR AL ASIGNAR LÍDER", "error"); }
+    };
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             sndStartup.play().catch(()=>{});
@@ -1605,6 +1681,9 @@
             
             windowUsersData = {};
             let totalSoldadosCount = 0; let totalOficialesCount = 0; let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
+            
+            let sq = { base: "", alpha: "", bravo: "", especial: "" };
+            let isAltoMandoSquad = window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver);
 
             snap.forEach(docSnap => {
                 try {
@@ -1654,6 +1733,31 @@
                     else if (estadoSeguro === "EN BASE") iconEstado = "🟡";
                     else if (estadoSeguro === "EN ENTRENAMIENTO") iconEstado = "🔵";
                     else if (estadoSeguro === "EN OPERACIÓN" || estadoSeguro === "En misión") iconEstado = "🟠";
+
+                    // GESTIÓN DE ESCUADRONES HTML
+                    if(!isRolAdmin) {
+                        let targetSq = d.escuadron || "base";
+                        if(!sq.hasOwnProperty(targetSq)) targetSq = "base";
+                        
+                        let leaderBtn = "";
+                        if (targetSq !== "base" && isAltoMandoSquad) {
+                            leaderBtn = `<button onclick="setSquadLeader('${email}', '${targetSq}')" style="background:transparent; border:none; color: ${d.liderEscuadron ? 'var(--alert-amber)' : '#555'}; cursor:pointer; font-size:16px; transition:0.2s; filter:drop-shadow(0 0 5px ${d.liderEscuadron ? 'rgba(255,180,0,0.5)' : 'transparent'});" title="Asignar Líder">⭐</button>`;
+                        } else if (d.liderEscuadron && targetSq !== "base") {
+                            leaderBtn = `<span style="color:var(--alert-amber); font-size:16px; filter:drop-shadow(0 0 5px rgba(255,180,0,0.5));" title="Líder de Escuadra">⭐</span>`;
+                        }
+                        
+                        let sqBorderClass = d.liderEscuadron && targetSq !== 'base' ? "squad-item is-leader slide-up" : "squad-item slide-up";
+                        
+                        sq[targetSq] += `
+                            <div class="${sqBorderClass}" draggable="${isAltoMandoSquad}" ondragstart="dragStartSquad(event, '${email}')">
+                                <div>
+                                    <div style="font-weight:bold; color:white; font-size:12px;">${nombreSeguro}</div>
+                                    <div style="font-size:10px; color:${divColor}; font-family:'Share Tech Mono';">${rangoSeguro.toUpperCase()}</div>
+                                </div>
+                                ${leaderBtn}
+                            </div>
+                        `;
+                    }
 
                     const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:11px; color:var(--danger-red); margin-top:5px; font-weight:bold; background:rgba(218,41,28,0.1); padding:2px 6px; border-radius:3px; display:inline-block;">⚠️ ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
                     const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
@@ -1710,6 +1814,11 @@
             document.getElementById("listaCadete").innerHTML = strCad;
             document.getElementById("listaMisiones").innerHTML = strMis === "" ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay operaciones activas en este momento.</div>" : strMis;
             
+            document.getElementById("sq_base").innerHTML = sq.base;
+            document.getElementById("sq_alpha").innerHTML = sq.alpha;
+            document.getElementById("sq_bravo").innerHTML = sq.bravo;
+            document.getElementById("sq_especial").innerHTML = sq.especial;
+
             document.getElementById("targetSoldier").innerHTML = strSelS;
             document.getElementById("targetSoldadoMision").innerHTML = strSelMis;
             document.getElementById("targetSoldadoLicencia").innerHTML = strSelLic;
@@ -1789,7 +1898,7 @@
             else if (division === "BOE") bColor = "var(--boe-color)";
             
             document.getElementById("p_foto").style.borderColor = bColor;
-            document.getElementById("p_foto").style.boxShadow = "0 10px 20px rgba(0,0,0,0.5)";
+            document.getElementById("p_foto").style.boxShadow = `0 10px 20px rgba(0,0,0,0.5)`;
         }
 
         let insigniasHTML = "";

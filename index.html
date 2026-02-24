@@ -197,6 +197,14 @@
         .squad-item:hover { background: rgba(0,229,255,0.1); }
         .squad-item.is-leader { border-color: var(--alert-amber); box-shadow: inset 0 0 15px rgba(255,180,0,0.2); background: rgba(255,180,0,0.05);}
 
+        /* ZONAS DE CONTROL EN MAPA */
+        #mapGridOverlay { position: absolute; inset: 0; z-index: 6; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); pointer-events: none; opacity: 0.8; transition: opacity 0.3s; }
+        .grid-sector { border: 1px solid rgba(255,255,255,0.07); display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.15); font-family: 'Share Tech Mono', monospace; font-size: 18px; font-weight: bold; transition: all 0.3s; user-select: none; }
+        .grid-sector:hover { border: 1px solid rgba(255,255,255,0.8); color: white; background: rgba(255,255,255,0.1); cursor: crosshair; }
+        .sector-blue { background: rgba(0, 51, 160, 0.45) !important; box-shadow: inset 0 0 25px rgba(0,51,160,0.7) !important; color: rgba(255,255,255,0.8) !important; border: 1px solid rgba(0,51,160,0.8) !important; }
+        .sector-yellow { background: rgba(255, 180, 0, 0.45) !important; box-shadow: inset 0 0 25px rgba(255,180,0,0.7) !important; color: rgba(255,255,255,0.8) !important; border: 1px solid rgba(255,180,0,0.8) !important; }
+        .sector-red { background: rgba(218, 41, 28, 0.45) !important; box-shadow: inset 0 0 25px rgba(218,41,28,0.7) !important; color: rgba(255,255,255,0.9) !important; border: 1px solid rgba(218,41,28,0.8) !important; }
+
         @media (max-width: 900px) {
             body { height: 100vh; overflow-y: auto; overflow-x: hidden; } 
             .top-bar { flex-direction: column !important; height: auto !important; padding: 15px !important; gap: 12px; text-align: center; }
@@ -704,6 +712,14 @@
                         <button onclick="resetZoomMapa()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Restaurar Tamaño">🔄</button>
 
                         <div style="width: 100%; height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
+                        
+                        <div style="font-size: 10px; color: var(--theme-color); text-align: center; line-height: 1; font-weight: bold;">ZONAS</div>
+                        <button onclick="toggleGridVisibility()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Ver/Ocultar Cuadrícula">👁️</button>
+                        <div id="territoryTools" style="display:none; width:100%; flex-direction:column; align-items:center; gap:10px;">
+                            <button id="btnGridEdit" onclick="toggleGridEditMode()" class="btn-tactical" style="padding: 0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px;" title="Editar Territorios (Clic en las zonas)">🗺️</button>
+                        </div>
+
+                        <div style="width: 100%; height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
 
                         <div style="font-size: 10px; color: var(--theme-color); text-align: center; line-height: 1; font-weight: bold;">ÍCONOS</div>
                         <div class="drag-icon" draggable="true" data-icon="🚩" title="Bandera Aliada">🚩</div>
@@ -746,6 +762,9 @@
                         <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
                             <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
                                 <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
+                                
+                                <div id="mapGridOverlay"></div>
+
                                 <canvas id="mapCanvas" width="1200" height="1200" style="position: absolute; inset: 0; z-index: 8; pointer-events: none;"></canvas>
                                 <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; opacity: 0; transition: 1s ease;"></div>
                             </div>
@@ -1126,7 +1145,29 @@
         } catch(e) { window.showToast("ERROR AL ENVIAR DENUNCIA", "error"); }
     };
 
-    // INTELIGENCIA HVT
+    window.enviarRadiograma = async () => {
+        window.playClick();
+        const texto = document.getElementById("p_radiograma_txt").value;
+        if(!texto || !window.perfilActualEmail) return window.showToast("MENSAJE VACÍO O DESTINATARIO INVÁLIDO", "error");
+        
+        try {
+            await addDoc(collection(db, "radiogramas"), {
+                emisorEmail: window.currentUserEmail,
+                emisorNombre: window.currentUserName,
+                emisorRango: window.currentUserRank,
+                receptorEmail: window.perfilActualEmail,
+                mensaje: texto,
+                leido: false,
+                fecha: new Date().toLocaleString('es-CL'),
+                timestamp: serverTimestamp()
+            });
+            window.showToast("RADIOGRAMA TRANSMITIDO CON ÉXITO", "success");
+            document.getElementById("p_radiograma_txt").value = "";
+            document.getElementById("p_radiograma_form").style.display = "none";
+            document.getElementById("p_radiograma_container").firstElementChild.style.display = "block";
+        } catch(e) { window.showToast("ERROR EN TRANSMISIÓN", "error"); }
+    };
+
     window.registrarHVT = async () => {
         window.playClick();
         const nombre = document.getElementById("hvtNombre").value;
@@ -1220,29 +1261,6 @@
         
         document.getElementById("listaHVT").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; grid-column:1/-1;'>No hay objetivos H.V.T. registrados en la base de datos de inteligencia.</div>" : htmlStr;
     }
-
-    window.enviarRadiograma = async () => {
-        window.playClick();
-        const texto = document.getElementById("p_radiograma_txt").value;
-        if(!texto || !window.perfilActualEmail) return window.showToast("MENSAJE VACÍO O DESTINATARIO INVÁLIDO", "error");
-        
-        try {
-            await addDoc(collection(db, "radiogramas"), {
-                emisorEmail: window.currentUserEmail,
-                emisorNombre: window.currentUserName,
-                emisorRango: window.currentUserRank,
-                receptorEmail: window.perfilActualEmail,
-                mensaje: texto,
-                leido: false,
-                fecha: new Date().toLocaleString('es-CL'),
-                timestamp: serverTimestamp()
-            });
-            window.showToast("RADIOGRAMA TRANSMITIDO CON ÉXITO", "success");
-            document.getElementById("p_radiograma_txt").value = "";
-            document.getElementById("p_radiograma_form").style.display = "none";
-            document.getElementById("p_radiograma_container").firstElementChild.style.display = "block";
-        } catch(e) { window.showToast("ERROR EN TRANSMISIÓN", "error"); }
-    };
 
     async function cargarSolicitudes() {
         const q = query(collection(db, "solicitudes"), orderBy("timestamp", "desc"), limit(30));
@@ -1551,10 +1569,101 @@
         overlay.style.opacity = overlayOp;
     }
 
+    let isGridEditMode = false;
+    let isGridVisible = true;
+
+    window.toggleGridVisibility = () => {
+        window.playClick();
+        isGridVisible = !isGridVisible;
+        document.getElementById('mapGridOverlay').style.opacity = isGridVisible ? '0.8' : '0';
+        window.showToast(isGridVisible ? "CUADRÍCULA DE TERRITORIOS VISIBLE" : "CUADRÍCULA OCULTA", "success");
+    };
+
+    window.toggleGridEditMode = () => {
+        window.playClick();
+        isGridEditMode = !isGridEditMode;
+        
+        if(isGridEditMode && isDrawingModeActive) {
+            window.toggleDrawMode();
+        }
+
+        const btn = document.getElementById("btnGridEdit");
+        const grid = document.getElementById("mapGridOverlay");
+        
+        if(isGridEditMode) {
+            btn.style.background = "var(--theme-color)";
+            btn.style.color = "#000";
+            grid.style.pointerEvents = "auto";
+            if(!isGridVisible) window.toggleGridVisibility();
+            window.showToast("EDICIÓN DE TERRITORIOS ACTIVADA (Clic en las zonas)", "success");
+        } else {
+            btn.style.background = "transparent";
+            btn.style.color = "white";
+            grid.style.pointerEvents = "none";
+            window.showToast("EDICIÓN DE TERRITORIOS DESACTIVADA", "error");
+        }
+    };
+
+    window.onSectorClick = async (id) => {
+        if(!isGridEditMode) return;
+        window.playClick();
+        const el = document.getElementById('sector_' + id);
+        if(!el) return;
+        
+        let nextState = 'blue';
+        if(el.classList.contains('sector-blue')) nextState = 'yellow';
+        else if(el.classList.contains('sector-yellow')) nextState = 'red';
+        else if(el.classList.contains('sector-red')) nextState = ''; 
+
+        try {
+            await setDoc(doc(db, "mapa_territorios", "estado"), {
+                [id]: nextState,
+                timestamp: serverTimestamp()
+            }, { merge: true });
+        } catch(e) { window.showToast("Error al establecer dominio", "error"); }
+    };
+
+    function inicializarGrid() {
+        const overlay = document.getElementById('mapGridOverlay');
+        if(!overlay) return;
+        const cols = ['A','B','C','D','E','F','G','H','I','J'];
+        let html = '';
+        for(let r=1; r<=10; r++) {
+            for(let c=0; c<10; c++) {
+                const id = cols[c] + r;
+                html += `<div class="grid-sector" id="sector_${id}" onclick="onSectorClick('${id}')">${id}</div>`;
+            }
+        }
+        overlay.innerHTML = html;
+    }
+
+    function iniciarSyncTerritorios() {
+        onSnapshot(doc(db, "mapa_territorios", "estado"), (docSnap) => {
+            document.querySelectorAll('.grid-sector').forEach(el => {
+                el.className = 'grid-sector'; 
+            });
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                for(const [sector, state] of Object.entries(data)) {
+                    if(sector === "timestamp") continue;
+                    const el = document.getElementById('sector_' + sector);
+                    if(el && state) {
+                        el.classList.add('sector-' + state);
+                    }
+                }
+            }
+        });
+    }
+
     let isDrawingModeActive = false;
     window.toggleDrawMode = () => {
         window.playClick();
         isDrawingModeActive = !isDrawingModeActive;
+        
+        if(isDrawingModeActive && isGridEditMode) {
+            window.toggleGridEditMode();
+        }
+
         const btn = document.getElementById("btnDrawToggle");
         const canvas = document.getElementById("mapCanvas");
         if(isDrawingModeActive) {
@@ -1756,14 +1865,17 @@
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver)) {
                     document.getElementById("drawingTools").style.display = "flex";
+                    document.getElementById("territoryTools").style.display = "flex";
                 }
                 
                 cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); cargarHVT(); if(window.isAdmin) cargarLogsVisual();
                 
+                inicializarGrid();
                 iniciarSyncMapa();
                 inicializarPizarra();
                 iniciarSyncDibujos();
                 iniciarSyncClima();
+                iniciarSyncTerritorios();
                 iniciarSyncRadiogramas();
             }
         } else { document.getElementById("loginScreen").style.display = "flex"; }

@@ -268,6 +268,7 @@
 
     <div class="top-bar glass-panel" style="border-radius: 0; height: 60px; min-height: 60px; border-bottom: 1px solid var(--glass-border); background: rgba(8, 12, 18, 0.9); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; z-index: 20; box-shadow: 0 5px 20px rgba(0,0,0,0.5); margin-top: 4px;">
         <div style="font-family: 'Share Tech Mono'; color: var(--alert-amber); font-size: 13px; border: 1px solid var(--alert-amber); padding: 6px 12px; background: rgba(255, 180, 0, 0.1); border-radius: 4px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255,180,0,0.2);">IP: mtasa://45.236.90.25:26101</div>
+        
         <div style="text-align: center;">
             <div style="font-size: 22px; font-weight: bold; letter-spacing: 4px; color: white; text-shadow: 0 0 15px var(--theme-color);">🇨🇱 EJÉRCITO DE CHILE RP 🇨🇱</div>
             <div style="font-size: 10px; color: #aaa; letter-spacing: 2px; margin-top: -2px; font-family: 'Share Tech Mono';">"POR LA RAZÓN O LA FUERZA"</div>
@@ -424,7 +425,7 @@
             
             <div class="menu-category">PANEL CENTRAL</div>
             <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
-            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Escuadrones</div>
+            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Gestor de Escuadrones</div>
             <div class="menu-item" id="btnSolicitudes" onclick="switchTab('solicitudes')" onmouseenter="playHover()"><span>📝</span> Solicitudes</div>
             <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
             <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
@@ -743,10 +744,10 @@
                             </select>
                         </div>
 
-                        <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative; text-align: center;" class="fade-in">
-                            <div style="padding: 40px; display: inline-block; min-width: 100%; box-sizing: border-box;">
-                                <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: 0 auto; transition: width 0.3s ease, height 0.3s ease;">
-                                    <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 0.5s ease;"></div>
+                        <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
+                            <div style="min-width: 100%; min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box;">
+                                <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; transition: width 0.3s ease, height 0.3s ease;">
+                                    <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
                                     <canvas id="mapCanvas" width="1200" height="1200" style="position: absolute; inset: 0; z-index: 8; pointer-events: none; width: 100%; height: 100%;"></canvas>
                                     <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; opacity: 0; transition: 1s ease;"></div>
                                 </div>
@@ -1130,19 +1131,20 @@
         let html = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>`;
         window.avionesNombres.forEach(n => {
             if (assignedAeronaves[n] && (!email || windowUsersData[email]?.aeronave !== n)) {
-                html += `<option value="${n}" disabled>⛔ ${n} [Ocupado por ${assignedAeronaves[n]}]</option>`;
+                html += `<option value="${n}" disabled>⛔ ${n} [Ocupado por ${assignedAeronaves[n].toUpperCase()}]</option>`;
             } else {
                 html += `<option value="${n}">${n}</option>`;
             }
         });
         
         const selectAvion = document.getElementById("targetAeronave");
-        selectAvion.innerHTML = html;
-
-        if (email && windowUsersData[email] && windowUsersData[email].aeronave) {
-            selectAvion.value = windowUsersData[email].aeronave;
-        } else {
-            selectAvion.value = "SIN ASIGNAR";
+        if(selectAvion) {
+            selectAvion.innerHTML = html;
+            if (email && windowUsersData[email] && windowUsersData[email].aeronave) {
+                selectAvion.value = windowUsersData[email].aeronave;
+            } else {
+                selectAvion.value = "SIN ASIGNAR";
+            }
         }
     };
 
@@ -1241,6 +1243,9 @@
     };
 
     async function cargarHVT() {
+        const elHVT = document.getElementById("listaHVT");
+        if(!elHVT) return;
+        
         const q = query(collection(db, "objetivos_hvt"), orderBy("timestamp", "desc"));
         const snap = await getDocs(q);
         let htmlStr = "";
@@ -1292,7 +1297,7 @@
             `;
         });
         
-        document.getElementById("listaHVT").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; grid-column:1/-1;'>No hay objetivos H.V.T. registrados en la base de datos de inteligencia.</div>" : htmlStr;
+        elHVT.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; grid-column:1/-1;'>No hay objetivos H.V.T. registrados en la base de datos de inteligencia.</div>" : htmlStr;
     }
 
     async function cargarSolicitudes() {
@@ -1429,7 +1434,6 @@
                 if(unread > 0) {
                     badge.style.display = "inline-block";
                     badge.innerText = `[${unread} NUEVO]`;
-                    sndAlert.volume = 0.2; 
                 } else {
                     badge.style.display = "none";
                 }
@@ -1933,21 +1937,6 @@
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 if(data.notasPersonales) document.getElementById("textoNotas").value = data.notasPersonales;
                 
-                // POBLACIÓN DE NOMENCLATURA DE CAZAS ESPECÍFICOS
-                const avionesNombres = [
-                    "F-22 Raptor 1: Spectre",
-                    "F-22 Raptor 2: Wraith",
-                    "F-22 Raptor 3: Phantom",
-                    "F-22 Raptor 4: Eclipse",
-                    "F-22 Raptor 5: Revenant",
-                    "F-16 Viper: Viper Zero",
-                    "C-130 Hércules",
-                    "UH-60 Black Hawk",
-                    "CH-47 Chinook",
-                    "AH-1 Cobra"
-                ];
-                document.getElementById("targetAeronave").innerHTML = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>` + avionesNombres.map(n => `<option value="${n}">${n}</option>`).join("");
-                
                 if (window.isAdmin) {
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
                 }
@@ -1964,8 +1953,10 @@
                 }
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) > RANGOS.indexOf("Subteniente") && !window.isObserver)) {
-                    document.getElementById("panelSubirDoc").style.display = "block";
-                    document.getElementById("panelAdminHVT").style.display = "block";
+                    const pDoc = document.getElementById("panelSubirDoc");
+                    if(pDoc) pDoc.style.display = "block";
+                    const pHVT = document.getElementById("panelAdminHVT");
+                    if(pHVT) pHVT.style.display = "block";
                 }
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel") && !window.isObserver)) {

@@ -86,7 +86,7 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px;}
         
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones, #seccionHVT { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
 
@@ -424,7 +424,7 @@
             
             <div class="menu-category">PANEL CENTRAL</div>
             <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
-            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Escuadrones (Drag & Drop)</div>
+            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Escuadrones</div>
             <div class="menu-item" id="btnSolicitudes" onclick="switchTab('solicitudes')" onmouseenter="playHover()"><span>📝</span> Solicitudes</div>
             <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
             <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
@@ -440,6 +440,7 @@
             
             <div class="menu-category">COMANDO SUPERIOR</div>
             <div class="menu-item" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
+            <div class="menu-item" id="btnHVT" onclick="switchTab('hvt')" onmouseenter="playHover()"><span>🎯</span> Inteligencia H.V.T.</div>
             <div class="menu-item" id="btnAsuntosInternos" onclick="switchTab('asuntos')" onmouseenter="playHover()"><span>🕵️</span> Asuntos Internos</div>
             <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
 
@@ -577,6 +578,28 @@
                 </div>
             </div>
             
+            <div id="seccionHVT">
+                <h2 class="section-title"><span>🎯</span> H.V.T. (HIGH VALUE TARGETS)</h2>
+                <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">BASE DE DATOS DE INTELIGENCIA HOSTIL Y MÁS BUSCADOS</p>
+                
+                <div class="glass-panel" id="panelAdminHVT" style="padding: 25px; border-color: var(--danger-red); margin-bottom: 30px; display: none;">
+                    <h4 style="margin-top:0; color:var(--danger-red); font-size:16px;">REGISTRAR NUEVO OBJETIVO H.V.T.</h4>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <input type="text" id="hvtNombre" class="auth-input" placeholder="NOMBRE / ALIAS DEL OBJETIVO" style="margin:0;">
+                        <input type="text" id="hvtFaccion" class="auth-input" placeholder="FACCIÓN / ORGANIZACIÓN" style="margin:0;">
+                        <select id="hvtAmenaza" class="auth-input" style="margin:0;">
+                            <option value="Extrema">Nivel de Amenaza: EXTREMA</option>
+                            <option value="Alta">Nivel de Amenaza: ALTA</option>
+                            <option value="Moderada">Nivel de Amenaza: MODERADA</option>
+                        </select>
+                    </div>
+                    <textarea id="hvtNotas" class="auth-input" rows="2" placeholder="Delitos, historial y notas de inteligencia..." style="margin: 15px 0;"></textarea>
+                    <button onclick="registrarHVT()" class="btn-tactical" style="background: rgba(218,41,28,0.1); border-color: var(--danger-red); color: var(--danger-red); width: 100%;">INGRESAR A LISTA DE MÁS BUSCADOS</button>
+                </div>
+
+                <div id="listaHVT" class="responsive-grid"></div>
+            </div>
+
             <div id="seccionRadiogramas">
                 <h2 class="section-title"><span>✉️</span> RADIOGRAMAS ENCRIPTADOS (BANDEJA DE ENTRADA)</h2>
                 <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">SISTEMA P2P DE COMUNICACIÓN DIRECTA Y CLASIFICADA</p>
@@ -1103,6 +1126,101 @@
         } catch(e) { window.showToast("ERROR AL ENVIAR DENUNCIA", "error"); }
     };
 
+    // INTELIGENCIA HVT
+    window.registrarHVT = async () => {
+        window.playClick();
+        const nombre = document.getElementById("hvtNombre").value;
+        const faccion = document.getElementById("hvtFaccion").value;
+        const amenaza = document.getElementById("hvtAmenaza").value;
+        const notas = document.getElementById("hvtNotas").value;
+
+        if(!nombre || !faccion) return window.showToast("NOMBRE Y FACCIÓN SON OBLIGATORIOS", "error");
+
+        try {
+            await addDoc(collection(db, "objetivos_hvt"), {
+                nombre: nombre, faccion: faccion, amenaza: amenaza, notas: notas,
+                estado: "Prófugo", capturadoPor: null,
+                registradoPor: window.currentUserName,
+                fecha: new Date().toLocaleString('es-CL'),
+                timestamp: serverTimestamp()
+            });
+            registrarLog("INTELIGENCIA", `Añadió a ${nombre} a la lista H.V.T. (Amenaza ${amenaza}).`);
+            window.showToast("OBJETIVO H.V.T. REGISTRADO", "success");
+            document.getElementById("hvtNombre").value = "";
+            document.getElementById("hvtFaccion").value = "";
+            document.getElementById("hvtNotas").value = "";
+            cargarHVT();
+        } catch(e) { window.showToast("ERROR AL REGISTRAR H.V.T.", "error"); }
+    };
+
+    window.actualizarEstadoHVT = async (id, estado, nombre) => {
+        window.playClick();
+        try {
+            await updateDoc(doc(db, "objetivos_hvt", id), {
+                estado: estado,
+                capturadoPor: window.currentUserName
+            });
+            registrarLog("OPERACIÓN H.V.T.", `El objetivo ${nombre} fue marcado como ${estado.toUpperCase()}.`);
+            window.showToast(`OBJETIVO ${estado.toUpperCase()}`, "success");
+            cargarHVT();
+        } catch(e) { window.showToast("ERROR AL ACTUALIZAR ESTADO", "error"); }
+    };
+
+    async function cargarHVT() {
+        const q = query(collection(db, "objetivos_hvt"), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q);
+        let htmlStr = "";
+        let count = 0;
+        
+        const isAltoMando = window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver);
+
+        snap.forEach(docSnap => {
+            count++;
+            const d = docSnap.data();
+            
+            let colorAmenaza = d.amenaza === "Extrema" ? "var(--danger-red)" : (d.amenaza === "Alta" ? "var(--alert-amber)" : "var(--theme-color)");
+            let colorEstado = d.estado === "Prófugo" ? "var(--danger-red)" : (d.estado === "Capturado" ? "#4df24d" : "#888");
+            let imgSilueta = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+            
+            let btnAcciones = "";
+            if (isAltoMando && d.estado === "Prófugo") {
+                btnAcciones = `
+                    <div style="display:flex; gap:10px; margin-top:15px;">
+                        <button onclick="actualizarEstadoHVT('${docSnap.id}', 'Capturado', '${d.nombre}')" class="btn-tactical" style="flex:1; font-size:10px; padding:6px; border-color:#4df24d; color:#4df24d; background:rgba(77,242,77,0.1);">MARCAR CAPTURADO</button>
+                        <button onclick="actualizarEstadoHVT('${docSnap.id}', 'Abatido', '${d.nombre}')" class="btn-tactical" style="flex:1; font-size:10px; padding:6px; border-color:#888; color:#888; background:rgba(255,255,255,0.05);">MARCAR ABATIDO</button>
+                    </div>
+                `;
+            }
+
+            let opacity = d.estado !== "Prófugo" ? "0.6" : "1";
+            let grayscale = d.estado === "Abatido" ? "grayscale(100%)" : "none";
+
+            htmlStr += `
+                <div class="glass-panel slide-up" style="border-top: 4px solid ${colorAmenaza}; opacity: ${opacity}; filter: ${grayscale}; position: relative; overflow:hidden;">
+                    <div style="position: absolute; top: 15px; right: -30px; background: ${colorEstado}; color: #000; font-weight: bold; font-size: 10px; padding: 5px 30px; transform: rotate(45deg); letter-spacing: 2px; z-index: 10;">${d.estado.toUpperCase()}</div>
+                    
+                    <div style="padding: 20px;">
+                        <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+                            <div style="width: 70px; height: 70px; background: url('${imgSilueta}') center/cover; border: 2px solid ${colorAmenaza}; border-radius: 4px; box-shadow: 0 0 10px ${colorAmenaza};"></div>
+                            <div>
+                                <div style="font-size: 10px; color: ${colorAmenaza}; letter-spacing: 2px; font-weight: bold;">AMENAZA ${d.amenaza.toUpperCase()}</div>
+                                <div style="font-size: 20px; color: white; font-weight: bold; letter-spacing: 1px; margin: 2px 0;">${d.nombre.toUpperCase()}</div>
+                                <div style="font-size: 12px; color: #aaa; font-family: 'Share Tech Mono';">FACCIÓN: ${d.faccion.toUpperCase()}</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: #ddd; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; border: 1px solid var(--glass-border); min-height: 50px;">
+                            ${d.notas}
+                        </div>
+                        ${d.capturadoPor ? `<div style="margin-top:10px; font-size:10px; color:var(--theme-color); font-family:'Share Tech Mono'; text-align:right;">[ RESOLUCIÓN POR: ${d.capturadoPor.toUpperCase()} ]</div>` : ''}
+                        ${btnAcciones}
+                    </div>
+                </div>
+            `;
+        });
+        
+        document.getElementById("listaHVT").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; grid-column:1/-1;'>No hay objetivos H.V.T. registrados en la base de datos de inteligencia.</div>" : htmlStr;
+    }
+
     window.enviarRadiograma = async () => {
         window.playClick();
         const texto = document.getElementById("p_radiograma_txt").value;
@@ -1354,7 +1472,7 @@
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes", "seccionAsuntosInternos", "seccionRadiogramas", "seccionEscuadrones"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes", "seccionAsuntosInternos", "seccionRadiogramas", "seccionEscuadrones", "seccionHVT"].forEach(id => {
             const el = document.getElementById(id); if(el) { el.style.display = 'none'; el.classList.remove('fade-in'); }
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -1375,6 +1493,7 @@
         if(tab === 'calendario') { targetId = 'seccionCalendario'; btnId = 'btnCalendario'; }
         if(tab === 'asuntos') { targetId = 'seccionAsuntosInternos'; btnId = 'btnAsuntosInternos'; cargarDenuncias(); }
         if(tab === 'escuadrones') { targetId = 'seccionEscuadrones'; btnId = 'btnEscuadrones'; }
+        if(tab === 'hvt') { targetId = 'seccionHVT'; btnId = 'btnHVT'; cargarHVT(); }
         
         const targetEl = document.getElementById(targetId);
         if(targetEl) {
@@ -1540,7 +1659,6 @@
         });
     }
 
-    // DRAG AND DROP ESCUADRONES LOGICA
     window.allowDropSquad = (e) => { e.preventDefault(); };
     window.dragStartSquad = (e, email) => { e.dataTransfer.setData("email", email); };
     
@@ -1628,6 +1746,7 @@
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) > RANGOS.indexOf("Subteniente") && !window.isObserver)) {
                     document.getElementById("panelSubirDoc").style.display = "block";
+                    document.getElementById("panelAdminHVT").style.display = "block";
                 }
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel") && !window.isObserver)) {
@@ -1639,7 +1758,7 @@
                     document.getElementById("drawingTools").style.display = "flex";
                 }
                 
-                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); if(window.isAdmin) cargarLogsVisual();
+                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); cargarHVT(); if(window.isAdmin) cargarLogsVisual();
                 
                 iniciarSyncMapa();
                 inicializarPizarra();
@@ -1734,7 +1853,6 @@
                     else if (estadoSeguro === "EN ENTRENAMIENTO") iconEstado = "🔵";
                     else if (estadoSeguro === "EN OPERACIÓN" || estadoSeguro === "En misión") iconEstado = "🟠";
 
-                    // GESTIÓN DE ESCUADRONES HTML
                     if(!isRolAdmin) {
                         let targetSq = d.escuadron || "base";
                         if(!sq.hasOwnProperty(targetSq)) targetSq = "base";
@@ -1860,7 +1978,7 @@
     window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad, cTiro, cFis, cPsi) => {
         window.playClick(); 
         
-        window.perfilActualEmail = email; // TRACKEO PARA EL RADIOGRAMA
+        window.perfilActualEmail = email; 
         
         const isRolAdmin = (rango === "Administrador");
         const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && email !== window.currentUserEmail && !window.isObserver;
@@ -1926,7 +2044,6 @@
         const descBox = document.getElementById("p_insignia_desc");
         if(descBox) descBox.innerHTML = "[ INFO. MEDALLA: ESPERANDO SELECCIÓN ]";
         
-        // CONTROLES DE RADIOGRAMA
         const btnRadio = document.getElementById("p_radiograma_container");
         if(email !== window.currentUserEmail && !isRolAdmin) {
             btnRadio.style.display = "block";
@@ -2096,62 +2213,6 @@
 
     window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
 
-    function cargarHangar() {
-        let hAereoHTML = ""; let hTerrHTML = "";
-        const generarCard = (v) => `
-            <div class="hangar-card-new glass-panel slide-up">
-                <div class="img-wrapper"><div class="hangar-img" style="background-image: url('${v.img}');"></div></div>
-                <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border);">
-                    <div style="color: #fff; font-weight: bold; font-size: 16px; letter-spacing:1px;">${v.id}</div><div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 6px 12px; border-radius: 4px; font-family:'Share Tech Mono';">CANT: ${v.cant}</div>
-                </div>
-            </div>`;
-        FLOTA_AEREA.forEach(v => { hAereoHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerrHTML += generarCard(v); });
-        document.getElementById("listaHangarAereo").innerHTML = hAereoHTML;
-        document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
-    }
-
-    async function cargarDocumentos() {
-        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
-        const snap = await getDocs(q); 
-        let htmlStr = "";
-        const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && !window.isObserver;
-
-        snap.forEach(docSnap => {
-            const d = docSnap.data(); 
-            const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
-            
-            if (isRestricted) {
-                htmlStr += `
-                <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid var(--danger-red); position: relative; overflow: hidden;">
-                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
-                        <span style="color:var(--danger-red); font-weight:bold; font-size:14px; letter-spacing:1px;">[ ACCESO DENEGADO ]</span>
-                        <span class="censurado-bar">██/██/████ | AUTOR: ██████</span>
-                    </div>
-                    <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;" class="censurado-bar">██████████████████████</div>
-                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 10px; font-size: 11px; padding: 6px 15px; border-color:var(--danger-red); color:var(--danger-red);">🔓 INTENTAR DESCIFRAR</button>
-                    <div class="contenido-descifrado censurado-blur" style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border); display:none; margin-top:15px;"></div>
-                    <textarea class="raw-text" style="display:none;">████████ ██████ ███████████ ███ █████████ ████ ███████ █████ ████████ ███████ ██████████.</textarea>
-                    <div class="sello-clasificado" style="font-size: 16px; top: 50%; opacity: 0.9;">INFO. CLASIFICADA</div>
-                </div>`;
-            } else {
-                htmlStr += `
-                <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};">
-                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
-                        <span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span>
-                        <span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span>
-                    </div>
-                    <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div>
-                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 10px; font-size: 11px; padding: 6px 15px; border-color:${color}; color:${color};">🔓 DESCIFRAR ARCHIVO</button>
-                    <div class="contenido-descifrado" style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; display:none; white-space: pre-wrap; margin-top: 15px;"></div>
-                    <textarea class="raw-text" style="display:none;">${d.contenido.replace(/'/g, "&#39;").replace(/"/g, "&quot;")}</textarea>
-                </div>`;
-            }
-        });
-        document.getElementById("listaDocumentos").innerHTML = htmlStr;
-    }
-
-    window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
-    
     async function cargarLogsVisual() { 
         let htmlStr = ""; 
         window.cachedLogs.forEach(d => { 

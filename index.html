@@ -1823,6 +1823,96 @@
         } catch(err) { window.showToast("ERROR AL ASIGNAR LÍDER", "error"); }
     };
 
+    window.quitarSanciones = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoSancion").value;
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO DE LA LISTA", "error");
+        try { await updateDoc(doc(db, "usuarios", email), { sanciones: [] }); registrarLog("SANCIÓN REMOVIDA", `Limpió el expediente de sanciones disciplinarias de ${email}.`); window.showToast("EXPEDIENTE LIMPIADO SATISFACTORIAMENTE", "success"); cargarDatos(); } 
+        catch(e) { window.showToast("ERROR AL LIMPIAR EXPEDIENTE", "error"); }
+    };
+
+    // --- FUNCIONES DE ADMINISTRADOR: MODIFICAR EXPEDIENTES ---
+    window.procesarCambiosAdmin = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldier").value;
+        const rango = document.getElementById("targetRank").value;
+        const division = document.getElementById("targetDivision").value;
+        const especialidad = document.getElementById("targetEspecialidad").value;
+        const aeronave = document.getElementById("targetAeronave").value;
+
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO DEL REGISTRO", "error");
+
+        try {
+            await updateDoc(doc(db, "usuarios", email), {
+                rango: rango,
+                division: division,
+                especialidad: especialidad,
+                aeronave: aeronave === "SIN ASIGNAR" ? null : aeronave
+            });
+            registrarLog("MODIFICACIÓN ADMIN", `Actualizó expediente de ${email}: ${rango} | ${division} | ${especialidad}`);
+            window.showToast("EXPEDIENTE MILITAR ACTUALIZADO", "success");
+            cargarDatos(); 
+        } catch(e) {
+            window.showToast("ERROR AL ACTUALIZAR EXPEDIENTE", "error");
+            console.error(e);
+        }
+    };
+
+    // --- FUNCIONES DE ADMINISTRADOR: ASIGNAR MISIONES ---
+    window.asignarMision = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoMision").value;
+        const tipo = document.getElementById("tipoMision").value;
+        const objetivo = document.getElementById("objMision").value;
+
+        if(!email || !objetivo) return window.showToast("COMPLETE TODOS LOS CAMPOS DE LA OPERACIÓN", "error");
+
+        try {
+            await updateDoc(doc(db, "usuarios", email), {
+                misionActiva: { tipo: tipo, detalle: objetivo, fechaInicio: new Date().toLocaleString('es-CL') },
+                estado: "EN OPERACIÓN" 
+            });
+            registrarLog("OPERACIÓN ASIGNADA", `Desplegó a ${email} en misión de ${tipo}: ${objetivo}`);
+            window.showToast("MISIÓN ASIGNADA Y SOLDADO DESPLEGADO", "success");
+            document.getElementById("objMision").value = "";
+            cargarDatos();
+        } catch(e) { window.showToast("ERROR AL ASIGNAR MISIÓN", "error"); }
+    };
+
+    // --- FUNCIONES DE ADMINISTRADOR: FINALIZAR MISIONES ---
+    window.finalizarMision = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoMision").value;
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error");
+
+        const user = windowUsersData[email];
+        if(!user || !user.misionActiva) return window.showToast("EL SOLDADO NO TIENE MISIÓN ACTIVA", "error");
+
+        try {
+            await addDoc(collection(db, "misiones_pasadas"), {
+                soldado: user.nombre,
+                email: email,
+                rango: user.rango,
+                division: user.division,
+                tipo: user.misionActiva.tipo,
+                detalle: user.misionActiva.detalle,
+                fechaInicio: user.misionActiva.fechaInicio,
+                fechaFin: new Date().toLocaleString('es-CL'),
+                timestamp: serverTimestamp()
+            });
+
+            await updateDoc(doc(db, "usuarios", email), {
+                misionActiva: null,
+                estado: "EN BASE" 
+            });
+            
+            registrarLog("OPERACIÓN FINALIZADA", `Finalizó la misión de ${user.nombre} y retornó a base.`);
+            window.showToast("OPERACIÓN FINALIZADA CON ÉXITO", "success");
+            cargarDatos();
+            cargarHistorialMisiones(); 
+        } catch(e) { window.showToast("ERROR AL FINALIZAR MISIÓN", "error"); }
+    };
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             sndStartup.play().catch(()=>{});
@@ -1883,7 +1973,9 @@
                     document.getElementById("territoryTools").style.display = "flex";
                 }
                 
-                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); cargarHVT(); if(window.isAdmin) cargarLogsVisual();
+                // Nota: Algunas funciones de carga como cargarDocumentos, cargarHangar, cargarCalendario
+                // pueden faltar en tu código original, asegúrate de tenerlas definidas o remuévelas si no las usas.
+                cargarLogsBase(); cargarDatos(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); cargarHVT(); cargarComunicados(); if(window.isAdmin) cargarLogsVisual();
                 
                 inicializarGrid();
                 iniciarSyncMapa();
@@ -2301,14 +2393,6 @@
             registrarLog("SANCIÓN APLICADA", `Sancionó a ${email} (${tipo}) por: ${motivo}`);
             window.showToast("SANCIÓN APLICADA A EXPEDIENTE", "success"); document.getElementById("motivoSancion").value = ""; document.getElementById("duracionSancion").value = ""; cargarDatos();
         } catch(error) { window.showToast("ERROR AL APLICAR SANCIÓN", "error"); }
-    };
-
-    window.quitarSanciones = async () => {
-        window.playClick();
-        const email = document.getElementById("targetSoldadoSancion").value;
-        if(!email) return window.showToast("SELECCIONE UN SOLDADO DE LA LISTA", "error");
-        try { await updateDoc(doc(db, "usuarios", email), { sanciones: [] }); registrarLog("SANCIÓN REMOVIDA", `Limpió el expediente de sanciones disciplinarias de ${email}.`); window.showToast("EXPEDIENTE LIMPIADO SATISFACTORIAMENTE", "success"); cargarDatos(); } 
-        catch(e) { window.showToast("ERROR AL LIMPIAR EXPEDIENTE", "error"); }
     };
 
     window.registrarPostulante = async () => {

@@ -36,10 +36,10 @@
             color: var(--theme-color); 
             font-family: 'Jura', sans-serif; 
             margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; 
-            transition: background-color 0.5s ease, color 0.5s ease; 
+            transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        /* EFECTOS NEÓN DE PERFILES */
+        /* EFECTOS NEÓN DE PERFILES (Optimizados para hardware) */
         .glow-ejercito { border-color: var(--ejercito-color) !important; box-shadow: 0 0 15px rgba(77, 242, 77, 0.3) !important; }
         .glow-armada { border-color: var(--armada-color) !important; box-shadow: 0 0 15px rgba(0, 51, 160, 0.4) !important; }
         .glow-fach { border-color: var(--fach-color) !important; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important; }
@@ -50,6 +50,8 @@
             position: fixed; inset: 0; z-index: 99999; pointer-events: none; opacity: 0; transition: opacity 0.3s;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
+            will-change: opacity;
+            transform: translateZ(0);
         }
         @keyframes crtFlicker { 0% { opacity: 0.95; } 5% { opacity: 0.85; } 10% { opacity: 0.95; } 100% { opacity: 0.95; } }
         body.crt-on .crt-scanlines { opacity: 0.6; }
@@ -72,42 +74,43 @@
         ::-webkit-scrollbar-thumb { background: var(--theme-dim); border-radius: 10px; border: 1px solid var(--army-dark); }
         ::-webkit-scrollbar-thumb:hover { background: var(--theme-color); }
 
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; transform: translateZ(0); }
+        /* OPTIMIZACIÓN CLAVE: Aislamiento de capas (Hardware Acceleration) */
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; transform: translateZ(0); backface-visibility: hidden; will-change: transform, box-shadow, border-color; }
         .glass-panel:hover { border-color: var(--theme-dim); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
 
-        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(15px); border-radius: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5); overflow-y: auto; margin-top: 4px; transform: translateZ(0);}
+        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(15px); border-radius: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5); overflow-y: auto; margin-top: 4px; transform: translateZ(0); will-change: transform;}
         .menu-category { font-size: 11px; color: #888; padding: 10px 25px; letter-spacing: 2px; font-weight: 700; margin-top: 10px;}
-        .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.2s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
+        .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: background-color 0.2s, border-color 0.2s, color 0.2s, padding-left 0.2s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; transform: translateZ(0);}
         .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); color: var(--theme-color); padding-left: 30px; }
         .menu-item.active { background: linear-gradient(90deg, var(--theme-dim), transparent); border-left-color: var(--theme-color); color: white; padding-left: 30px; }
         .btn-alert { color: var(--danger-red); border-left-color: transparent; margin-top: 10px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
         .btn-alert:hover { color: var(--danger-red); background: rgba(218, 41, 28, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
 
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px;}
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px; will-change: transform;}
         
         #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
 
-        .auth-input { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: white; padding: 14px; width: 100%; margin-bottom: 15px; font-family: 'Share Tech Mono', monospace; box-sizing: border-box; outline: none; border-radius: 8px; transition: 0.2s; }
+        .auth-input { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: white; padding: 14px; width: 100%; margin-bottom: 15px; font-family: 'Share Tech Mono', monospace; box-sizing: border-box; outline: none; border-radius: 8px; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; }
         .auth-input:focus { border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); background: rgba(0,0,0,0.6); }
-        .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: all 0.2s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px); transform: translateZ(0);}
+        .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px); transform: translateZ(0); will-change: transform;}
         .btn-tactical:hover { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); transform: translateY(-2px); }
 
-        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 30000; display: flex; justify-content: center; align-items: center; }
+        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 30000; display: flex; justify-content: center; align-items: center; transform: translateZ(0);}
         #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
-        .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 4px solid var(--danger-red); }
+        .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 4px solid var(--danger-red); will-change: transform, opacity;}
         .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/contain no-repeat; background-color: rgba(0,0,0,0.8); box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
 
-        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.3s ease-out; }
+        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); transform: translateZ(0);}
+        .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.3s ease-out; will-change: transform, opacity;}
 
-        .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.3s ease-out; overflow: hidden; border-radius: 15px;}
+        .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.3s ease-out; overflow: hidden; border-radius: 15px; will-change: transform, opacity;}
         .perfil-header { background: rgba(0,0,0,0.5); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; border-bottom: 1px solid var(--theme-color); }
         .perfil-body { display: grid; grid-template-columns: 300px 1fr; gap: 0; background: rgba(10, 15, 25, 0.9); }
         .perfil-col-izq { padding: 30px; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.01); position: relative; }
-        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: filter 0.3s;}
+        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: filter 0.3s; transform: translateZ(0);}
         .perfil-col-der { padding: 30px; display: flex; flex-direction: column; gap: 20px; }
         .perfil-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .perfil-item { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; }
@@ -124,11 +127,11 @@
         .esp-default { background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid #aaa; }
 
         .insignia-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--glass-border); width: 100%; }
-        .insignia { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; background: rgba(0,0,0,0.6); border: 2px solid; position: relative; cursor: pointer; transition: 0.2s; will-change: transform, box-shadow; transform: translateZ(0);}
+        .insignia { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; background: rgba(0,0,0,0.6); border: 2px solid; position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; will-change: transform, box-shadow; transform: translateZ(0);}
         .insignia:hover { transform: scale(1.15) translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 10; }
         .insignia-glow { animation: insigniaGlow 2s infinite alternate; }
         .insignia-spin::before { content:''; position:absolute; inset:-4px; border: 2px dashed currentColor; border-radius: 50%; animation: spin 4s linear infinite; opacity: 0.5; will-change: transform;}
-        .insignia-float { animation: float 3s ease-in-out infinite; }
+        .insignia-float { animation: float 3s ease-in-out infinite; will-change: transform;}
         
         @keyframes insigniaGlow { from { box-shadow: 0 0 5px currentColor; } to { box-shadow: 0 0 15px currentColor; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -151,7 +154,7 @@
         .toast-success { border-color: var(--theme-color); }
         @keyframes slideRight { from { transform: translateX(-150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        .radar-realista { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 229, 255, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #050a0f; overflow: hidden; box-shadow: 0 0 25px var(--theme-dim), inset 0 0 25px var(--theme-dim); margin: auto; transform: translateZ(0); }
+        .radar-realista { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 229, 255, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #050a0f; overflow: hidden; box-shadow: 0 0 25px var(--theme-dim), inset 0 0 25px var(--theme-dim); margin: auto; transform: translateZ(0); will-change: transform;}
         .radar-realista::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--theme-dim); }
         .radar-realista::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--theme-dim); }
         .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg, var(--theme-color) 0%, transparent 60%); transform-origin: 0 0; animation: sweep 2.5s linear infinite; opacity: 0.6; will-change: transform;}
@@ -167,7 +170,7 @@
         .map-marker:hover { transform: translate(-50%, -50%) scale(1.2); filter: drop-shadow(0 0 12px var(--danger-red)); }
         @keyframes bounceIn { from { transform: translate(-50%, -100%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 
-        .map-nav-btn { position: absolute; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--theme-color); color: var(--theme-color); font-size: 16px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 20; display: flex; justify-content: center; align-items: center; transition: all 0.2s; backdrop-filter: blur(5px); transform: translateZ(0);}
+        .map-nav-btn { position: absolute; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--theme-color); color: var(--theme-color); font-size: 16px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 20; display: flex; justify-content: center; align-items: center; transition: background-color 0.2s, box-shadow 0.2s, color 0.2s, transform 0.2s; backdrop-filter: blur(5px); transform: translateZ(0); will-change: transform;}
         .map-nav-btn:hover { background: var(--theme-color); color: #000; box-shadow: 0 0 15px var(--theme-color); transform: scale(1.1); }
         .map-nav-left { left: 15px; top: calc(50% - 20px); }
         .map-nav-right { right: 15px; top: calc(50% - 20px); }
@@ -180,9 +183,9 @@
         .calif-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; }
 
         /* WIDGET NOTAS FLOTANTE */
-        .floating-notes-btn { position: fixed; right: 25px; bottom: 50px; z-index: 8000; background: rgba(15, 22, 35, 0.9); border: 2px solid var(--theme-color); color: var(--theme-color); width: 55px; height: 55px; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); transition: all 0.3s; display: flex; justify-content: center; align-items: center; font-size: 22px; }
+        .floating-notes-btn { position: fixed; right: 25px; bottom: 50px; z-index: 8000; background: rgba(15, 22, 35, 0.9); border: 2px solid var(--theme-color); color: var(--theme-color); width: 55px; height: 55px; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); transition: transform 0.3s, background-color 0.3s, filter 0.3s; display: flex; justify-content: center; align-items: center; font-size: 22px; transform: translateZ(0); will-change: transform;}
         .floating-notes-btn:hover { background: var(--theme-color); filter: brightness(1.2); transform: scale(1.1); }
-        .notes-panel { position: fixed; right: 25px; bottom: 115px; z-index: 8000; width: 320px; display: none; flex-direction: column; animation: slideUp 0.3s ease-out; box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
+        .notes-panel { position: fixed; right: 25px; bottom: 115px; z-index: 8000; width: 320px; display: none; flex-direction: column; animation: slideUp 0.3s ease-out; box-shadow: 0 15px 40px rgba(0,0,0,0.8); transform: translateZ(0);}
 
         /* EFECTO TEXTO ENCRIPTADO */
         .encrypted-text { font-family: 'Share Tech Mono', monospace; word-break: break-all; color: var(--theme-color); filter: brightness(0.7); }
@@ -192,7 +195,7 @@
         .squad-col { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 8px; display: flex; flex-direction: column; }
         .squad-header { padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px dashed var(--glass-border); letter-spacing: 1px; font-size: 14px;}
         .squad-body { padding: 10px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 300px; }
-        .squad-item { background: rgba(255,255,255,0.05); border: 1px solid var(--theme-dim); padding: 10px; border-radius: 6px; cursor: grab; display: flex; justify-content: space-between; align-items: center; transition: 0.2s;}
+        .squad-item { background: rgba(255,255,255,0.05); border: 1px solid var(--theme-dim); padding: 10px; border-radius: 6px; cursor: grab; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.2s, background-color 0.2s; transform: translateZ(0);}
         .squad-item:active { cursor: grabbing; opacity: 0.5; }
         .squad-item:hover { background: rgba(0,229,255,0.1); }
         .squad-item.is-leader { border-color: var(--alert-amber); box-shadow: inset 0 0 15px rgba(255,180,0,0.2); background: rgba(255,180,0,0.05);}
@@ -1129,9 +1132,6 @@
     async function cargarSolicitudes() {
         const q = query(collection(db, "solicitudes"), orderBy("timestamp", "desc"), limit(30));
         const snap = await getDocs(q);
-        const lista = document.getElementById("listaSolicitudes");
-        if(!lista) return;
-        lista.innerHTML = "";
         let count = 0;
         
         const isGestor = window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Mayor") && !window.isObserver);
@@ -1175,16 +1175,17 @@
                 `;
             }
         });
-        lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay solicitudes en su bandeja de entrada.</div>" : htmlStr;
+        
+        requestAnimationFrame(() => {
+            const lista = document.getElementById("listaSolicitudes");
+            if(lista) lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay solicitudes en su bandeja de entrada.</div>" : htmlStr;
+        });
     }
 
     async function cargarDenuncias() {
         const isAltoMando = window.isAdmin || window.isObserver || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Coronel"));
         const titulo = document.getElementById("tituloGestorDenuncias");
-        const lista = document.getElementById("listaDenuncias");
         
-        if(!lista) return;
-
         if(isAltoMando) {
             if(titulo) titulo.style.display = "block";
             const q = query(collection(db, "asuntos_internos"), orderBy("timestamp", "desc"), limit(30));
@@ -1211,10 +1212,16 @@
                 `;
             });
             
-            lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay expedientes activos en Asuntos Internos.</div>" : htmlStr;
+            requestAnimationFrame(() => {
+                const lista = document.getElementById("listaDenuncias");
+                if(lista) lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay expedientes activos en Asuntos Internos.</div>" : htmlStr;
+            });
         } else {
             if(titulo) titulo.style.display = "none";
-            lista.innerHTML = "";
+            requestAnimationFrame(() => {
+                const lista = document.getElementById("listaDenuncias");
+                if(lista) lista.innerHTML = "";
+            });
         }
     }
 
@@ -1252,19 +1259,21 @@
                 }
             });
             
-            const lista = document.getElementById("listaRadiogramas");
-            if(lista) lista.innerHTML = htmlStr === "" ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center; grid-column:1/-1;'>BANDEJA DE ENTRADA VACÍA. NO HAY TRANSMISIONES ACTIVAS.</div>" : htmlStr;
-            
-            const badge = document.getElementById("badgeRadiogramas");
-            if(badge) {
-                if(unread > 0) {
-                    badge.style.display = "inline-block";
-                    badge.innerText = `[${unread} NUEVO]`;
-                    sndAlert.volume = 0.2; 
-                } else {
-                    badge.style.display = "none";
+            requestAnimationFrame(() => {
+                const lista = document.getElementById("listaRadiogramas");
+                if(lista) lista.innerHTML = htmlStr === "" ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center; grid-column:1/-1;'>BANDEJA DE ENTRADA VACÍA. NO HAY TRANSMISIONES ACTIVAS.</div>" : htmlStr;
+                
+                const badge = document.getElementById("badgeRadiogramas");
+                if(badge) {
+                    if(unread > 0) {
+                        badge.style.display = "inline-block";
+                        badge.innerText = `[${unread} NUEVO]`;
+                        sndAlert.volume = 0.2; 
+                    } else {
+                        badge.style.display = "none";
+                    }
                 }
-            }
+            });
         });
     }
 
@@ -1316,9 +1325,6 @@
     async function cargarComunicados() {
         const q = query(collection(db, "comunicados"), orderBy("timestamp", "desc"), limit(30));
         const snap = await getDocs(q);
-        const lista = document.getElementById("listaComunicados");
-        if(!lista) return;
-        lista.innerHTML = "";
         let count = 0;
 
         let htmlStr = "";
@@ -1349,7 +1355,10 @@
             `;
         });
 
-        lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay comunicados recientes en la red.</div>" : htmlStr;
+        requestAnimationFrame(() => {
+            const lista = document.getElementById("listaComunicados");
+            if(lista) lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay comunicados recientes en la red.</div>" : htmlStr;
+        });
     }
 
     window.switchTab = (tab) => {
@@ -1427,9 +1436,11 @@
             overlayOp = 1;
         }
 
-        bg.style.filter = filter.trim() || "none";
-        overlay.style.background = overlayCss || "transparent";
-        overlay.style.opacity = overlayOp;
+        requestAnimationFrame(() => {
+            bg.style.filter = filter.trim() || "none";
+            overlay.style.background = overlayCss || "transparent";
+            overlay.style.opacity = overlayOp;
+        });
     }
 
     let isDrawingModeActive = false;
@@ -1540,7 +1551,6 @@
         });
     }
 
-    // DRAG AND DROP ESCUADRONES LOGICA
     window.allowDropSquad = (e) => { e.preventDefault(); };
     window.dragStartSquad = (e, email) => { e.dataTransfer.setData("email", email); };
     
@@ -1654,7 +1664,6 @@
     async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); } catch(e) {} }
     async function cargarLogsBase() { const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100)); const snap = await getDocs(q); window.cachedLogs = []; snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); }); }
 
-    // ====== NUEVAS FUNCIONES AÑADIDAS ======
     window.procesarCambiosAdmin = async () => {
         window.playClick();
         const email = document.getElementById("targetSoldier").value;
@@ -1735,7 +1744,6 @@
             window.showToast("ERROR AL FINALIZAR MISIÓN", "error");
         }
     };
-    // ====== FIN NUEVAS FUNCIONES ======
 
     async function cargarDatos() {
         try {
@@ -1890,27 +1898,31 @@
                 } catch (errLoop) { console.error("Error aislando perfil:", errLoop); }
             });
             
-            document.getElementById("listaSoldados").innerHTML = strPer;
-            document.getElementById("listaUsuariosLicencias").innerHTML = strLic;
-            document.getElementById("listaComandante").innerHTML = strCom;
-            document.getElementById("listaInstructor").innerHTML = strIns;
-            document.getElementById("listaCadete").innerHTML = strCad;
-            document.getElementById("listaMisiones").innerHTML = strMis === "" ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay operaciones activas en este momento.</div>" : strMis;
+            // OPTIMIZACIÓN CLAVE: Inyección de DOM en requestAnimationFrame
+            requestAnimationFrame(() => {
+                document.getElementById("listaSoldados").innerHTML = strPer;
+                document.getElementById("listaUsuariosLicencias").innerHTML = strLic;
+                document.getElementById("listaComandante").innerHTML = strCom;
+                document.getElementById("listaInstructor").innerHTML = strIns;
+                document.getElementById("listaCadete").innerHTML = strCad;
+                document.getElementById("listaMisiones").innerHTML = strMis === "" ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay operaciones activas en este momento.</div>" : strMis;
+                
+                document.getElementById("sq_base").innerHTML = sq.base;
+                document.getElementById("sq_alpha").innerHTML = sq.alpha;
+                document.getElementById("sq_bravo").innerHTML = sq.bravo;
+                document.getElementById("sq_especial").innerHTML = sq.especial;
+
+                document.getElementById("targetSoldier").innerHTML = strSelS;
+                document.getElementById("targetSoldadoMision").innerHTML = strSelMis;
+                document.getElementById("targetSoldadoLicencia").innerHTML = strSelLic;
+                document.getElementById("targetSoldadoSancion").innerHTML = strSelSanc;
+                document.getElementById("evalSoldado").innerHTML = strSelEval;
+
+                document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
+                document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
+                document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
+            });
             
-            document.getElementById("sq_base").innerHTML = sq.base;
-            document.getElementById("sq_alpha").innerHTML = sq.alpha;
-            document.getElementById("sq_bravo").innerHTML = sq.bravo;
-            document.getElementById("sq_especial").innerHTML = sq.especial;
-
-            document.getElementById("targetSoldier").innerHTML = strSelS;
-            document.getElementById("targetSoldadoMision").innerHTML = strSelMis;
-            document.getElementById("targetSoldadoLicencia").innerHTML = strSelLic;
-            document.getElementById("targetSoldadoSancion").innerHTML = strSelSanc;
-            document.getElementById("evalSoldado").innerHTML = strSelEval;
-
-            document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
-            document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
-            document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
         } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
     }
 
@@ -1933,7 +1945,9 @@
                     </div>
                 </div>`;
         });
-        document.getElementById("listaHistorialMisiones").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>El archivo histórico de operaciones está vacío.</div>" : htmlStr;
+        requestAnimationFrame(() => {
+            document.getElementById("listaHistorialMisiones").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>El archivo histórico de operaciones está vacío.</div>" : htmlStr;
+        });
     }
 
     function getColorTiro(v) { return v==="Experto"?"#4df24d":v==="Calificado"?"#ffb400":"#aaa"; }
@@ -2174,7 +2188,9 @@
                     <div style="display: flex; gap: 10px;"><button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">APROBAR</button><button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(218,41,28,0.1); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button></div>
                 </div>`;
         });
-        document.getElementById("listaPostulantes").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>" : htmlStr;
+        requestAnimationFrame(() => {
+            document.getElementById("listaPostulantes").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>" : htmlStr;
+        });
     }
 
     window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
@@ -2189,8 +2205,10 @@
                 </div>
             </div>`;
         FLOTA_AEREA.forEach(v => { hAereoHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerrHTML += generarCard(v); });
-        document.getElementById("listaHangarAereo").innerHTML = hAereoHTML;
-        document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
+        requestAnimationFrame(() => {
+            document.getElementById("listaHangarAereo").innerHTML = hAereoHTML;
+            document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
+        });
     }
 
     async function cargarDocumentos() {
@@ -2230,7 +2248,9 @@
                 </div>`;
             }
         });
-        document.getElementById("listaDocumentos").innerHTML = htmlStr;
+        requestAnimationFrame(() => {
+            document.getElementById("listaDocumentos").innerHTML = htmlStr;
+        });
     }
 
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
@@ -2240,7 +2260,9 @@
         window.cachedLogs.forEach(d => { 
             htmlStr += `<div style="font-size: 13px; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: #bbb; font-family:'Share Tech Mono';"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}</div>`; 
         }); 
-        document.getElementById("listaLogsContainer").innerHTML = htmlStr;
+        requestAnimationFrame(() => {
+            document.getElementById("listaLogsContainer").innerHTML = htmlStr;
+        });
     }
 
     window.logout = () => signOut(auth).then(() => location.reload());

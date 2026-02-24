@@ -1654,6 +1654,89 @@
     async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); } catch(e) {} }
     async function cargarLogsBase() { const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100)); const snap = await getDocs(q); window.cachedLogs = []; snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); }); }
 
+    // ====== NUEVAS FUNCIONES AÑADIDAS ======
+    window.procesarCambiosAdmin = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldier").value;
+        const rango = document.getElementById("targetRank").value;
+        const division = document.getElementById("targetDivision").value;
+        const especialidad = document.getElementById("targetEspecialidad").value;
+        const aeronave = document.getElementById("targetAeronave").value;
+
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error");
+
+        try {
+            await updateDoc(doc(db, "usuarios", email), {
+                rango: rango,
+                division: division,
+                especialidad: especialidad,
+                aeronave: aeronave === "SIN ASIGNAR" ? null : aeronave
+            });
+            registrarLog("MODIFICACIÓN DE EXPEDIENTE", `Modificó datos de ${email}: ${rango} / ${division}`);
+            window.showToast("EXPEDIENTE ACTUALIZADO", "success");
+            cargarDatos();
+        } catch(e) {
+            window.showToast("ERROR AL ACTUALIZAR EXPEDIENTE", "error");
+        }
+    };
+
+    window.asignarMision = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoMision").value;
+        const tipo = document.getElementById("tipoMision").value;
+        const obj = document.getElementById("objMision").value;
+
+        if(!email || !obj) return window.showToast("COMPLETE LOS DATOS DE LA MISIÓN", "error");
+
+        try {
+            await updateDoc(doc(db, "usuarios", email), {
+                misionActiva: { tipo: tipo, detalle: obj, fechaInicio: new Date().toLocaleString('es-CL') },
+                estado: "EN OPERACIÓN"
+            });
+            registrarLog("OPERACIÓN ASIGNADA", `Desplegó a ${email} en misión de ${tipo}: ${obj}`);
+            window.showToast("MISIÓN ASIGNADA Y SOLDADO DESPLEGADO", "success");
+            document.getElementById("objMision").value = "";
+            cargarDatos();
+        } catch(e) {
+            window.showToast("ERROR AL ASIGNAR MISIÓN", "error");
+        }
+    };
+
+    window.finalizarMision = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoMision").value;
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error");
+
+        const userData = windowUsersData[email];
+        if(!userData || !userData.misionActiva) return window.showToast("EL SOLDADO NO TIENE MISIÓN ACTIVA", "error");
+
+        try {
+            await addDoc(collection(db, "misiones_pasadas"), {
+                tipo: userData.misionActiva.tipo,
+                detalle: userData.misionActiva.detalle,
+                fechaInicio: userData.misionActiva.fechaInicio || "Desconocida",
+                fechaFin: new Date().toLocaleString('es-CL'),
+                rango: userData.rango,
+                soldado: userData.nombre,
+                division: userData.division,
+                timestamp: serverTimestamp()
+            });
+
+            await updateDoc(doc(db, "usuarios", email), {
+                misionActiva: null,
+                estado: "EN BASE"
+            });
+            
+            registrarLog("OPERACIÓN FINALIZADA", `Finalizó la misión de ${email}`);
+            window.showToast("MISIÓN FINALIZADA Y ARCHIVADA", "success");
+            cargarDatos();
+            cargarHistorialMisiones();
+        } catch(e) {
+            window.showToast("ERROR AL FINALIZAR MISIÓN", "error");
+        }
+    };
+    // ====== FIN NUEVAS FUNCIONES ======
+
     async function cargarDatos() {
         try {
             const snap = await getDocs(collection(db, "usuarios"));

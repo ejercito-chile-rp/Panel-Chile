@@ -413,7 +413,6 @@
             
             <div class="menu-category">PANEL CENTRAL</div>
             <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
-            <div class="menu-item" id="btnRadiogramas" onclick="switchTab('radiogramas')" onmouseenter="playHover()"><span>✉️</span> Radiogramas <span id="badgeRadiogramas" style="display:none; color:var(--danger-red); margin-left:auto; font-size:10px; animation:crtFlicker 1s infinite; font-weight:bold;"></span></div>
             <div class="menu-item" id="btnSolicitudes" onclick="switchTab('solicitudes')" onmouseenter="playHover()"><span>📝</span> Solicitudes</div>
             <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
             <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
@@ -422,14 +421,17 @@
             <div class="menu-item" id="btnMisiones" onclick="switchTab('misiones')" onmouseenter="playHover()"><span>🎯</span> Operaciones</div>
             <div class="menu-item" id="btnFach" onclick="switchTab('fach')" onmouseenter="playHover()"><span>✈️</span> Control Aéreo</div>
             
-            <div class="menu-category">COMANDO SUPERIOR</div>
+            <div class="menu-category">COMUNICACIÓN</div>
+            <div class="menu-item" id="btnRadiogramas" onclick="switchTab('radiogramas')" onmouseenter="playHover()"><span>✉️</span> Radiogramas <span id="badgeRadiogramas" style="display:none; color:var(--danger-red); margin-left:auto; font-size:10px; animation:crtFlicker 1s infinite; font-weight:bold;"></span></div>
             <div class="menu-item" id="btnComunicados" onclick="switchTab('comunicados')" onmouseenter="playHover()"><span>📢</span> Comunicados Oficiales</div>
+            <div class="menu-item" id="btnCalendario" onclick="switchTab('calendario')" onmouseenter="playHover()"><span>📅</span> Calendario Entrenamientos</div>
+            
+            <div class="menu-category">COMANDO SUPERIOR</div>
             <div class="menu-item" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
             <div class="menu-item" id="btnAsuntosInternos" onclick="switchTab('asuntos')" onmouseenter="playHover()"><span>🕵️</span> Asuntos Internos</div>
             <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
 
             <div class="menu-category">SISTEMA E INMERSIÓN</div>
-            <div class="menu-item" id="btnCalendario" onclick="switchTab('calendario')" onmouseenter="playHover()"><span>📅</span> Calendario Entrenamientos</div>
             <div class="menu-item" id="btnCRTToggle" onclick="toggleCRT()" onmouseenter="playHover()"><span>📺</span> Filtro CRT: <strong style="color:var(--danger-red); margin-left:5px;">OFF</strong></div>
             <div class="menu-item" onclick="abrirAdminAuth()" onmouseenter="playHover()"><span style="color: var(--admin-blue);">🌐</span> Autoridad Admin</div>
             <div class="menu-item menu-hidden" id="btnLogs" onclick="switchTab('logs')" onmouseenter="playHover()"><span>🧑‍💻</span> Registros SECRETO</div>
@@ -1225,7 +1227,6 @@
                     badge.style.display = "inline-block";
                     badge.innerText = `[${unread} NUEVO]`;
                     sndAlert.volume = 0.2; 
-                    // Se podría agregar un pitido acá si se desea.
                 } else {
                     badge.style.display = "none";
                 }
@@ -2042,250 +2043,6 @@
 
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
     
-    window.asignarMision = async () => { window.playClick(); const email = document.getElementById("targetSoldadoMision").value; const tipo = document.getElementById("tipoMision").value; const objetivo = document.getElementById("objMision").value; if(!email || !objetivo) return window.showToast("COMPLETE SOLDADO Y OBJETIVO", "error"); await updateDoc(doc(db, "usuarios", email), { misionActiva: { tipo: tipo, detalle: objetivo, fecha: new Date().toLocaleDateString('es-CL') }, estado: "EN OPERACIÓN" }); registrarLog("MISIÓN ASIGNADA", `Desplegó a ${email} en operación de ${tipo}.`); document.getElementById("objMision").value = ""; window.showToast("ÓRDENES DESPLEGADAS", "success"); cargarDatos(); };
-    
-    window.finalizarMision = async () => { 
-        window.playClick(); 
-        const email = document.getElementById("targetSoldadoMision").value; 
-        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
-
-        const userRef = doc(db, "usuarios", email);
-        const userSnap = await getDoc(userRef);
-        
-        if(userSnap.exists()) {
-            const userData = userSnap.data();
-            if(userData.misionActiva) {
-                await addDoc(collection(db, "misiones_pasadas"), {
-                    soldado: userData.nombre,
-                    rango: userData.rango,
-                    division: userData.division || 'EJÉRCITO',
-                    tipo: userData.misionActiva.tipo,
-                    detalle: userData.misionActiva.detalle,
-                    fechaInicio: userData.misionActiva.fecha,
-                    fechaFin: new Date().toLocaleDateString('es-CL'),
-                    timestamp: serverTimestamp()
-                });
-            }
-        }
-
-        await updateDoc(userRef, { misionActiva: null, estado: "ACTIVO" }); 
-        registrarLog("MISIÓN FINALIZADA", `Retiró de operación activa a ${email}.`); 
-        window.showToast("SOLDADO RETIRADO Y ARCHIVADO", "success"); 
-        cargarDatos(); 
-        cargarHistorialMisiones();
-    };
-    
-    window.procesarCambiosAdmin = async () => { 
-        window.playClick(); 
-        const email = document.getElementById("targetSoldier").value; 
-        const rango = document.getElementById("targetRank").value; 
-        const division = document.getElementById("targetDivision").value; 
-        const avion = document.getElementById("targetAeronave").value; 
-        const especialidad = document.getElementById("targetEspecialidad").value; 
-        
-        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
-        
-        const myRankIndex = window.isObserver ? -1 : RANGOS.indexOf(window.currentUserRank);
-        const targetRankIndex = RANGOS.indexOf(rango);
-
-        if (rango === "Administrador") {
-            if (!window.isAdmin && myRankIndex < RANGOS.indexOf("Coronel")) {
-                 return window.showToast("BLOQUEO: Solo Coronel+ puede asignar el rol Administrador.", "error");
-            }
-        } else if (window.currentUserRank !== "General en Jefe" && targetRankIndex >= myRankIndex) {
-            return window.showToast(`BLOQUEO: Tu rango (${window.currentUserRank}) solo permite ascender hasta ${RANGOS[myRankIndex - 1] || 'ningún rango'}.`, "error");
-        }
-        
-        await updateDoc(doc(db, "usuarios", email), { 
-            rango: rango, 
-            division: division, 
-            aeronave: avion === "SIN ASIGNAR" ? null : avion,
-            especialidad: especialidad
-        }); 
-        
-        registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango}, división ${division}, especialidad ${especialidad}.`); 
-        window.showToast("BASE DE DATOS ACTUALIZADA", "success"); 
-        cargarDatos(); 
-    };
-
-    let mapBaseSize = 1200; 
-    let currentMapZoom = 1;
-
-    window.zoomMapa = (amount) => {
-        window.playClick();
-        currentMapZoom += amount;
-        if (currentMapZoom < 0.4) currentMapZoom = 0.4; 
-        if (currentMapZoom > 4.0) currentMapZoom = 4.0; 
-        aplicarZoomMapa();
-    };
-
-    window.resetZoomMapa = () => {
-        window.playClick();
-        currentMapZoom = 1;
-        aplicarZoomMapa();
-    };
-
-    function aplicarZoomMapa() {
-        const mapa = document.getElementById("mapaEstrategico");
-        if (mapa) {
-            mapa.style.width = (mapBaseSize * currentMapZoom) + "px";
-            mapa.style.height = (mapBaseSize * currentMapZoom) + "px";
-        }
-    }
-
-    window.scrollMap = (dx, dy) => {
-        window.playHover();
-        const vp = document.getElementById('mapViewport');
-        if (vp) vp.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
-    };
-
-    function iniciarSyncMapa() {
-        onSnapshot(collection(db, "mapa_estrategico"), (snapshot) => {
-            const mapa = document.getElementById('mapaEstrategico');
-            if(!mapa) return;
-            
-            const oldMarkers = mapa.querySelectorAll('.map-marker');
-            oldMarkers.forEach(m => m.remove());
-
-            const docFrag = document.createDocumentFragment();
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const marker = document.createElement('div');
-                marker.className = 'map-marker';
-                marker.innerHTML = data.icon;
-                marker.style.left = data.x + '%';
-                marker.style.top = data.y + '%';
-                
-                marker.ondblclick = async () => {
-                    window.playHover();
-                    await deleteDoc(doc(db, "mapa_estrategico", docSnap.id));
-                };
-
-                docFrag.appendChild(marker);
-            });
-            mapa.appendChild(docFrag);
-        });
-    }
-
-    window.limpiarMapa = async () => {
-        window.playClick();
-        if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel") && !window.isObserver)) {
-            const mapRef = collection(db, "mapa_estrategico");
-            const snap = await getDocs(mapRef);
-            snap.forEach(async (docSnap) => {
-                await deleteDoc(doc(db, "mapa_estrategico", docSnap.id));
-            });
-            
-            const drawRef = collection(db, "mapa_dibujos");
-            const drawSnap = await getDocs(drawRef);
-            drawSnap.forEach(async (docSnap) => {
-                await deleteDoc(doc(db, "mapa_dibujos", docSnap.id));
-            });
-            
-            window.showToast("MAPA TÁCTICO Y PIZARRA LIMPIADOS", "success");
-            registrarLog("MAPA ESTRATÉGICO", "Limpió todos los marcadores y trazos del mapa.");
-        } else {
-            window.showToast("ACCESO DENEGADO. Rango insuficiente.", "error");
-        }
-    };
-
-    setTimeout(() => {
-        const mapa = document.getElementById('mapaEstrategico');
-        if(!mapa) return;
-        let iconToDrop = null;
-
-        document.querySelectorAll('.drag-icon').forEach(el => {
-            el.addEventListener('dragstart', (e) => {
-                iconToDrop = e.target.getAttribute('data-icon');
-                e.dataTransfer.effectAllowed = "copy";
-            });
-        });
-
-        mapa.addEventListener('dragover', (e) => {
-            e.preventDefault(); 
-            e.dataTransfer.dropEffect = "copy";
-        });
-
-        mapa.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            if (!iconToDrop) return;
-            window.playClick();
-            
-            const rect = mapa.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-            try {
-                await addDoc(collection(db, "mapa_estrategico"), {
-                    icon: iconToDrop,
-                    x: x,
-                    y: y,
-                    timestamp: serverTimestamp()
-                });
-            } catch(err) { window.showToast("Error al colocar marcador", "error"); }
-            
-            iconToDrop = null; 
-        });
-    }, 1000);
-
-    window.programarEntrenamiento = async () => {
-        window.playClick();
-        const fecha = document.getElementById("calFecha").value;
-        const hora = document.getElementById("calHora").value;
-        const tipo = document.getElementById("calTipo").value;
-
-        if(!fecha || !hora || !tipo) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error");
-
-        try {
-            await addDoc(collection(db, "entrenamientos"), { fecha: fecha, hora: hora, tipo: tipo, instructor: window.currentUserName, timestamp: serverTimestamp() });
-            registrarLog("ENTRENAMIENTO", `Programó un entrenamiento de ${tipo} para el ${fecha} a las ${hora}.`);
-            window.showToast("ENTRENAMIENTO PROGRAMADO", "success");
-            document.getElementById("calFecha").value = "";
-            document.getElementById("calHora").value = "";
-            cargarCalendario();
-        } catch(e) { window.showToast("ERROR AL PROGRAMAR", "error"); }
-    };
-
-    async function cargarCalendario() {
-        const q = query(collection(db, "entrenamientos"), orderBy("fecha", "asc"));
-        const snap = await getDocs(q);
-        let htmlStr = ""; let count = 0;
-
-        snap.forEach(docSnap => {
-            count++;
-            const d = docSnap.data();
-            let btnEliminar = "";
-            if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver)) {
-                btnEliminar = `<button onclick="eliminarEntrenamiento('${docSnap.id}')" style="background:rgba(218,41,28,0.1); border:1px solid var(--danger-red); color:var(--danger-red); padding:8px 12px; border-radius:4px; cursor:pointer; font-family:'Share Tech Mono'; margin-top:15px; width: 100%; transition:0.2s;" onmouseover="this.style.background='var(--danger-red)'; this.style.color='#000';" onmouseout="this.style.background='rgba(218,41,28,0.1)'; this.style.color='var(--danger-red)';">CANCELAR ENTRENAMIENTO</button>`;
-            }
-
-            htmlStr += `
-                <div class="glass-panel slide-up" style="padding: 20px; border-left: 4px solid var(--theme-color);">
-                    <div style="font-size: 18px; color: white; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px;">${d.tipo.toUpperCase()}</div>
-                    <div style="color: var(--alert-amber); font-size: 14px; font-family: 'Share Tech Mono', monospace; margin-bottom: 12px;">
-                        <span>🗓️ ${d.fecha}</span> &nbsp;|&nbsp; <span>⏰ ${d.hora} HRS</span>
-                    </div>
-                    <div style="font-size: 12px; color: #aaa; border-top: 1px dashed var(--glass-border); padding-top: 10px;">
-                        SUPERVISOR: <span style="color:var(--theme-color); font-weight:bold;">${d.instructor.toUpperCase()}</span>
-                    </div>
-                    ${btnEliminar}
-                </div>
-            `;
-        });
-        
-        document.getElementById("listaCalendario").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center; grid-column: 1 / -1;'>No hay entrenamientos programados para las próximas fechas.</div>" : htmlStr;
-    }
-
-    window.eliminarEntrenamiento = async (id) => {
-        window.playClick();
-        try {
-            await deleteDoc(doc(db, "entrenamientos", id));
-            window.showToast("ENTRENAMIENTO CANCELADO", "success");
-            registrarLog("ENTRENAMIENTO", "Canceló un entrenamiento programado.");
-            cargarCalendario();
-        } catch(e) { window.showToast("ERROR AL CANCELAR", "error"); }
-    };
-
     async function cargarLogsVisual() { 
         let htmlStr = ""; 
         window.cachedLogs.forEach(d => { 

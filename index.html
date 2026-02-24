@@ -86,7 +86,7 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px;}
         
-        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones, #seccionHVT { display: none; }
+        #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones { display: none; }
         
         .section-title { margin-top: 0; color: white; font-weight: 700; letter-spacing: 2px; font-size: 24px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
 
@@ -268,7 +268,6 @@
 
     <div class="top-bar glass-panel" style="border-radius: 0; height: 60px; min-height: 60px; border-bottom: 1px solid var(--glass-border); background: rgba(8, 12, 18, 0.9); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; z-index: 20; box-shadow: 0 5px 20px rgba(0,0,0,0.5); margin-top: 4px;">
         <div style="font-family: 'Share Tech Mono'; color: var(--alert-amber); font-size: 13px; border: 1px solid var(--alert-amber); padding: 6px 12px; background: rgba(255, 180, 0, 0.1); border-radius: 4px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255,180,0,0.2);">IP: mtasa://45.236.90.25:26101</div>
-        
         <div style="text-align: center;">
             <div style="font-size: 22px; font-weight: bold; letter-spacing: 4px; color: white; text-shadow: 0 0 15px var(--theme-color);">🇨🇱 EJÉRCITO DE CHILE RP 🇨🇱</div>
             <div style="font-size: 10px; color: #aaa; letter-spacing: 2px; margin-top: -2px; font-family: 'Share Tech Mono';">"POR LA RAZÓN O LA FUERZA"</div>
@@ -425,7 +424,7 @@
             
             <div class="menu-category">PANEL CENTRAL</div>
             <div class="menu-item active" id="btnPersonal" onclick="switchTab('personal')" onmouseenter="playHover()"><span>📋</span> Personal Táctico</div>
-            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Gestor de Escuadrones</div>
+            <div class="menu-item" id="btnEscuadrones" onclick="switchTab('escuadrones')" onmouseenter="playHover()"><span>🧩</span> Escuadrones (Drag & Drop)</div>
             <div class="menu-item" id="btnSolicitudes" onclick="switchTab('solicitudes')" onmouseenter="playHover()"><span>📝</span> Solicitudes</div>
             <div class="menu-item" id="btnMapa" onclick="switchTab('mapa')" onmouseenter="playHover()"><span>🗺️</span> Mapa Estratégico</div>
             <div class="menu-item" id="btnEstadisticas" onclick="switchTab('estadisticas')" onmouseenter="playHover()"><span>📊</span> Estadísticas</div>
@@ -441,7 +440,6 @@
             
             <div class="menu-category">COMANDO SUPERIOR</div>
             <div class="menu-item" id="btnDocumentos" onclick="switchTab('documentos')" onmouseenter="playHover()"><span>🗃️</span> Inteligencia y Docs</div>
-            <div class="menu-item" id="btnHVT" onclick="switchTab('hvt')" onmouseenter="playHover()"><span>🎯</span> Inteligencia H.V.T.</div>
             <div class="menu-item" id="btnAsuntosInternos" onclick="switchTab('asuntos')" onmouseenter="playHover()"><span>🕵️</span> Asuntos Internos</div>
             <div class="menu-item menu-hidden" id="btnReclutamiento" onclick="switchTab('reclutamiento')" onmouseenter="playHover()"><span>📝</span> Reclutamiento</div>
 
@@ -462,7 +460,7 @@
                 
                 <p style="color: white; font-weight: bold; margin: 20px 0 10px; font-size: 14px;">MODIFICACIÓN DE EXPEDIENTES Y ACTIVOS</p>
                 <div class="admin-grid">
-                    <select id="targetSoldier" class="auth-input" style="margin:0;" onchange="actualizarFormularioAdmin()"></select>
+                    <select id="targetSoldier" class="auth-input" style="margin:0;"></select>
                     <select id="targetRank" class="auth-input" style="margin:0;"></select>
                     <select id="targetDivision" class="auth-input" style="margin:0;">
                         <option value="EJÉRCITO">EJÉRCITO</option>
@@ -477,7 +475,7 @@
                         <option value="Artillería de apoyo">Artillería de apoyo</option>
                         <option value="Fuerzas especiales">Fuerzas especiales</option>
                     </select>
-                    <select id="targetAeronave" class="auth-input" style="margin:0;"></select>
+                    <select id="targetAeronave" class="auth-input" id="listaDesplegableAeronaves" style="margin:0;"></select>
                     <button onclick="procesarCambiosAdmin()" class="btn-tactical" style="background: var(--admin-blue); color: black; border:none;">ACTUALIZAR</button>
                 </div>
                 
@@ -579,28 +577,6 @@
                 </div>
             </div>
             
-            <div id="seccionHVT">
-                <h2 class="section-title"><span>🎯</span> H.V.T. (HIGH VALUE TARGETS)</h2>
-                <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">BASE DE DATOS DE INTELIGENCIA HOSTIL Y MÁS BUSCADOS</p>
-                
-                <div class="glass-panel" id="panelAdminHVT" style="padding: 25px; border-color: var(--danger-red); margin-bottom: 30px; display: none;">
-                    <h4 style="margin-top:0; color:var(--danger-red); font-size:16px;">REGISTRAR NUEVO OBJETIVO H.V.T.</h4>
-                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-                        <input type="text" id="hvtNombre" class="auth-input" placeholder="NOMBRE / ALIAS DEL OBJETIVO" style="margin:0;">
-                        <input type="text" id="hvtFaccion" class="auth-input" placeholder="FACCIÓN / ORGANIZACIÓN" style="margin:0;">
-                        <select id="hvtAmenaza" class="auth-input" style="margin:0;">
-                            <option value="Extrema">Nivel de Amenaza: EXTREMA</option>
-                            <option value="Alta">Nivel de Amenaza: ALTA</option>
-                            <option value="Moderada">Nivel de Amenaza: MODERADA</option>
-                        </select>
-                    </div>
-                    <textarea id="hvtNotas" class="auth-input" rows="2" placeholder="Delitos, historial y notas de inteligencia..." style="margin: 15px 0;"></textarea>
-                    <button onclick="registrarHVT()" class="btn-tactical" style="background: rgba(218,41,28,0.1); border-color: var(--danger-red); color: var(--danger-red); width: 100%;">INGRESAR A LISTA DE MÁS BUSCADOS</button>
-                </div>
-
-                <div id="listaHVT" class="responsive-grid"></div>
-            </div>
-
             <div id="seccionRadiogramas">
                 <h2 class="section-title"><span>✉️</span> RADIOGRAMAS ENCRIPTADOS (BANDEJA DE ENTRADA)</h2>
                 <p style="color: #888; font-size: 13px; margin-bottom: 25px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">SISTEMA P2P DE COMUNICACIÓN DIRECTA Y CLASIFICADA</p>
@@ -745,12 +721,10 @@
                         </div>
 
                         <div id="mapViewport" style="flex: 1; overflow: auto; background: #020406; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative;" class="fade-in">
-                            <div style="min-width: 100%; min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box;">
-                                <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; transition: width 0.3s ease, height 0.3s ease;">
-                                    <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
-                                    <canvas id="mapCanvas" width="1200" height="1200" style="position: absolute; inset: 0; z-index: 8; pointer-events: none; width: 100%; height: 100%;"></canvas>
-                                    <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; opacity: 0; transition: 1s ease;"></div>
-                                </div>
+                            <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
+                                <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
+                                <canvas id="mapCanvas" width="1200" height="1200" style="position: absolute; inset: 0; z-index: 8; pointer-events: none;"></canvas>
+                                <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; opacity: 0; transition: 1s ease;"></div>
                             </div>
                         </div>
 
@@ -895,19 +869,6 @@
 
     const RANGOS = ["Cabo 2°", "Cabo 1°", "Sargento 2°", "Sargento 1°", "Suboficial", "Suboficial Mayor", "Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
     const OFICIALES = ["Subteniente", "Teniente", "Capitán", "Mayor", "Teniente Coronel", "Coronel", "General de Brigada", "General de División", "General en Jefe"];
-
-    window.avionesNombres = [
-        "F-22 Raptor 1: Spectre",
-        "F-22 Raptor 2: Wraith",
-        "F-22 Raptor 3: Phantom",
-        "F-22 Raptor 4: Eclipse",
-        "F-22 Raptor 5: Revenant",
-        "F-16 Viper: Viper Zero",
-        "C-130 Hércules",
-        "UH-60 Black Hawk",
-        "CH-47 Chinook",
-        "AH-1 Cobra"
-    ];
 
     const FLOTA_AEREA = [
         { id: "F-22 Raptor", cant: 5, img: "f22.jpg" },
@@ -1110,44 +1071,6 @@
     window.cerrarAdminAuth = () => { window.playClick(); document.getElementById("modalAdminAuth").style.display = "none"; };
     window.verificarAdminAuth = () => { window.playClick(); if(document.getElementById("adminPassInput").value === "CHILE2026") { document.getElementById("modalAdminAuth").style.display = "none"; document.getElementById("adminTools").style.display = "block"; window.showToast("AUTENTICACIÓN EXITOSA. Protocolos desbloqueados.", "success"); } else { window.showToast("CÓDIGO DE AUTORIDAD INVÁLIDO.", "error"); } };
 
-    // ACTUALIZACIÓN DE FORMULARIO ADMIN (ASIGNACIÓN DINÁMICA DE AERONAVES)
-    window.actualizarFormularioAdmin = () => {
-        const email = document.getElementById("targetSoldier").value;
-        if (email && windowUsersData[email]) {
-            const u = windowUsersData[email];
-            document.getElementById("targetRank").value = u.rango || "Cabo 2°";
-            document.getElementById("targetDivision").value = u.division || "EJÉRCITO";
-            document.getElementById("targetEspecialidad").value = u.especialidad || "Infantería";
-        }
-        
-        let assignedAeronaves = {}; 
-        for (let e in windowUsersData) {
-            let avion = windowUsersData[e].aeronave;
-            if (avion && avion !== "SIN ASIGNAR") {
-                assignedAeronaves[avion] = windowUsersData[e].nombre;
-            }
-        }
-
-        let html = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>`;
-        window.avionesNombres.forEach(n => {
-            if (assignedAeronaves[n] && (!email || windowUsersData[email]?.aeronave !== n)) {
-                html += `<option value="${n}" disabled>⛔ ${n} [Ocupado por ${assignedAeronaves[n].toUpperCase()}]</option>`;
-            } else {
-                html += `<option value="${n}">${n}</option>`;
-            }
-        });
-        
-        const selectAvion = document.getElementById("targetAeronave");
-        if(selectAvion) {
-            selectAvion.innerHTML = html;
-            if (email && windowUsersData[email] && windowUsersData[email].aeronave) {
-                selectAvion.value = windowUsersData[email].aeronave;
-            } else {
-                selectAvion.value = "SIN ASIGNAR";
-            }
-        }
-    };
-
     window.enviarSolicitud = async () => {
         window.playClick();
         const tipo = document.getElementById("solTipo").value;
@@ -1202,103 +1125,6 @@
             document.getElementById("p_radiograma_container").firstElementChild.style.display = "block";
         } catch(e) { window.showToast("ERROR EN TRANSMISIÓN", "error"); }
     };
-
-    window.registrarHVT = async () => {
-        window.playClick();
-        const nombre = document.getElementById("hvtNombre").value;
-        const faccion = document.getElementById("hvtFaccion").value;
-        const amenaza = document.getElementById("hvtAmenaza").value;
-        const notas = document.getElementById("hvtNotas").value;
-
-        if(!nombre || !faccion) return window.showToast("NOMBRE Y FACCIÓN SON OBLIGATORIOS", "error");
-
-        try {
-            await addDoc(collection(db, "objetivos_hvt"), {
-                nombre: nombre, faccion: faccion, amenaza: amenaza, notas: notas,
-                estado: "Prófugo", capturadoPor: null,
-                registradoPor: window.currentUserName,
-                fecha: new Date().toLocaleString('es-CL'),
-                timestamp: serverTimestamp()
-            });
-            registrarLog("INTELIGENCIA", `Añadió a ${nombre} a la lista H.V.T. (Amenaza ${amenaza}).`);
-            window.showToast("OBJETIVO H.V.T. REGISTRADO", "success");
-            document.getElementById("hvtNombre").value = "";
-            document.getElementById("hvtFaccion").value = "";
-            document.getElementById("hvtNotas").value = "";
-            cargarHVT();
-        } catch(e) { window.showToast("ERROR AL REGISTRAR H.V.T.", "error"); }
-    };
-
-    window.actualizarEstadoHVT = async (id, estado, nombre) => {
-        window.playClick();
-        try {
-            await updateDoc(doc(db, "objetivos_hvt", id), {
-                estado: estado,
-                capturadoPor: window.currentUserName
-            });
-            registrarLog("OPERACIÓN H.V.T.", `El objetivo ${nombre} fue marcado como ${estado.toUpperCase()}.`);
-            window.showToast(`OBJETIVO ${estado.toUpperCase()}`, "success");
-            cargarHVT();
-        } catch(e) { window.showToast("ERROR AL ACTUALIZAR ESTADO", "error"); }
-    };
-
-    async function cargarHVT() {
-        const elHVT = document.getElementById("listaHVT");
-        if(!elHVT) return;
-        
-        const q = query(collection(db, "objetivos_hvt"), orderBy("timestamp", "desc"));
-        const snap = await getDocs(q);
-        let htmlStr = "";
-        let count = 0;
-        
-        const isAltoMando = window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver);
-
-        snap.forEach(docSnap => {
-            count++;
-            const d = docSnap.data();
-            
-            let colorAmenaza = d.amenaza === "Extrema" ? "var(--danger-red)" : (d.amenaza === "Alta" ? "var(--alert-amber)" : "var(--theme-color)");
-            let colorEstado = d.estado === "Prófugo" ? "var(--danger-red)" : (d.estado === "Capturado" ? "#4df24d" : "#888");
-            let imgSilueta = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
-            
-            let btnAcciones = "";
-            if (isAltoMando && d.estado === "Prófugo") {
-                btnAcciones = `
-                    <div style="display:flex; gap:10px; margin-top:15px;">
-                        <button onclick="actualizarEstadoHVT('${docSnap.id}', 'Capturado', '${d.nombre}')" class="btn-tactical" style="flex:1; font-size:10px; padding:6px; border-color:#4df24d; color:#4df24d; background:rgba(77,242,77,0.1);">MARCAR CAPTURADO</button>
-                        <button onclick="actualizarEstadoHVT('${docSnap.id}', 'Abatido', '${d.nombre}')" class="btn-tactical" style="flex:1; font-size:10px; padding:6px; border-color:#888; color:#888; background:rgba(255,255,255,0.05);">MARCAR ABATIDO</button>
-                    </div>
-                `;
-            }
-
-            let opacity = d.estado !== "Prófugo" ? "0.6" : "1";
-            let grayscale = d.estado === "Abatido" ? "grayscale(100%)" : "none";
-
-            htmlStr += `
-                <div class="glass-panel slide-up" style="border-top: 4px solid ${colorAmenaza}; opacity: ${opacity}; filter: ${grayscale}; position: relative; overflow:hidden;">
-                    <div style="position: absolute; top: 15px; right: -30px; background: ${colorEstado}; color: #000; font-weight: bold; font-size: 10px; padding: 5px 30px; transform: rotate(45deg); letter-spacing: 2px; z-index: 10;">${d.estado.toUpperCase()}</div>
-                    
-                    <div style="padding: 20px;">
-                        <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
-                            <div style="width: 70px; height: 70px; background: url('${imgSilueta}') center/cover; border: 2px solid ${colorAmenaza}; border-radius: 4px; box-shadow: 0 0 10px ${colorAmenaza};"></div>
-                            <div>
-                                <div style="font-size: 10px; color: ${colorAmenaza}; letter-spacing: 2px; font-weight: bold;">AMENAZA ${d.amenaza.toUpperCase()}</div>
-                                <div style="font-size: 20px; color: white; font-weight: bold; letter-spacing: 1px; margin: 2px 0;">${d.nombre.toUpperCase()}</div>
-                                <div style="font-size: 12px; color: #aaa; font-family: 'Share Tech Mono';">FACCIÓN: ${d.faccion.toUpperCase()}</div>
-                            </div>
-                        </div>
-                        <div style="font-size: 12px; color: #ddd; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; border: 1px solid var(--glass-border); min-height: 50px;">
-                            ${d.notas}
-                        </div>
-                        ${d.capturadoPor ? `<div style="margin-top:10px; font-size:10px; color:var(--theme-color); font-family:'Share Tech Mono'; text-align:right;">[ RESOLUCIÓN POR: ${d.capturadoPor.toUpperCase()} ]</div>` : ''}
-                        ${btnAcciones}
-                    </div>
-                </div>
-            `;
-        });
-        
-        elHVT.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; grid-column:1/-1;'>No hay objetivos H.V.T. registrados en la base de datos de inteligencia.</div>" : htmlStr;
-    }
 
     async function cargarSolicitudes() {
         const q = query(collection(db, "solicitudes"), orderBy("timestamp", "desc"), limit(30));
@@ -1434,6 +1260,7 @@
                 if(unread > 0) {
                     badge.style.display = "inline-block";
                     badge.innerText = `[${unread} NUEVO]`;
+                    sndAlert.volume = 0.2; 
                 } else {
                     badge.style.display = "none";
                 }
@@ -1527,7 +1354,7 @@
 
     window.switchTab = (tab) => {
         window.playClick();
-        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes", "seccionAsuntosInternos", "seccionRadiogramas", "seccionEscuadrones", "seccionHVT"].forEach(id => {
+        ["seccionPersonal", "seccionEstadisticas", "seccionFach", "seccionMisiones", "seccionHangar", "seccionDocumentos", "seccionLogs", "seccionLicencias", "seccionReclutamiento", "seccionMapa", "seccionCalendario", "seccionComunicados", "seccionSolicitudes", "seccionAsuntosInternos", "seccionRadiogramas", "seccionEscuadrones"].forEach(id => {
             const el = document.getElementById(id); if(el) { el.style.display = 'none'; el.classList.remove('fade-in'); }
         });
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -1548,7 +1375,6 @@
         if(tab === 'calendario') { targetId = 'seccionCalendario'; btnId = 'btnCalendario'; }
         if(tab === 'asuntos') { targetId = 'seccionAsuntosInternos'; btnId = 'btnAsuntosInternos'; cargarDenuncias(); }
         if(tab === 'escuadrones') { targetId = 'seccionEscuadrones'; btnId = 'btnEscuadrones'; }
-        if(tab === 'hvt') { targetId = 'seccionHVT'; btnId = 'btnHVT'; cargarHVT(); }
         
         const targetEl = document.getElementById(targetId);
         if(targetEl) {
@@ -1610,7 +1436,6 @@
     window.toggleDrawMode = () => {
         window.playClick();
         isDrawingModeActive = !isDrawingModeActive;
-        
         const btn = document.getElementById("btnDrawToggle");
         const canvas = document.getElementById("mapCanvas");
         if(isDrawingModeActive) {
@@ -1715,6 +1540,7 @@
         });
     }
 
+    // DRAG AND DROP ESCUADRONES LOGICA
     window.allowDropSquad = (e) => { e.preventDefault(); };
     window.dragStartSquad = (e, email) => { e.dataTransfer.setData("email", email); };
     
@@ -1755,160 +1581,6 @@
         } catch(err) { window.showToast("ERROR AL ASIGNAR LÍDER", "error"); }
     };
 
-    // LOGICA CORREGIDA DEL ZOOM
-    window.currentMapZoom = 1;
-    let mapBaseSize = 1200; 
-
-    window.zoomMapa = (amount) => {
-        window.playClick();
-        window.currentMapZoom += amount;
-        if (window.currentMapZoom < 0.4) window.currentMapZoom = 0.4; 
-        if (window.currentMapZoom > 4.0) window.currentMapZoom = 4.0; 
-        aplicarZoomMapa();
-    };
-
-    window.resetZoomMapa = () => {
-        window.playClick();
-        window.currentMapZoom = 1;
-        aplicarZoomMapa();
-    };
-
-    function aplicarZoomMapa() {
-        const mapa = document.getElementById("mapaEstrategico");
-        if (mapa) {
-            mapa.style.width = (mapBaseSize * window.currentMapZoom) + "px";
-            mapa.style.height = (mapBaseSize * window.currentMapZoom) + "px";
-        }
-    }
-
-    window.scrollMap = (dx, dy) => {
-        window.playHover();
-        const vp = document.getElementById('mapViewport');
-        if (vp) vp.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
-    };
-
-    function iniciarSyncMapa() {
-        onSnapshot(collection(db, "mapa_estrategico"), (snapshot) => {
-            const mapa = document.getElementById('mapaEstrategico');
-            if(!mapa) return;
-            
-            const oldMarkers = mapa.querySelectorAll('.map-marker');
-            oldMarkers.forEach(m => m.remove());
-
-            const docFrag = document.createDocumentFragment();
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const marker = document.createElement('div');
-                marker.className = 'map-marker';
-                marker.innerHTML = data.icon;
-                marker.style.left = data.x + '%';
-                marker.style.top = data.y + '%';
-                
-                marker.ondblclick = async () => {
-                    window.playHover();
-                    await deleteDoc(doc(db, "mapa_estrategico", docSnap.id));
-                };
-
-                docFrag.appendChild(marker);
-            });
-            mapa.appendChild(docFrag);
-        });
-    }
-
-    window.limpiarMapa = async () => {
-        window.playClick();
-        if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel") && !window.isObserver)) {
-            const mapRef = collection(db, "mapa_estrategico");
-            const snap = await getDocs(mapRef);
-            snap.forEach(async (docSnap) => {
-                await deleteDoc(doc(db, "mapa_estrategico", docSnap.id));
-            });
-            
-            const drawRef = collection(db, "mapa_dibujos");
-            const drawSnap = await getDocs(drawRef);
-            drawSnap.forEach(async (docSnap) => {
-                await deleteDoc(doc(db, "mapa_dibujos", docSnap.id));
-            });
-            
-            window.showToast("MAPA TÁCTICO Y PIZARRA LIMPIADOS", "success");
-            registrarLog("MAPA ESTRATÉGICO", "Limpió todos los marcadores y trazos del mapa.");
-        } else {
-            window.showToast("ACCESO DENEGADO. Rango insuficiente.", "error");
-        }
-    };
-
-    setTimeout(() => {
-        const mapa = document.getElementById('mapaEstrategico');
-        if(!mapa) return;
-        let iconToDrop = null;
-
-        document.querySelectorAll('.drag-icon').forEach(el => {
-            el.addEventListener('dragstart', (e) => {
-                iconToDrop = e.target.getAttribute('data-icon');
-                e.dataTransfer.effectAllowed = "copy";
-            });
-        });
-
-        mapa.addEventListener('dragover', (e) => {
-            e.preventDefault(); 
-            e.dataTransfer.dropEffect = "copy";
-        });
-
-        mapa.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            if (!iconToDrop) return;
-            window.playClick();
-            
-            const rect = mapa.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-            try {
-                await addDoc(collection(db, "mapa_estrategico"), {
-                    icon: iconToDrop,
-                    x: x,
-                    y: y,
-                    timestamp: serverTimestamp()
-                });
-            } catch(err) { window.showToast("Error al colocar marcador", "error"); }
-            
-            iconToDrop = null; 
-        });
-    }, 1000);
-
-    window.procesarCambiosAdmin = async () => { 
-        window.playClick(); 
-        const email = document.getElementById("targetSoldier").value; 
-        const rango = document.getElementById("targetRank").value; 
-        const division = document.getElementById("targetDivision").value; 
-        const avion = document.getElementById("targetAeronave").value; 
-        const especialidad = document.getElementById("targetEspecialidad").value; 
-        
-        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error"); 
-        
-        const myRankIndex = window.isObserver ? -1 : RANGOS.indexOf(window.currentUserRank);
-        const targetRankIndex = RANGOS.indexOf(rango);
-
-        if (rango === "Administrador") {
-            if (!window.isAdmin && myRankIndex < RANGOS.indexOf("Coronel")) {
-                 return window.showToast("BLOQUEO: Solo Coronel+ puede asignar el rol Administrador.", "error");
-            }
-        } else if (window.currentUserRank !== "General en Jefe" && targetRankIndex >= myRankIndex) {
-            return window.showToast(`BLOQUEO: Tu rango (${window.currentUserRank}) solo permite ascender hasta ${RANGOS[myRankIndex - 1] || 'ningún rango'}.`, "error");
-        }
-        
-        await updateDoc(doc(db, "usuarios", email), { 
-            rango: rango, 
-            division: division, 
-            aeronave: avion === "SIN ASIGNAR" ? null : avion,
-            especialidad: especialidad
-        }); 
-        
-        registrarLog("EXPEDIENTE MODIFICADO", `Actualizó a ${email} al rango ${rango}, división ${division}, especialidad ${especialidad}.`); 
-        window.showToast("BASE DE DATOS ACTUALIZADA", "success"); 
-        cargarDatos(); 
-    };
-
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             sndStartup.play().catch(()=>{});
@@ -1937,6 +1609,8 @@
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 if(data.notasPersonales) document.getElementById("textoNotas").value = data.notasPersonales;
                 
+                document.getElementById("targetAeronave").innerHTML = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>` + FLOTA_AEREA.map(n => `<option value="${n.id}">${n.id}</option>`).join("");
+                
                 if (window.isAdmin) {
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
                 }
@@ -1953,10 +1627,7 @@
                 }
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) > RANGOS.indexOf("Subteniente") && !window.isObserver)) {
-                    const pDoc = document.getElementById("panelSubirDoc");
-                    if(pDoc) pDoc.style.display = "block";
-                    const pHVT = document.getElementById("panelAdminHVT");
-                    if(pHVT) pHVT.style.display = "block";
+                    document.getElementById("panelSubirDoc").style.display = "block";
                 }
 
                 if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel") && !window.isObserver)) {
@@ -1968,7 +1639,7 @@
                     document.getElementById("drawingTools").style.display = "flex";
                 }
                 
-                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); cargarHVT(); if(window.isAdmin) cargarLogsVisual();
+                cargarLogsBase(); cargarDatos(); cargarDocumentos(); cargarHangar(); cargarCalendario(); cargarComunicados(); cargarSolicitudes(); cargarHistorialMisiones(); cargarDenuncias(); if(window.isAdmin) cargarLogsVisual();
                 
                 iniciarSyncMapa();
                 inicializarPizarra();
@@ -1979,64 +1650,508 @@
         } else { document.getElementById("loginScreen").style.display = "flex"; }
     });
 
-    window.programarEntrenamiento = async () => {
-        window.playClick();
-        const fecha = document.getElementById("calFecha").value;
-        const hora = document.getElementById("calHora").value;
-        const tipo = document.getElementById("calTipo").value;
+    window.updateMyStatus = async () => { if(!window.currentUserEmail) return; await updateDoc(doc(db, "usuarios", window.currentUserEmail), { estado: document.getElementById("myStatus").value }); cargarDatos(); };
+    async function registrarLog(accion, detalle) { try { await addDoc(collection(db, "logs"), { accion: accion, detalle: detalle, autor: window.currentUserName, fechaFormato: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); cargarLogsBase(); if(window.isAdmin) cargarLogsVisual(); } catch(e) {} }
+    async function cargarLogsBase() { const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(100)); const snap = await getDocs(q); window.cachedLogs = []; snap.forEach(docSnap => { window.cachedLogs.push(docSnap.data()); }); }
 
-        if(!fecha || !hora || !tipo) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error");
-
+    async function cargarDatos() {
         try {
-            await addDoc(collection(db, "entrenamientos"), { fecha: fecha, hora: hora, tipo: tipo, instructor: window.currentUserName, timestamp: serverTimestamp() });
-            registrarLog("ENTRENAMIENTO", `Programó un entrenamiento de ${tipo} para el ${fecha} a las ${hora}.`);
-            window.showToast("ENTRENAMIENTO PROGRAMADO", "success");
-            document.getElementById("calFecha").value = "";
-            document.getElementById("calHora").value = "";
-            cargarCalendario();
-        } catch(e) { window.showToast("ERROR AL PROGRAMAR", "error"); }
-    };
+            const snap = await getDocs(collection(db, "usuarios"));
+            
+            let strPer = "", strLic = "", strCom = "", strIns = "", strCad = "", strMis = "";
+            let strSelS = '<option value="">SELECCIONAR...</option>';
+            let strSelMis = '<option value="">SELECCIONAR...</option>';
+            let strSelLic = '<option value="">SELECCIONAR SOLDADO...</option>';
+            let strSelSanc = '<option value="">SELECCIONAR SOLDADO PARA SANCIÓN...</option>';
+            let strSelEval = '<option value="">SELECCIONAR SOLDADO...</option>';
 
-    async function cargarCalendario() {
-        const q = query(collection(db, "entrenamientos"), orderBy("fecha", "asc"));
+            const myRankIndex = window.isObserver ? -1 : RANGOS.indexOf(window.currentUserRank);
+            let allowedRanks = RANGOS;
+            if (window.currentUserRank !== "General en Jefe" && myRankIndex > 0) {
+                allowedRanks = RANGOS.slice(0, myRankIndex);
+            } else if (myRankIndex === 0 && window.currentUserRank !== "General en Jefe") {
+                allowedRanks = [RANGOS[0]]; 
+            }
+            
+            let allowedRanksHtml = allowedRanks.map(r => `<option value="${r}">${r}</option>`).join("");
+            if (window.isAdmin || (myRankIndex >= RANGOS.indexOf("Coronel") && !window.isObserver)) {
+                allowedRanksHtml += `<option value="Administrador" style="color:var(--admin-neon); font-weight:bold;">Administrador (Observador)</option>`;
+            }
+            document.getElementById("targetRank").innerHTML = allowedRanksHtml;
+            
+            windowUsersData = {};
+            let totalSoldadosCount = 0; let totalOficialesCount = 0; let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
+            
+            let sq = { base: "", alpha: "", bravo: "", especial: "" };
+            let isAltoMandoSquad = window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver);
+
+            snap.forEach(docSnap => {
+                try {
+                    const d = docSnap.data(); const email = docSnap.id;
+                    windowUsersData[email] = d;
+                    
+                    const nombreSeguro = d.nombre ? d.nombre.toUpperCase() : "SOLDADO DESCONOCIDO";
+                    const rangoSeguro = d.rango ? d.rango : "Cabo 2°";
+                    const divUpper = (d.division || 'EJÉRCITO').toUpperCase();
+                    const aeronaveSafe = d.aeronave || "SIN ASIGNAR";
+                    const estadoSeguro = d.estado || "ACTIVO";
+                    const especialidadSegura = d.especialidad || "Infantería"; 
+                    
+                    const cTiro = d.calTiro || "Básico";
+                    const cFis = d.calFisico || "Regular";
+                    const cPsi = d.calPsico || "Observación";
+                    
+                    let isRolAdmin = rangoSeguro === "Administrador";
+
+                    totalSoldadosCount++;
+                    if (OFICIALES.includes(rangoSeguro) || isRolAdmin) totalOficialesCount++;
+                    
+                    const optionHTML = `<option value="${email}">${nombreSeguro}</option>`;
+                    strSelS += optionHTML; strSelMis += optionHTML; strSelLic += optionHTML; strSelSanc += optionHTML; strSelEval += optionHTML;
+
+                    let divColor = "var(--theme-color)"; 
+                    let panelClass = "glass-panel slide-up";
+                    let titleColor = "white";
+                    let textShadow = "none";
+                    let borderFoto = "var(--theme-dim)";
+
+                    if (isRolAdmin) {
+                        panelClass += " mando-admin-glow";
+                        divColor = "var(--admin-neon)";
+                        titleColor = "var(--admin-neon)";
+                        textShadow = "0 0 10px var(--admin-neon)";
+                        borderFoto = "var(--admin-neon)";
+                    } else {
+                        if (divUpper === "EJÉRCITO") { panelClass += " glow-ejercito"; divColor = "var(--ejercito-color)"; borderFoto = "var(--ejercito-color)"; }
+                        else if (divUpper === "ARMADA") { panelClass += " glow-armada"; divColor = "var(--armada-color)"; borderFoto = "var(--armada-color)"; }
+                        else if (divUpper === "FACH") { panelClass += " glow-fach"; divColor = "var(--fach-color)"; borderFoto = "var(--fach-color)"; }
+                        else if (divUpper === "BOE") { panelClass += " glow-boe"; divColor = "var(--boe-color)"; borderFoto = "var(--boe-color)"; }
+                    }
+
+                    let iconEstado = "🔴";
+                    if (estadoSeguro === "ACTIVO" || estadoSeguro === "Online") iconEstado = "🟢";
+                    else if (estadoSeguro === "EN BASE") iconEstado = "🟡";
+                    else if (estadoSeguro === "EN ENTRENAMIENTO") iconEstado = "🔵";
+                    else if (estadoSeguro === "EN OPERACIÓN" || estadoSeguro === "En misión") iconEstado = "🟠";
+
+                    // GESTIÓN DE ESCUADRONES HTML
+                    if(!isRolAdmin) {
+                        let targetSq = d.escuadron || "base";
+                        if(!sq.hasOwnProperty(targetSq)) targetSq = "base";
+                        
+                        let leaderBtn = "";
+                        if (targetSq !== "base" && isAltoMandoSquad) {
+                            leaderBtn = `<button onclick="setSquadLeader('${email}', '${targetSq}')" style="background:transparent; border:none; color: ${d.liderEscuadron ? 'var(--alert-amber)' : '#555'}; cursor:pointer; font-size:16px; transition:0.2s; filter:drop-shadow(0 0 5px ${d.liderEscuadron ? 'rgba(255,180,0,0.5)' : 'transparent'});" title="Asignar Líder">⭐</button>`;
+                        } else if (d.liderEscuadron && targetSq !== "base") {
+                            leaderBtn = `<span style="color:var(--alert-amber); font-size:16px; filter:drop-shadow(0 0 5px rgba(255,180,0,0.5));" title="Líder de Escuadra">⭐</span>`;
+                        }
+                        
+                        let sqBorderClass = d.liderEscuadron && targetSq !== 'base' ? "squad-item is-leader slide-up" : "squad-item slide-up";
+                        
+                        sq[targetSq] += `
+                            <div class="${sqBorderClass}" draggable="${isAltoMandoSquad}" ondragstart="dragStartSquad(event, '${email}')">
+                                <div>
+                                    <div style="font-weight:bold; color:white; font-size:12px;">${nombreSeguro}</div>
+                                    <div style="font-size:10px; color:${divColor}; font-family:'Share Tech Mono';">${rangoSeguro.toUpperCase()}</div>
+                                </div>
+                                ${leaderBtn}
+                            </div>
+                        `;
+                    }
+
+                    const alertaSancion = (d.sanciones && d.sanciones.length > 0) ? `<div style="font-size:11px; color:var(--danger-red); margin-top:5px; font-weight:bold; background:rgba(218,41,28,0.1); padding:2px 6px; border-radius:3px; display:inline-block;">⚠️ ${d.sanciones.length} SANCIÓN(ES) ACTIVA(S)</div>` : '';
+                    const objMisionString = d.misionActiva ? encodeURIComponent(JSON.stringify(d.misionActiva)) : 'null';
+                    const fCrea = d.fechaCreacion || "01/01/2026";
+
+                    strPer += `
+                        <div class="${panelClass}" onmouseenter="playHover()" onclick="abrirPerfilCompleto('${email}', '${nombreSeguro}', '${rangoSeguro}', '${divUpper}', '${aeronaveSafe}', '${fCrea}', '${objMisionString}', '${especialidadSegura}', '${cTiro}', '${cFis}', '${cPsi}')" 
+                             style="padding: 20px; display: flex; gap: 20px; align-items: center; cursor:pointer;">
+                            <div style="width: 60px; height: 60px; background: url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover no-repeat; border-radius: 8px; border: 2px solid ${borderFoto}; box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
+                            <div>
+                                <div style="font-weight:bold; color:${titleColor}; text-shadow:${textShadow}; font-size:18px; letter-spacing:1px;">${iconEstado} ${nombreSeguro}</div>
+                                <div style="font-size:12px; color:${divColor}; margin-top:3px; letter-spacing:1px; font-family:'Share Tech Mono';">${rangoSeguro.toUpperCase()} // ${divUpper}</div>
+                                ${alertaSancion}
+                            </div>
+                        </div>`;
+
+                    const lic = d.licencias || {};
+                    const getLicBadge = (tipo, val) => {
+                        if(!val || val === "Ninguna") return '';
+                        const cssColor = val === 'Activa' ? '#4df24d' : (val === 'Suspendida' ? 'var(--alert-amber)' : 'var(--danger-red)');
+                        return `<span style="border: 1px solid ${cssColor}; color: ${cssColor}; background: rgba(0,0,0,0.5); padding: 3px 6px; border-radius: 4px; font-size:10px; margin-right:5px; display:inline-block; font-weight:bold;">${tipo.toUpperCase()}: ${val.toUpperCase()}</span>`;
+                    };
+                    const licHTML = (lic.piloto || lic.comando || lic.armamento) ? (getLicBadge("Piloto", lic.piloto) + getLicBadge("Comando", lic.comando) + getLicBadge("Armamento", lic.armamento)) : `<span style="color:#555; font-size:10px; font-style:italic;">SIN LICENCIAS ASIGNADAS</span>`;
+
+                    strLic += `
+                        <div class="glass-panel slide-up" style="padding: 20px;">
+                            <div style="margin-bottom:15px; border-bottom:1px solid var(--glass-border); padding-bottom:10px;"><strong style="color:white; font-size:18px; letter-spacing:1px;">${nombreSeguro}</strong> <span style="font-size:11px; color:var(--theme-color); font-family:'Share Tech Mono';">[${rangoSeguro}]</span></div>
+                            <div>${licHTML}</div>
+                        </div>`;
+
+                    if (divUpper === "FACH" && !isRolAdmin) {
+                        let cat = (rangoSeguro.includes("General") || rangoSeguro === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(rangoSeguro) ? "instructor" : "cadete");
+                        const itemHtml = `<div class="glass-panel slide-up" style="padding: 10px; margin-bottom: 10px; display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 10px; cursor:pointer;" onclick="document.getElementById('vPilot').innerText='${nombreSeguro}'; document.getElementById('vUnit').innerText='${aeronaveSafe}'; window.playClick();">
+                                          <div style="border-radius:6px; font-size:20px; background:rgba(0,0,0,0.5); border:1px solid var(--admin-blue); text-align:center; padding:5px;">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
+                                          <div><div style="color:var(--admin-blue); font-size:10px; font-weight:bold; font-family:'Share Tech Mono'; letter-spacing:1px;">[${aeronaveSafe}]</div><div style="font-size:13px; color:white; font-weight:bold;">${nombreSeguro}</div></div></div>`;
+                        if (cat === "comandante") strCom += itemHtml; else if (cat === "instructor") strIns += itemHtml; else strCad += itemHtml;
+                    }
+
+                    if(d.misionActiva && d.misionActiva.tipo && !isRolAdmin) {
+                        let mColor = d.misionActiva.tipo === "Combate" ? "var(--danger-red)" : (d.misionActiva.tipo === "Reconocimiento" ? "var(--admin-blue)" : "var(--theme-color)");
+                        strMis += `
+                            <div class="glass-panel slide-up" style="border-left: 4px solid ${mColor}; padding: 25px;">
+                                <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px;"><strong style="color: ${mColor}; font-size:22px; letter-spacing:1px;">OP: ${d.misionActiva.tipo.toUpperCase()}</strong><span style="font-size: 11px; color: white; background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px;">ASIGNADO: ${nombreSeguro}</span></div>
+                                <div style="color: #ddd; margin-top: 15px; font-size: 15px; line-height:1.6;">> OBJETIVO TÁCTICO:<br><span style="color:white; font-weight:bold;">${d.misionActiva.detalle || 'Sin detalles'}</span></div>
+                            </div>`;
+                    }
+                } catch (errLoop) { console.error("Error aislando perfil:", errLoop); }
+            });
+            
+            document.getElementById("listaSoldados").innerHTML = strPer;
+            document.getElementById("listaUsuariosLicencias").innerHTML = strLic;
+            document.getElementById("listaComandante").innerHTML = strCom;
+            document.getElementById("listaInstructor").innerHTML = strIns;
+            document.getElementById("listaCadete").innerHTML = strCad;
+            document.getElementById("listaMisiones").innerHTML = strMis === "" ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay operaciones activas en este momento.</div>" : strMis;
+            
+            document.getElementById("sq_base").innerHTML = sq.base;
+            document.getElementById("sq_alpha").innerHTML = sq.alpha;
+            document.getElementById("sq_bravo").innerHTML = sq.bravo;
+            document.getElementById("sq_especial").innerHTML = sq.especial;
+
+            document.getElementById("targetSoldier").innerHTML = strSelS;
+            document.getElementById("targetSoldadoMision").innerHTML = strSelMis;
+            document.getElementById("targetSoldadoLicencia").innerHTML = strSelLic;
+            document.getElementById("targetSoldadoSancion").innerHTML = strSelSanc;
+            document.getElementById("evalSoldado").innerHTML = strSelEval;
+
+            document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
+            document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
+            document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
+        } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
+    }
+
+    async function cargarHistorialMisiones() {
+        const q = query(collection(db, "misiones_pasadas"), orderBy("timestamp", "desc"), limit(20));
         const snap = await getDocs(q);
         let htmlStr = ""; let count = 0;
-
         snap.forEach(docSnap => {
             count++;
             const d = docSnap.data();
-            let btnEliminar = "";
-            if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Subteniente") && !window.isObserver)) {
-                btnEliminar = `<button onclick="eliminarEntrenamiento('${docSnap.id}')" style="background:rgba(218,41,28,0.1); border:1px solid var(--danger-red); color:var(--danger-red); padding:8px 12px; border-radius:4px; cursor:pointer; font-family:'Share Tech Mono'; margin-top:15px; width: 100%; transition:0.2s;" onmouseover="this.style.background='var(--danger-red)'; this.style.color='#000';" onmouseout="this.style.background='rgba(218,41,28,0.1)'; this.style.color='var(--danger-red)';">CANCELAR ENTRENAMIENTO</button>`;
-            }
-
             htmlStr += `
-                <div class="glass-panel slide-up" style="padding: 20px; border-left: 4px solid var(--theme-color);">
-                    <div style="font-size: 18px; color: white; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px;">${d.tipo.toUpperCase()}</div>
-                    <div style="color: var(--alert-amber); font-size: 14px; font-family: 'Share Tech Mono', monospace; margin-bottom: 12px;">
-                        <span>🗓️ ${d.fecha}</span> &nbsp;|&nbsp; <span>⏰ ${d.hora} HRS</span>
+                <div class="glass-panel slide-up" style="border-left: 4px solid #555; padding: 20px; opacity: 0.85;">
+                    <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+                        <strong style="color: #aaa; font-size:16px; letter-spacing:1px;">✔️ OP FINALIZADA: ${d.tipo.toUpperCase()}</strong>
+                        <span style="font-size: 10px; color: #888; font-family:'Share Tech Mono';">INICIO: ${d.fechaInicio} | FIN: ${d.fechaFin}</span>
                     </div>
-                    <div style="font-size: 12px; color: #aaa; border-top: 1px dashed var(--glass-border); padding-top: 10px;">
-                        SUPERVISOR: <span style="color:var(--theme-color); font-weight:bold;">${d.instructor.toUpperCase()}</span>
+                    <div style="color: #bbb; margin-top: 12px; font-size: 14px; line-height: 1.5;">
+                        <span style="color:var(--theme-color);">[AGENTE ASIGNADO]:</span> ${d.rango} ${d.soldado} (${d.division})<br>
+                        <span style="color:var(--alert-amber);">[REPORTE DE OBJETIVO]:</span> ${d.detalle}
                     </div>
-                    ${btnEliminar}
-                </div>
-            `;
+                </div>`;
         });
-        
-        document.getElementById("listaCalendario").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center; grid-column: 1 / -1;'>No hay entrenamientos programados para las próximas fechas.</div>" : htmlStr;
+        document.getElementById("listaHistorialMisiones").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>El archivo histórico de operaciones está vacío.</div>" : htmlStr;
     }
 
-    window.eliminarEntrenamiento = async (id) => {
+    function getColorTiro(v) { return v==="Experto"?"#4df24d":v==="Calificado"?"#ffb400":"#aaa"; }
+    function getColorFisico(v) { return v==="Excelente"?"#4df24d":v==="Buena"?"#ffb400":"#aaa"; }
+    function getColorPsico(v) { return v==="Apto"?"#4df24d":v==="Observación"?"#ffb400":"#da291c"; }
+
+    window.abrirPerfilCompleto = (email, nombre, rango, division, unidad, fCreacion, objMisionRaw, especialidad, cTiro, cFis, cPsi) => {
+        window.playClick(); 
+        
+        window.perfilActualEmail = email; // TRACKEO PARA EL RADIOGRAMA
+        
+        const isRolAdmin = (rango === "Administrador");
+        const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && email !== window.currentUserEmail && !window.isObserver;
+
+        document.getElementById("p_id").classList.remove("censurado-bar");
+        document.getElementById("p_unidad").classList.remove("censurado-bar");
+        document.getElementById("p_creacion").classList.remove("censurado-bar");
+        document.getElementById("p_mision").classList.remove("censurado-bar");
+        document.getElementById("p_tiro").classList.remove("censurado-bar");
+        document.getElementById("p_fisico").classList.remove("censurado-bar");
+        document.getElementById("p_psico").classList.remove("censurado-bar");
+        document.getElementById("p_foto").classList.remove("censurado-blur");
+        let selloExistente = document.getElementById("sello_clasificado");
+        if (selloExistente) selloExistente.remove();
+
+        document.getElementById("p_nombre").innerText = nombre;
+        document.getElementById("p_rango").innerText = rango;
+        document.getElementById("p_division").innerText = division || 'EJÉRCITO';
+
+        if (isRolAdmin) {
+            document.getElementById("p_nombre").style.color = "var(--admin-neon)";
+            document.getElementById("p_nombre").style.textShadow = "0 0 15px var(--admin-neon)";
+            document.getElementById("p_rango").style.color = "var(--admin-neon)";
+            document.getElementById("p_foto").style.borderColor = "var(--admin-neon)";
+            document.getElementById("p_foto").style.boxShadow = "0 0 20px rgba(182, 102, 255, 0.4)";
+        } else {
+            document.getElementById("p_nombre").style.color = "white";
+            document.getElementById("p_nombre").style.textShadow = "none";
+            document.getElementById("p_rango").style.color = "var(--alert-amber)";
+            
+            let bColor = "var(--theme-dim)";
+            if (division === "EJÉRCITO") bColor = "var(--ejercito-color)";
+            else if (division === "ARMADA") bColor = "var(--armada-color)";
+            else if (division === "FACH") bColor = "var(--fach-color)";
+            else if (division === "BOE") bColor = "var(--boe-color)";
+            
+            document.getElementById("p_foto").style.borderColor = bColor;
+            document.getElementById("p_foto").style.boxShadow = `0 10px 20px rgba(0,0,0,0.5)`;
+        }
+
+        let insigniasHTML = "";
+        const getOnClick = (desc) => `onclick="document.getElementById('p_insignia_desc').innerHTML = '<span style=\\'color:white;\\'>INFO:</span> ${desc}'; window.playClick();"`;
+
+        if(isRolAdmin) {
+            insigniasHTML += `<div class="insignia insignia-glow" style="color:var(--admin-neon); border-color:var(--admin-neon);" data-tooltip="Auditor de Inteligencia" ${getOnClick('Acceso total a la red clasificada. El portador de esta medalla no puede ser censurado ni restringido en la visualización de documentos o expedientes.')}>👁️</div>`;
+        } else {
+            insigniasHTML += `<div class="insignia insignia-float" style="color:var(--theme-color); border-color:var(--theme-color);" data-tooltip="Servicio Activo" ${getOnClick('Medalla base otorgada por pertenecer al servicio activo de las Fuerzas Armadas.')}>🎖️</div>`;
+            if(RANGOS.indexOf(rango) >= RANGOS.indexOf("Subteniente")) {
+                insigniasHTML += `<div class="insignia insignia-glow" style="color:var(--alert-amber); border-color:var(--alert-amber);" data-tooltip="Oficial al Mando" ${getOnClick('Insignia de Oficial. Otorga autoridad para dar órdenes tácticas y liderar tropas en terreno.')}>⭐</div>`;
+            }
+            if(especialidad === "Fuerzas especiales") {
+                insigniasHTML += `<div class="insignia insignia-spin" style="color:#b666ff; border-color:#b666ff;" data-tooltip="Operador B.O.E." ${getOnClick('Distintivo de las Fuerzas Especiales. Entrenado en guerra asimétrica y rescate táctico.')}>⚡</div>`;
+            }
+            if(especialidad === "Piloto") {
+                insigniasHTML += `<div class="insignia insignia-float" style="color:var(--admin-blue); border-color:var(--admin-blue);" data-tooltip="Alas de Piloto" ${getOnClick('Licencia de vuelo avanzada. Capacitado para operar aeronaves militares y combate aéreo.')}>🦅</div>`;
+            }
+            if(cTiro === "Experto") {
+                insigniasHTML += `<div class="insignia insignia-glow" style="color:#4df24d; border-color:#4df24d;" data-tooltip="Tirador Experto" ${getOnClick('Calificación máxima en el polígono de tiro. Precisión letal confirmada en combate.')}>🎯</div>`;
+            }
+        }
+        
+        document.getElementById("p_insignias").innerHTML = insigniasHTML;
+        const descBox = document.getElementById("p_insignia_desc");
+        if(descBox) descBox.innerHTML = "[ INFO. MEDALLA: ESPERANDO SELECCIÓN ]";
+        
+        // CONTROLES DE RADIOGRAMA
+        const btnRadio = document.getElementById("p_radiograma_container");
+        if(email !== window.currentUserEmail && !isRolAdmin) {
+            btnRadio.style.display = "block";
+            btnRadio.firstElementChild.style.display = "block";
+            document.getElementById("p_radiograma_form").style.display = "none";
+        } else {
+            btnRadio.style.display = "none";
+        }
+
+        if (isRestricted) {
+            document.getElementById("p_unidad").innerText = "█████████";
+            document.getElementById("p_unidad").classList.add("censurado-bar");
+            
+            document.getElementById("p_creacion").innerText = "██/██/████";
+            document.getElementById("p_creacion").classList.add("censurado-bar");
+            
+            document.getElementById("p_id").innerText = "CHL-██████-███";
+            document.getElementById("p_id").classList.add("censurado-bar");
+            
+            document.getElementById("p_mision").innerText = "[ INFO. CLASIFICADA ]";
+            document.getElementById("p_mision").style.color = "var(--danger-red)";
+            document.getElementById("p_mision").classList.add("censurado-bar");
+
+            document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`;
+            
+            document.getElementById("p_tiro").innerText = "████";
+            document.getElementById("p_tiro").style.color = "#050a0f";
+            document.getElementById("p_tiro").classList.add("censurado-bar");
+
+            document.getElementById("p_fisico").innerText = "████";
+            document.getElementById("p_fisico").style.color = "#050a0f";
+            document.getElementById("p_fisico").classList.add("censurado-bar");
+
+            document.getElementById("p_psico").innerText = "████";
+            document.getElementById("p_psico").style.color = "#050a0f";
+            document.getElementById("p_psico").classList.add("censurado-bar");
+
+            document.getElementById("p_foto").classList.add("censurado-blur");
+            document.getElementById("p_insignias").style.display = "none";
+            if(descBox) descBox.style.display = "none";
+            btnRadio.style.display = "none";
+            document.getElementById("p_foto").parentElement.insertAdjacentHTML('beforeend', '<div id="sello_clasificado" class="sello-clasificado">ACCESO RESTRINGIDO</div>');
+        } else {
+            document.getElementById("p_unidad").innerText = unidad;
+            document.getElementById("p_creacion").innerText = fCreacion;
+            document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
+            document.getElementById("p_insignias").style.display = "flex";
+            if(descBox) descBox.style.display = "flex";
+            
+            let misionTexto = isRolAdmin ? "MONITOREANDO LA RED" : "DISPONIBLE EN BASE"; 
+            let mColor = isRolAdmin ? "var(--admin-neon)" : "var(--theme-color)";
+            
+            if (objMisionRaw !== 'null' && objMisionRaw !== 'undefined' && !isRolAdmin) { 
+                try { 
+                    const m = JSON.parse(decodeURIComponent(objMisionRaw)); 
+                    misionTexto = `[EN OPERACIÓN: ${m.tipo.toUpperCase()}] ${m.detalle}`; mColor = "var(--alert-amber)";
+                } catch(e) {} 
+            }
+            document.getElementById("p_mision").innerText = misionTexto;
+            document.getElementById("p_mision").style.color = mColor;
+
+            let claseColor = "esp-default";
+            let icono = "🎖️";
+            if(especialidad === "Piloto") { claseColor = "esp-piloto"; icono = "✈️"; }
+            else if(especialidad === "Francotirador") { claseColor = "esp-francotirador"; icono = "🎯"; }
+            else if(especialidad === "Artillería de apoyo") { claseColor = "esp-artilleria"; icono = "💥"; }
+            else if(especialidad === "Infantería") { claseColor = "esp-infanteria"; icono = "🪖"; }
+            else if(especialidad === "Fuerzas especiales") { claseColor = "esp-fuerzas"; icono = "⚡"; }
+
+            document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
+
+            document.getElementById("p_tiro").innerText = cTiro.toUpperCase();
+            document.getElementById("p_tiro").style.color = getColorTiro(cTiro);
+
+            document.getElementById("p_fisico").innerText = cFis.toUpperCase();
+            document.getElementById("p_fisico").style.color = getColorFisico(cFis);
+
+            document.getElementById("p_psico").innerText = cPsi.toUpperCase();
+            document.getElementById("p_psico").style.color = getColorPsico(cPsi);
+        }
+
+        document.getElementById("perfilModal").style.display = "flex";
+    };
+    
+    window.cerrarPerfil = () => { window.playClick(); document.getElementById("perfilModal").style.display = "none"; };
+
+    window.guardarCalificacion = async () => {
         window.playClick();
-        try {
-            await deleteDoc(doc(db, "entrenamientos", id));
-            window.showToast("ENTRENAMIENTO CANCELADO", "success");
-            registrarLog("ENTRENAMIENTO", "Canceló un entrenamiento programado.");
-            cargarCalendario();
-        } catch(e) { window.showToast("ERROR AL CANCELAR", "error"); }
+        const email = document.getElementById("evalSoldado").value;
+        const tiro = document.getElementById("evalTiro").value;
+        const fisico = document.getElementById("evalFisico").value;
+        const psico = document.getElementById("evalPsico").value;
+
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO PARA EVALUAR", "error");
+
+        if (window.isAdmin || (RANGOS.indexOf(window.currentUserRank) >= RANGOS.indexOf("Teniente Coronel") && !window.isObserver)) {
+            try {
+                await updateDoc(doc(db, "usuarios", email), { calTiro: tiro, calFisico: fisico, calPsico: psico });
+                registrarLog("EVALUACIÓN DE PERSONAL", `Actualizó calificaciones de ${email}: Tiro [${tiro}], Físico [${fisico}], Psicológico [${psico}].`);
+                window.showToast("CALIFICACIONES ACTUALIZADAS", "success");
+                cargarDatos();
+            } catch(e) { window.showToast("ERROR AL GUARDAR", "error"); }
+        } else {
+            window.showToast("ACCESO DENEGADO. Rango insuficiente.", "error");
+        }
     };
 
+    window.actualizarLicencia = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoLicencia").value; const tipoLic = document.getElementById("tipoLicencia").value; const estadoLic = document.getElementById("estadoLicencia").value;
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO", "error");
+        
+        const currentLicencias = windowUsersData[email].licencias || {};
+        if(estadoLic === "Ninguna") delete currentLicencias[tipoLic]; else currentLicencias[tipoLic] = estadoLic;
+
+        try { await updateDoc(doc(db, "usuarios", email), { licencias: currentLicencias }); registrarLog("LICENCIA ACTUALIZADA", `Modificó licencia de ${tipoLic} a ${estadoLic} para ${email}.`); window.showToast("SISTEMA DE LICENCIAS ACTUALIZADO.", "success"); cargarDatos(); } 
+        catch(e) { window.showToast("ERROR AL ACTUALIZAR LICENCIA.", "error"); }
+    };
+
+    window.aplicarSancion = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoSancion").value; const tipo = document.getElementById("targetSancion").value; const motivo = document.getElementById("motivoSancion").value; const duracion = document.getElementById("duracionSancion").value;
+        if(!email || !motivo || !duracion) return window.showToast("COMPLETE TODOS LOS CAMPOS DE SANCIÓN", "error");
+
+        const nuevaSancion = { tipo: tipo, motivo: motivo, duracion: duracion, fecha: new Date().toLocaleDateString('es-CL'), sancionador: window.currentUserName };
+        try {
+            await updateDoc(doc(db, "usuarios", email), { sanciones: arrayUnion(nuevaSancion) });
+            registrarLog("SANCIÓN APLICADA", `Sancionó a ${email} (${tipo}) por: ${motivo}`);
+            window.showToast("SANCIÓN APLICADA A EXPEDIENTE", "success"); document.getElementById("motivoSancion").value = ""; document.getElementById("duracionSancion").value = ""; cargarDatos();
+        } catch(error) { window.showToast("ERROR AL APLICAR SANCIÓN", "error"); }
+    };
+
+    window.quitarSanciones = async () => {
+        window.playClick();
+        const email = document.getElementById("targetSoldadoSancion").value;
+        if(!email) return window.showToast("SELECCIONE UN SOLDADO DE LA LISTA", "error");
+        try { await updateDoc(doc(db, "usuarios", email), { sanciones: [] }); registrarLog("SANCIÓN REMOVIDA", `Limpió el expediente de sanciones disciplinarias de ${email}.`); window.showToast("EXPEDIENTE LIMPIADO SATISFACTORIAMENTE", "success"); cargarDatos(); } 
+        catch(e) { window.showToast("ERROR AL LIMPIAR EXPEDIENTE", "error"); }
+    };
+
+    window.registrarPostulante = async () => {
+        window.playClick();
+        const nombre = document.getElementById("recNombre").value; const division = document.getElementById("recDivision").value; const notas = document.getElementById("recNotas").value;
+        if(!nombre) return window.showToast("EL NOMBRE DEL POSTULANTE ES OBLIGATORIO.", "error");
+
+        try {
+            await addDoc(collection(db, "reclutamiento"), { nombre: nombre, division: division, notas: notas, estado: "Pendiente", fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() });
+            window.showToast("POSTULANTE REGISTRADO EN LA BASE DE DATOS.", "success"); document.getElementById("recNombre").value = ""; document.getElementById("recNotas").value = ""; cargarReclutamiento();
+        } catch(e) { window.showToast("ERROR AL REGISTRAR POSTULANTE.", "error"); }
+    };
+
+    async function cargarReclutamiento() {
+        const q = query(collection(db, "reclutamiento"), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q); 
+        let htmlStr = ""; let count = 0;
+
+        snap.forEach(docSnap => {
+            const d = docSnap.data(); if(d.estado !== "Pendiente") return; count++;
+            htmlStr += `
+                <div class="glass-panel slide-up" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="color:white; font-weight:bold; font-size:18px; letter-spacing:1px;">${d.nombre}</div><div style="color:var(--admin-blue); font-size:12px; font-family:'Share Tech Mono'; margin:5px 0;">División de Interés: ${d.division}</div><div style="color:#aaa; font-size:13px; max-width: 500px; line-height:1.5;">${d.notas || 'Sin observaciones'}</div></div>
+                    <div style="display: flex; gap: 10px;"><button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">APROBAR</button><button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(218,41,28,0.1); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button></div>
+                </div>`;
+        });
+        document.getElementById("listaPostulantes").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>" : htmlStr;
+    }
+
+    window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
+
+    function cargarHangar() {
+        let hAereoHTML = ""; let hTerrHTML = "";
+        const generarCard = (v) => `
+            <div class="hangar-card-new glass-panel slide-up">
+                <div class="img-wrapper"><div class="hangar-img" style="background-image: url('${v.img}');"></div></div>
+                <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border);">
+                    <div style="color: #fff; font-weight: bold; font-size: 16px; letter-spacing:1px;">${v.id}</div><div style="background: var(--admin-blue); color: #000; font-weight: bold; padding: 6px 12px; border-radius: 4px; font-family:'Share Tech Mono';">CANT: ${v.cant}</div>
+                </div>
+            </div>`;
+        FLOTA_AEREA.forEach(v => { hAereoHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerrHTML += generarCard(v); });
+        document.getElementById("listaHangarAereo").innerHTML = hAereoHTML;
+        document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
+    }
+
+    async function cargarDocumentos() {
+        const q = query(collection(db, "documentos"), orderBy("timestamp", "desc"), limit(20)); 
+        const snap = await getDocs(q); 
+        let htmlStr = "";
+        const isRestricted = RANGOS.indexOf(window.currentUserRank) <= RANGOS.indexOf("Subteniente") && !window.isObserver;
+
+        snap.forEach(docSnap => {
+            const d = docSnap.data(); 
+            const color = d.tipo === "ORDEN" ? "var(--danger-red)" : "var(--admin-blue)";
+            
+            if (isRestricted) {
+                htmlStr += `
+                <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid var(--danger-red); position: relative; overflow: hidden;">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
+                        <span style="color:var(--danger-red); font-weight:bold; font-size:14px; letter-spacing:1px;">[ ACCESO DENEGADO ]</span>
+                        <span class="censurado-bar">██/██/████ | AUTOR: ██████</span>
+                    </div>
+                    <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;" class="censurado-bar">██████████████████████</div>
+                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 10px; font-size: 11px; padding: 6px 15px; border-color:var(--danger-red); color:var(--danger-red);">🔓 INTENTAR DESCIFRAR</button>
+                    <div class="contenido-descifrado censurado-blur" style="color:#ddd; font-size:15px; line-height:1.6; padding-top:10px; border-top:1px dashed var(--glass-border); display:none; margin-top:15px;"></div>
+                    <textarea class="raw-text" style="display:none;">████████ ██████ ███████████ ███ █████████ ████ ███████ █████ ████████ ███████ ██████████.</textarea>
+                    <div class="sello-clasificado" style="font-size: 16px; top: 50%; opacity: 0.9;">INFO. CLASIFICADA</div>
+                </div>`;
+            } else {
+                htmlStr += `
+                <div class="glass-panel slide-up" style="padding: 25px; border-left: 4px solid ${color};">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#aaa; font-family:'Share Tech Mono'; margin-bottom:10px;">
+                        <span style="color:${color}; font-weight:bold; font-size:14px; letter-spacing:1px;">[${d.tipo}]</span>
+                        <span>FECHA: ${d.fecha} | AUTOR: ${d.autor}</span>
+                    </div>
+                    <div style="color:white; font-weight:bold; font-size:20px; margin:10px 0; letter-spacing:1px;">${d.titulo.toUpperCase()}</div>
+                    <button onclick="descifrarTexto(this)" class="btn-tactical" style="margin-top: 10px; font-size: 11px; padding: 6px 15px; border-color:${color}; color:${color};">🔓 DESCIFRAR ARCHIVO</button>
+                    <div class="contenido-descifrado" style="color:#ddd; font-size:14px; line-height:1.6; border-top:1px dashed var(--glass-border); padding-top:12px; display:none; white-space: pre-wrap; margin-top: 15px;"></div>
+                    <textarea class="raw-text" style="display:none;">${d.contenido.replace(/'/g, "&#39;").replace(/"/g, "&quot;")}</textarea>
+                </div>`;
+            }
+        });
+        document.getElementById("listaDocumentos").innerHTML = htmlStr;
+    }
+
+    window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
+    
     async function cargarLogsVisual() { 
         let htmlStr = ""; 
         window.cachedLogs.forEach(d => { 

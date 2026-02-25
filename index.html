@@ -39,22 +39,22 @@
             transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        /* EFECTOS NEÓN DE PERFILES (Optimizados para hardware) */
+        /* EFECTOS NEÓN DE PERFILES */
         .glow-ejercito { border-color: var(--ejercito-color) !important; box-shadow: 0 0 15px rgba(77, 242, 77, 0.3) !important; }
         .glow-armada { border-color: var(--armada-color) !important; box-shadow: 0 0 15px rgba(0, 51, 160, 0.4) !important; }
         .glow-fach { border-color: var(--fach-color) !important; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important; }
         .glow-boe { border-color: var(--boe-color) !important; box-shadow: 0 0 15px rgba(218, 41, 28, 0.4) !important; }
         .mando-admin-glow { border-color: var(--admin-neon) !important; box-shadow: 0 0 15px rgba(182, 102, 255, 0.4) !important; }
 
+        /* OPTIMIZACIÓN: visibility: hidden corta el renderizado cuando no se usa */
         .crt-scanlines {
             position: fixed; inset: 0; z-index: 99999; pointer-events: none; opacity: 0; transition: opacity 0.3s;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
-            will-change: opacity;
-            transform: translateZ(0);
+            visibility: hidden; 
         }
         @keyframes crtFlicker { 0% { opacity: 0.95; } 5% { opacity: 0.85; } 10% { opacity: 0.95; } 100% { opacity: 0.95; } }
-        body.crt-on .crt-scanlines { opacity: 0.6; }
+        body.crt-on .crt-scanlines { visibility: visible; opacity: 0.6; }
         body.crt-on { animation: crtFlicker 0.15s infinite; text-shadow: 0 0 3px rgba(0, 229, 255, 0.4); }
 
         .chile-flag-top { height: 4px; width: 100%; display: flex; position: absolute; top: 0; left: 0; z-index: 10000; }
@@ -64,8 +64,8 @@
 
         @keyframes red-pulse { 0%, 100% { box-shadow: inset 0 0 0px transparent; } 50% { box-shadow: inset 0 0 120px rgba(218, 41, 28, 0.2); } }
 
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; will-change: opacity; }
-        .slide-up { animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; will-change: transform, opacity; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-up { animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -74,20 +74,20 @@
         ::-webkit-scrollbar-thumb { background: var(--theme-dim); border-radius: 10px; border: 1px solid var(--army-dark); }
         ::-webkit-scrollbar-thumb:hover { background: var(--theme-color); }
 
-        /* OPTIMIZACIÓN CLAVE: Aislamiento de capas (Hardware Acceleration) */
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; transform: translateZ(0); backface-visibility: hidden; will-change: transform, box-shadow, border-color; }
+        /* OPTIMIZACIÓN: Se retiran los will-change masivos para evitar colapso de VRAM */
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
         .glass-panel:hover { border-color: var(--theme-dim); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
 
-        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(15px); border-radius: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5); overflow-y: auto; margin-top: 4px; transform: translateZ(0); will-change: transform;}
+        .sidebar { width: 270px; background: rgba(8, 12, 18, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 25px 0; z-index: 10; backdrop-filter: blur(15px); border-radius: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.5); overflow-y: auto; margin-top: 4px; }
         .menu-category { font-size: 11px; color: #888; padding: 10px 25px; letter-spacing: 2px; font-weight: 700; margin-top: 10px;}
-        .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: background-color 0.2s, border-color 0.2s, color 0.2s, padding-left 0.2s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; transform: translateZ(0);}
+        .menu-item { padding: 14px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: background-color 0.2s, border-color 0.2s, color 0.2s, padding-left 0.2s; border-left: 3px solid transparent; color: #ccc; font-weight: 600; font-size: 14px; position: relative; overflow: hidden; }
         .menu-item:hover { background: var(--theme-dim); border-left-color: var(--theme-color); color: var(--theme-color); padding-left: 30px; }
         .menu-item.active { background: linear-gradient(90deg, var(--theme-dim), transparent); border-left-color: var(--theme-color); color: white; padding-left: 30px; }
         .btn-alert { color: var(--danger-red); border-left-color: transparent; margin-top: 10px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
         .btn-alert:hover { color: var(--danger-red); background: rgba(218, 41, 28, 0.1); border-left-color: var(--danger-red); }
         .menu-hidden { display: none !important; }
 
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px; will-change: transform;}
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; z-index: 5; position: relative; margin-top: 4px; }
         
         #seccionFach, #seccionMisiones, #seccionDocumentos, #seccionHangar, #seccionLogs, #seccionLicencias, #seccionEstadisticas, #seccionReclutamiento, #seccionMapa, #seccionCalendario, #seccionComunicados, #seccionSolicitudes, #seccionAsuntosInternos, #seccionRadiogramas, #seccionEscuadrones { display: none; }
         
@@ -95,22 +95,22 @@
 
         .auth-input { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: white; padding: 14px; width: 100%; margin-bottom: 15px; font-family: 'Share Tech Mono', monospace; box-sizing: border-box; outline: none; border-radius: 8px; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; }
         .auth-input:focus { border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); background: rgba(0,0,0,0.6); }
-        .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px); transform: translateZ(0); will-change: transform;}
+        .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px); }
         .btn-tactical:hover { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); transform: translateY(-2px); }
 
-        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 30000; display: flex; justify-content: center; align-items: center; transform: translateZ(0);}
+        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 30000; display: flex; justify-content: center; align-items: center; }
         #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
-        .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 4px solid var(--danger-red); will-change: transform, opacity;}
+        .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 4px solid var(--danger-red); }
         .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/contain no-repeat; background-color: rgba(0,0,0,0.8); box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
 
-        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); transform: translateZ(0);}
-        .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.3s ease-out; will-change: transform, opacity;}
+        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.3s ease-out; }
 
-        .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.3s ease-out; overflow: hidden; border-radius: 15px; will-change: transform, opacity;}
+        .perfil-container { width: 850px; max-width: 95vw; display: flex; flex-direction: column; animation: slideUp 0.3s ease-out; overflow: hidden; border-radius: 15px; }
         .perfil-header { background: rgba(0,0,0,0.5); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 2px; border-bottom: 1px solid var(--theme-color); }
         .perfil-body { display: grid; grid-template-columns: 300px 1fr; gap: 0; background: rgba(10, 15, 25, 0.9); }
         .perfil-col-izq { padding: 30px; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.01); position: relative; }
-        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: filter 0.3s; transform: translateZ(0);}
+        .perfil-foto-hd { width: 190px; height: 230px; border-radius: 8px; border: 2px solid var(--theme-dim); background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/cover; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: filter 0.3s; }
         .perfil-col-der { padding: 30px; display: flex; flex-direction: column; gap: 20px; }
         .perfil-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .perfil-item { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; }
@@ -127,11 +127,11 @@
         .esp-default { background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid #aaa; }
 
         .insignia-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--glass-border); width: 100%; }
-        .insignia { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; background: rgba(0,0,0,0.6); border: 2px solid; position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; will-change: transform, box-shadow; transform: translateZ(0);}
+        .insignia { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; background: rgba(0,0,0,0.6); border: 2px solid; position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; will-change: transform; transform: translateZ(0);}
         .insignia:hover { transform: scale(1.15) translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 10; }
         .insignia-glow { animation: insigniaGlow 2s infinite alternate; }
-        .insignia-spin::before { content:''; position:absolute; inset:-4px; border: 2px dashed currentColor; border-radius: 50%; animation: spin 4s linear infinite; opacity: 0.5; will-change: transform;}
-        .insignia-float { animation: float 3s ease-in-out infinite; will-change: transform;}
+        .insignia-spin::before { content:''; position:absolute; inset:-4px; border: 2px dashed currentColor; border-radius: 50%; animation: spin 4s linear infinite; opacity: 0.5; }
+        .insignia-float { animation: float 3s ease-in-out infinite; }
         
         @keyframes insigniaGlow { from { box-shadow: 0 0 5px currentColor; } to { box-shadow: 0 0 15px currentColor; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -144,33 +144,34 @@
 
         .hangar-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         .hangar-card-new { display: flex; flex-direction: column; overflow: hidden; }
-        .hangar-img { height: 190px; background-size: cover; background-position: center; border-bottom: 2px solid var(--theme-dim); transition: transform 0.4s; will-change: transform;}
+        .hangar-img { height: 190px; background-size: cover; background-position: center; border-bottom: 2px solid var(--theme-dim); transition: transform 0.4s; }
         .hangar-card-new:hover .hangar-img { transform: scale(1.03); }
-        .img-wrapper { overflow: hidden; border-radius: 12px 12px 0 0; transform: translateZ(0);}
+        .img-wrapper { overflow: hidden; border-radius: 12px 12px 0 0; }
 
         #toastContainer { position: fixed; left: 25px; bottom: 25px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
-        .toast { background: rgba(10, 15, 25, 0.95); border-left: 4px solid; color: white; padding: 18px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 350px; transform: translateZ(0); will-change: transform, opacity;}
+        .toast { background: rgba(10, 15, 25, 0.95); border-left: 4px solid; color: white; padding: 18px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 350px; }
         .toast-error { border-color: var(--danger-red); }
         .toast-success { border-color: var(--theme-color); }
         @keyframes slideRight { from { transform: translateX(-150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        .radar-realista { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 229, 255, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #050a0f; overflow: hidden; box-shadow: 0 0 25px var(--theme-dim), inset 0 0 25px var(--theme-dim); margin: auto; transform: translateZ(0); will-change: transform;}
+        /* OPTIMIZACIÓN: Solo el radar lleva aceleración forzada */
+        .radar-realista { position: relative; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--theme-color); background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 229, 255, 0.1) 100%), repeating-radial-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 23%, var(--theme-dim) 24%, var(--theme-dim) 25%); background-color: #050a0f; overflow: hidden; box-shadow: 0 0 25px var(--theme-dim), inset 0 0 25px var(--theme-dim); margin: auto; transform: translateZ(0); }
         .radar-realista::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--theme-dim); }
         .radar-realista::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--theme-dim); }
-        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg, var(--theme-color) 0%, transparent 60%); transform-origin: 0 0; animation: sweep 2.5s linear infinite; opacity: 0.6; will-change: transform;}
-        .blip { position: absolute; width: 6px; height: 6px; background: var(--theme-color); border-radius: 50%; box-shadow: 0 0 10px var(--theme-color); opacity: 0; animation: blip-fade 2.5s infinite; will-change: transform, opacity;}
+        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg, var(--theme-color) 0%, transparent 60%); transform-origin: 0 0; animation: sweep 2.5s linear infinite; opacity: 0.6; will-change: transform; }
+        .blip { position: absolute; width: 6px; height: 6px; background: var(--theme-color); border-radius: 50%; box-shadow: 0 0 10px var(--theme-color); opacity: 0; animation: blip-fade 2.5s infinite; will-change: opacity, transform; }
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blip-fade { 0% { opacity: 0; } 10% { opacity: 1; transform: scale(1.5); } 50% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0; } }
 
-        .drag-icon { font-size: 24px; cursor: grab; transition: transform 0.2s, filter 0.2s; user-select: none; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); display: flex; justify-content: center; width: 100%; will-change: transform;}
+        .drag-icon { font-size: 24px; cursor: grab; transition: transform 0.2s, filter 0.2s; user-select: none; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); display: flex; justify-content: center; width: 100%; }
         .drag-icon:active { cursor: grabbing; transform: scale(0.9); }
         .drag-icon:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px var(--theme-color)); }
         
-        .map-marker { position: absolute; transform: translate(-50%, -50%); font-size: 28px; cursor: pointer; z-index: 10; filter: drop-shadow(0 0 8px rgba(0,0,0,0.8)); transition: transform 0.2s; user-select: none; animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; will-change: transform, opacity;}
+        .map-marker { position: absolute; transform: translate(-50%, -50%); font-size: 28px; cursor: pointer; z-index: 10; filter: drop-shadow(0 0 8px rgba(0,0,0,0.8)); transition: transform 0.2s; user-select: none; animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .map-marker:hover { transform: translate(-50%, -50%) scale(1.2); filter: drop-shadow(0 0 12px var(--danger-red)); }
         @keyframes bounceIn { from { transform: translate(-50%, -100%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 
-        .map-nav-btn { position: absolute; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--theme-color); color: var(--theme-color); font-size: 16px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 20; display: flex; justify-content: center; align-items: center; transition: background-color 0.2s, box-shadow 0.2s, color 0.2s, transform 0.2s; backdrop-filter: blur(5px); transform: translateZ(0); will-change: transform;}
+        .map-nav-btn { position: absolute; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--theme-color); color: var(--theme-color); font-size: 16px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 20; display: flex; justify-content: center; align-items: center; transition: background-color 0.2s, box-shadow 0.2s, color 0.2s, transform 0.2s; backdrop-filter: blur(5px); }
         .map-nav-btn:hover { background: var(--theme-color); color: #000; box-shadow: 0 0 15px var(--theme-color); transform: scale(1.1); }
         .map-nav-left { left: 15px; top: calc(50% - 20px); }
         .map-nav-right { right: 15px; top: calc(50% - 20px); }
@@ -183,9 +184,9 @@
         .calif-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; }
 
         /* WIDGET NOTAS FLOTANTE */
-        .floating-notes-btn { position: fixed; right: 25px; bottom: 50px; z-index: 8000; background: rgba(15, 22, 35, 0.9); border: 2px solid var(--theme-color); color: var(--theme-color); width: 55px; height: 55px; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); transition: transform 0.3s, background-color 0.3s, filter 0.3s; display: flex; justify-content: center; align-items: center; font-size: 22px; transform: translateZ(0); will-change: transform;}
+        .floating-notes-btn { position: fixed; right: 25px; bottom: 50px; z-index: 8000; background: rgba(15, 22, 35, 0.9); border: 2px solid var(--theme-color); color: var(--theme-color); width: 55px; height: 55px; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); transition: transform 0.3s, background-color 0.3s, filter 0.3s; display: flex; justify-content: center; align-items: center; font-size: 22px; }
         .floating-notes-btn:hover { background: var(--theme-color); filter: brightness(1.2); transform: scale(1.1); }
-        .notes-panel { position: fixed; right: 25px; bottom: 115px; z-index: 8000; width: 320px; display: none; flex-direction: column; animation: slideUp 0.3s ease-out; box-shadow: 0 15px 40px rgba(0,0,0,0.8); transform: translateZ(0);}
+        .notes-panel { position: fixed; right: 25px; bottom: 115px; z-index: 8000; width: 320px; display: none; flex-direction: column; animation: slideUp 0.3s ease-out; box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
 
         /* EFECTO TEXTO ENCRIPTADO */
         .encrypted-text { font-family: 'Share Tech Mono', monospace; word-break: break-all; color: var(--theme-color); filter: brightness(0.7); }
@@ -195,7 +196,7 @@
         .squad-col { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 8px; display: flex; flex-direction: column; }
         .squad-header { padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px dashed var(--glass-border); letter-spacing: 1px; font-size: 14px;}
         .squad-body { padding: 10px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 300px; }
-        .squad-item { background: rgba(255,255,255,0.05); border: 1px solid var(--theme-dim); padding: 10px; border-radius: 6px; cursor: grab; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.2s, background-color 0.2s; transform: translateZ(0);}
+        .squad-item { background: rgba(255,255,255,0.05); border: 1px solid var(--theme-dim); padding: 10px; border-radius: 6px; cursor: grab; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.2s, background-color 0.2s;}
         .squad-item:active { cursor: grabbing; opacity: 0.5; }
         .squad-item:hover { background: rgba(0,229,255,0.1); }
         .squad-item.is-leader { border-color: var(--alert-amber); box-shadow: inset 0 0 15px rgba(255,180,0,0.2); background: rgba(255,180,0,0.05);}
@@ -727,7 +728,7 @@
                             <div id="mapaEstrategico" style="position: relative; width: 1200px; height: 1200px; margin: auto; transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
                                 <div class="map-bg" style="position: absolute; inset: 0; background: url('mapagtasa.jpg') center/100% 100% no-repeat; opacity: 0.85; pointer-events: none; transition: filter 1s ease;"></div>
                                 <canvas id="mapCanvas" width="1200" height="1200" style="position: absolute; inset: 0; z-index: 8; pointer-events: none;"></canvas>
-                                <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; opacity: 0; transition: 1s ease;"></div>
+                                <div id="mapWeatherOverlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 9; visibility: hidden; transition: 1s ease;"></div>
                             </div>
                         </div>
 
@@ -897,6 +898,19 @@
     let windowUsersData = {};
     window.cachedLogs = [];
 
+    // OPTIMIZACIÓN: CACHÉ DEL DOM (VIRTUAL DOM)
+    // Esto evita que el navegador recalcule todo el layout si el HTML no ha cambiado
+    const domCache = {};
+    const updateDOM = (id, newHTML) => {
+        if (domCache[id] !== newHTML) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerHTML = newHTML;
+                domCache[id] = newHTML;
+            }
+        }
+    };
+
     const sndHover = document.getElementById("sndHover"); const sndClick = document.getElementById("sndClick"); const sndAlert = document.getElementById("sndAlert"); const sndError = document.getElementById("sndError"); const sndStartup = document.getElementById("sndStartup");
     window.playHover = () => { sndHover.currentTime = 0; sndHover.play().catch(()=>{}); };
     window.playClick = () => { sndClick.currentTime = 0; sndClick.play().catch(()=>{}); };
@@ -911,14 +925,11 @@
         setTimeout(() => { toast.style.animation = "fadeOut 0.4s forwards"; setTimeout(() => toast.remove(), 400); }, 3000);
     };
 
+    // OPTIMIZACIÓN DEL RELOJ: Se reduce la actualización del DOM usando el caché
     setInterval(() => {
         const now = new Date();
-        const local = document.getElementById('relojLocal');
-        const zulu = document.getElementById('relojZulu');
-        if(local && zulu) {
-            local.innerText = now.toLocaleTimeString('es-CL', { hour12: false });
-            zulu.innerText = now.toISOString().substr(11, 8) + " ZULU";
-        }
+        updateDOM('relojLocal', now.toLocaleTimeString('es-CL', { hour12: false }));
+        updateDOM('relojZulu', now.toISOString().substr(11, 8) + " ZULU");
     }, 1000);
 
     let crtOn = false;
@@ -1176,10 +1187,8 @@
             }
         });
         
-        requestAnimationFrame(() => {
-            const lista = document.getElementById("listaSolicitudes");
-            if(lista) lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay solicitudes en su bandeja de entrada.</div>" : htmlStr;
-        });
+        const finalHtml = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay solicitudes en su bandeja de entrada.</div>" : htmlStr;
+        updateDOM("listaSolicitudes", finalHtml);
     }
 
     async function cargarDenuncias() {
@@ -1212,16 +1221,11 @@
                 `;
             });
             
-            requestAnimationFrame(() => {
-                const lista = document.getElementById("listaDenuncias");
-                if(lista) lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay expedientes activos en Asuntos Internos.</div>" : htmlStr;
-            });
+            const finalHtml = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay expedientes activos en Asuntos Internos.</div>" : htmlStr;
+            updateDOM("listaDenuncias", finalHtml);
         } else {
             if(titulo) titulo.style.display = "none";
-            requestAnimationFrame(() => {
-                const lista = document.getElementById("listaDenuncias");
-                if(lista) lista.innerHTML = "";
-            });
+            updateDOM("listaDenuncias", "");
         }
     }
 
@@ -1259,21 +1263,19 @@
                 }
             });
             
-            requestAnimationFrame(() => {
-                const lista = document.getElementById("listaRadiogramas");
-                if(lista) lista.innerHTML = htmlStr === "" ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center; grid-column:1/-1;'>BANDEJA DE ENTRADA VACÍA. NO HAY TRANSMISIONES ACTIVAS.</div>" : htmlStr;
-                
-                const badge = document.getElementById("badgeRadiogramas");
-                if(badge) {
-                    if(unread > 0) {
-                        badge.style.display = "inline-block";
-                        badge.innerText = `[${unread} NUEVO]`;
-                        sndAlert.volume = 0.2; 
-                    } else {
-                        badge.style.display = "none";
-                    }
+            const finalHtml = htmlStr === "" ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center; grid-column:1/-1;'>BANDEJA DE ENTRADA VACÍA. NO HAY TRANSMISIONES ACTIVAS.</div>" : htmlStr;
+            updateDOM("listaRadiogramas", finalHtml);
+            
+            const badge = document.getElementById("badgeRadiogramas");
+            if(badge) {
+                if(unread > 0) {
+                    badge.style.display = "inline-block";
+                    badge.innerText = `[${unread} NUEVO]`;
+                    sndAlert.volume = 0.2; 
+                } else {
+                    badge.style.display = "none";
                 }
-            });
+            }
         });
     }
 
@@ -1355,10 +1357,8 @@
             `;
         });
 
-        requestAnimationFrame(() => {
-            const lista = document.getElementById("listaComunicados");
-            if(lista) lista.innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay comunicados recientes en la red.</div>" : htmlStr;
-        });
+        const finalHtml = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay comunicados recientes en la red.</div>" : htmlStr;
+        updateDOM("listaComunicados", finalHtml);
     }
 
     window.switchTab = (tab) => {
@@ -1421,7 +1421,7 @@
         const overlay = document.getElementById('mapWeatherOverlay');
         if(!bg || !overlay) return;
 
-        let filter = ""; let overlayCss = ""; let overlayOp = 0;
+        let filter = ""; let overlayCss = ""; let overlayOp = 0; let overlayVis = "hidden";
 
         if (time === 'noche') filter += "brightness(0.3) sepia(0.4) hue-rotate(180deg) ";
         else filter += "brightness(0.9) ";
@@ -1430,17 +1430,19 @@
             filter += "grayscale(0.4) blur(1px) ";
             overlayCss = "repeating-linear-gradient(160deg, transparent, transparent 15px, rgba(255,255,255,0.2) 15px, rgba(255,255,255,0.2) 16px)";
             overlayOp = time === 'noche' ? 0.3 : 0.6;
+            overlayVis = "visible";
         } else if (weather === 'tormenta') {
             filter += "sepia(0.8) hue-rotate(-15deg) contrast(0.8) blur(1px) ";
             overlayCss = "rgba(194, 178, 128, 0.5)";
             overlayOp = 1;
+            overlayVis = "visible";
         }
 
-        requestAnimationFrame(() => {
-            bg.style.filter = filter.trim() || "none";
-            overlay.style.background = overlayCss || "transparent";
-            overlay.style.opacity = overlayOp;
-        });
+        // OPTIMIZACIÓN: Si el clima es normal, apagamos por completo la capa
+        bg.style.filter = filter.trim() || "none";
+        overlay.style.background = overlayCss || "transparent";
+        overlay.style.opacity = overlayOp;
+        overlay.style.visibility = overlayVis;
     }
 
     let isDrawingModeActive = false;
@@ -1606,20 +1608,20 @@
                 document.getElementById("loginScreen").style.display = "none";
                 
                 if(window.isObserver) {
-                    document.getElementById("userName").innerText = `[INTELIGENCIA] ${data.nombre}`;
+                    updateDOM("userName", `[INTELIGENCIA] ${data.nombre}`);
                     document.getElementById("userName").style.color = "var(--admin-neon)";
                     document.getElementById("userName").style.textShadow = "0 0 10px var(--admin-neon)";
-                    document.getElementById("userRank").innerText = "AUDITORÍA DEL COMANDO";
+                    updateDOM("userRank", "AUDITORÍA DEL COMANDO");
                     document.getElementById("userRank").style.color = "var(--admin-neon)";
                 } else {
-                    document.getElementById("userName").innerText = data.nombre;
-                    document.getElementById("userRank").innerText = window.currentUserRank;
+                    updateDOM("userName", data.nombre);
+                    updateDOM("userRank", window.currentUserRank);
                 }
                 
                 if(data.estado) document.getElementById("myStatus").value = data.estado;
                 if(data.notasPersonales) document.getElementById("textoNotas").value = data.notasPersonales;
                 
-                document.getElementById("targetAeronave").innerHTML = `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>` + FLOTA_AEREA.map(n => `<option value="${n.id}">${n.id}</option>`).join("");
+                updateDOM("targetAeronave", `<option value="SIN ASIGNAR">-- SIN AERONAVE --</option>` + FLOTA_AEREA.map(n => `<option value="${n.id}">${n.id}</option>`).join(""));
                 
                 if (window.isAdmin) {
                     document.getElementById("btnLogs").classList.remove("menu-hidden");
@@ -1768,7 +1770,7 @@
             if (window.isAdmin || (myRankIndex >= RANGOS.indexOf("Coronel") && !window.isObserver)) {
                 allowedRanksHtml += `<option value="Administrador" style="color:var(--admin-neon); font-weight:bold;">Administrador (Observador)</option>`;
             }
-            document.getElementById("targetRank").innerHTML = allowedRanksHtml;
+            updateDOM("targetRank", allowedRanksHtml);
             
             windowUsersData = {};
             let totalSoldadosCount = 0; let totalOficialesCount = 0; let totalAeronavesCount = FLOTA_AEREA.reduce((acc, a) => acc + a.cant, 0);
@@ -1837,7 +1839,7 @@
                             leaderBtn = `<span style="color:var(--alert-amber); font-size:16px; filter:drop-shadow(0 0 5px rgba(255,180,0,0.5));" title="Líder de Escuadra">⭐</span>`;
                         }
                         
-                        let sqBorderClass = d.liderEscuadron && targetSq !== 'base' ? "squad-item is-leader slide-up" : "squad-item slide-up";
+                        let sqBorderClass = d.liderEscuadron && targetSq !== 'base' ? "squad-item is-leader" : "squad-item";
                         
                         sq[targetSq] += `
                             <div class="${sqBorderClass}" draggable="${isAltoMandoSquad}" ondragstart="dragStartSquad(event, '${email}')">
@@ -1881,7 +1883,7 @@
 
                     if (divUpper === "FACH" && !isRolAdmin) {
                         let cat = (rangoSeguro.includes("General") || rangoSeguro === "Coronel") ? "comandante" : (["Capitán", "Mayor", "Teniente Coronel"].includes(rangoSeguro) ? "instructor" : "cadete");
-                        const itemHtml = `<div class="glass-panel slide-up" style="padding: 10px; margin-bottom: 10px; display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 10px; cursor:pointer;" onclick="document.getElementById('vPilot').innerText='${nombreSeguro}'; document.getElementById('vUnit').innerText='${aeronaveSafe}'; window.playClick();">
+                        const itemHtml = `<div class="glass-panel" style="padding: 10px; margin-bottom: 10px; display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 10px; cursor:pointer;" onclick="updateDOM('vPilot', '${nombreSeguro}'); updateDOM('vUnit', '${aeronaveSafe}'); window.playClick();">
                                           <div style="border-radius:6px; font-size:20px; background:rgba(0,0,0,0.5); border:1px solid var(--admin-blue); text-align:center; padding:5px;">${cat === 'comandante' ? '🦅' : (cat === 'instructor' ? '✈️' : '🪖')}</div>
                                           <div><div style="color:var(--admin-blue); font-size:10px; font-weight:bold; font-family:'Share Tech Mono'; letter-spacing:1px;">[${aeronaveSafe}]</div><div style="font-size:13px; color:white; font-weight:bold;">${nombreSeguro}</div></div></div>`;
                         if (cat === "comandante") strCom += itemHtml; else if (cat === "instructor") strIns += itemHtml; else strCad += itemHtml;
@@ -1898,30 +1900,28 @@
                 } catch (errLoop) { console.error("Error aislando perfil:", errLoop); }
             });
             
-            // OPTIMIZACIÓN CLAVE: Inyección de DOM en requestAnimationFrame
-            requestAnimationFrame(() => {
-                document.getElementById("listaSoldados").innerHTML = strPer;
-                document.getElementById("listaUsuariosLicencias").innerHTML = strLic;
-                document.getElementById("listaComandante").innerHTML = strCom;
-                document.getElementById("listaInstructor").innerHTML = strIns;
-                document.getElementById("listaCadete").innerHTML = strCad;
-                document.getElementById("listaMisiones").innerHTML = strMis === "" ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay operaciones activas en este momento.</div>" : strMis;
-                
-                document.getElementById("sq_base").innerHTML = sq.base;
-                document.getElementById("sq_alpha").innerHTML = sq.alpha;
-                document.getElementById("sq_bravo").innerHTML = sq.bravo;
-                document.getElementById("sq_especial").innerHTML = sq.especial;
+            // INYECCIÓN CON DOM CACHE
+            updateDOM("listaSoldados", strPer);
+            updateDOM("listaUsuariosLicencias", strLic);
+            updateDOM("listaComandante", strCom);
+            updateDOM("listaInstructor", strIns);
+            updateDOM("listaCadete", strCad);
+            updateDOM("listaMisiones", strMis === "" ? "<div style='color:#555; font-style:italic; padding: 20px;'>No hay operaciones activas en este momento.</div>" : strMis);
+            
+            updateDOM("sq_base", sq.base);
+            updateDOM("sq_alpha", sq.alpha);
+            updateDOM("sq_bravo", sq.bravo);
+            updateDOM("sq_especial", sq.especial);
 
-                document.getElementById("targetSoldier").innerHTML = strSelS;
-                document.getElementById("targetSoldadoMision").innerHTML = strSelMis;
-                document.getElementById("targetSoldadoLicencia").innerHTML = strSelLic;
-                document.getElementById("targetSoldadoSancion").innerHTML = strSelSanc;
-                document.getElementById("evalSoldado").innerHTML = strSelEval;
+            updateDOM("targetSoldier", strSelS);
+            updateDOM("targetSoldadoMision", strSelMis);
+            updateDOM("targetSoldadoLicencia", strSelLic);
+            updateDOM("targetSoldadoSancion", strSelSanc);
+            updateDOM("evalSoldado", strSelEval);
 
-                document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
-                document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
-                document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
-            });
+            document.getElementById("statTotalSoldados").innerText = totalSoldadosCount;
+            document.getElementById("statTotalOficiales").innerText = totalOficialesCount;
+            document.getElementById("statTotalAeronaves").innerText = totalAeronavesCount;
             
         } catch(errorGlobal) { console.error("Error global:", errorGlobal); }
     }
@@ -1945,9 +1945,8 @@
                     </div>
                 </div>`;
         });
-        requestAnimationFrame(() => {
-            document.getElementById("listaHistorialMisiones").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>El archivo histórico de operaciones está vacío.</div>" : htmlStr;
-        });
+        const finalHtml = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px;'>El archivo histórico de operaciones está vacío.</div>" : htmlStr;
+        updateDOM("listaHistorialMisiones", finalHtml);
     }
 
     function getColorTiro(v) { return v==="Experto"?"#4df24d":v==="Calificado"?"#ffb400":"#aaa"; }
@@ -1973,9 +1972,9 @@
         let selloExistente = document.getElementById("sello_clasificado");
         if (selloExistente) selloExistente.remove();
 
-        document.getElementById("p_nombre").innerText = nombre;
-        document.getElementById("p_rango").innerText = rango;
-        document.getElementById("p_division").innerText = division || 'EJÉRCITO';
+        updateDOM("p_nombre", nombre);
+        updateDOM("p_rango", rango);
+        updateDOM("p_division", division || 'EJÉRCITO');
 
         if (isRolAdmin) {
             document.getElementById("p_nombre").style.color = "var(--admin-neon)";
@@ -1999,7 +1998,7 @@
         }
 
         let insigniasHTML = "";
-        const getOnClick = (desc) => `onclick="document.getElementById('p_insignia_desc').innerHTML = '<span style=\\'color:white;\\'>INFO:</span> ${desc}'; window.playClick();"`;
+        const getOnClick = (desc) => `onclick="updateDOM('p_insignia_desc', '<span style=\\'color:white;\\'>INFO:</span> ${desc}'); window.playClick();"`;
 
         if(isRolAdmin) {
             insigniasHTML += `<div class="insignia insignia-glow" style="color:var(--admin-neon); border-color:var(--admin-neon);" data-tooltip="Auditor de Inteligencia" ${getOnClick('Acceso total a la red clasificada. El portador de esta medalla no puede ser censurado ni restringido en la visualización de documentos o expedientes.')}>👁️</div>`;
@@ -2019,9 +2018,8 @@
             }
         }
         
-        document.getElementById("p_insignias").innerHTML = insigniasHTML;
-        const descBox = document.getElementById("p_insignia_desc");
-        if(descBox) descBox.innerHTML = "[ INFO. MEDALLA: ESPERANDO SELECCIÓN ]";
+        updateDOM("p_insignias", insigniasHTML);
+        updateDOM("p_insignia_desc", "[ INFO. MEDALLA: ESPERANDO SELECCIÓN ]");
         
         // CONTROLES DE RADIOGRAMA
         const btnRadio = document.getElementById("p_radiograma_container");
@@ -2034,43 +2032,45 @@
         }
 
         if (isRestricted) {
-            document.getElementById("p_unidad").innerText = "█████████";
+            updateDOM("p_unidad", "█████████");
             document.getElementById("p_unidad").classList.add("censurado-bar");
             
-            document.getElementById("p_creacion").innerText = "██/██/████";
+            updateDOM("p_creacion", "██/██/████");
             document.getElementById("p_creacion").classList.add("censurado-bar");
             
-            document.getElementById("p_id").innerText = "CHL-██████-███";
+            updateDOM("p_id", "CHL-██████-███");
             document.getElementById("p_id").classList.add("censurado-bar");
             
-            document.getElementById("p_mision").innerText = "[ INFO. CLASIFICADA ]";
+            updateDOM("p_mision", "[ INFO. CLASIFICADA ]");
             document.getElementById("p_mision").style.color = "var(--danger-red)";
             document.getElementById("p_mision").classList.add("censurado-bar");
 
-            document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`;
+            updateDOM("p_especialidades", `<span class="esp-tag esp-default censurado-bar" style="border:none; color:#050a0f;">████████</span>`);
             
-            document.getElementById("p_tiro").innerText = "████";
+            updateDOM("p_tiro", "████");
             document.getElementById("p_tiro").style.color = "#050a0f";
             document.getElementById("p_tiro").classList.add("censurado-bar");
 
-            document.getElementById("p_fisico").innerText = "████";
+            updateDOM("p_fisico", "████");
             document.getElementById("p_fisico").style.color = "#050a0f";
             document.getElementById("p_fisico").classList.add("censurado-bar");
 
-            document.getElementById("p_psico").innerText = "████";
+            updateDOM("p_psico", "████");
             document.getElementById("p_psico").style.color = "#050a0f";
             document.getElementById("p_psico").classList.add("censurado-bar");
 
             document.getElementById("p_foto").classList.add("censurado-blur");
             document.getElementById("p_insignias").style.display = "none";
+            const descBox = document.getElementById("p_insignia_desc");
             if(descBox) descBox.style.display = "none";
             btnRadio.style.display = "none";
             document.getElementById("p_foto").parentElement.insertAdjacentHTML('beforeend', '<div id="sello_clasificado" class="sello-clasificado">ACCESO RESTRINGIDO</div>');
         } else {
-            document.getElementById("p_unidad").innerText = unidad;
-            document.getElementById("p_creacion").innerText = fCreacion;
-            document.getElementById("p_id").innerText = "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000);
+            updateDOM("p_unidad", unidad);
+            updateDOM("p_creacion", fCreacion);
+            updateDOM("p_id", "CHL-" + email.substring(0,6).toUpperCase() + "-" + Math.floor(Math.random()*10000));
             document.getElementById("p_insignias").style.display = "flex";
+            const descBox = document.getElementById("p_insignia_desc");
             if(descBox) descBox.style.display = "flex";
             
             let misionTexto = isRolAdmin ? "MONITOREANDO LA RED" : "DISPONIBLE EN BASE"; 
@@ -2082,7 +2082,7 @@
                     misionTexto = `[EN OPERACIÓN: ${m.tipo.toUpperCase()}] ${m.detalle}`; mColor = "var(--alert-amber)";
                 } catch(e) {} 
             }
-            document.getElementById("p_mision").innerText = misionTexto;
+            updateDOM("p_mision", misionTexto);
             document.getElementById("p_mision").style.color = mColor;
 
             let claseColor = "esp-default";
@@ -2093,15 +2093,15 @@
             else if(especialidad === "Infantería") { claseColor = "esp-infanteria"; icono = "🪖"; }
             else if(especialidad === "Fuerzas especiales") { claseColor = "esp-fuerzas"; icono = "⚡"; }
 
-            document.getElementById("p_especialidades").innerHTML = `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`;
+            updateDOM("p_especialidades", `<span class="esp-tag ${claseColor}">${icono} ${especialidad}</span>`);
 
-            document.getElementById("p_tiro").innerText = cTiro.toUpperCase();
+            updateDOM("p_tiro", cTiro.toUpperCase());
             document.getElementById("p_tiro").style.color = getColorTiro(cTiro);
 
-            document.getElementById("p_fisico").innerText = cFis.toUpperCase();
+            updateDOM("p_fisico", cFis.toUpperCase());
             document.getElementById("p_fisico").style.color = getColorFisico(cFis);
 
-            document.getElementById("p_psico").innerText = cPsi.toUpperCase();
+            updateDOM("p_psico", cPsi.toUpperCase());
             document.getElementById("p_psico").style.color = getColorPsico(cPsi);
         }
 
@@ -2188,9 +2188,8 @@
                     <div style="display: flex; gap: 10px;"><button onclick="evaluarPostulante('${docSnap.id}', 'Aprobado', '${d.nombre}')" class="btn-tactical" style="background: rgba(77,242,77,0.1); border-color: #4df24d; color: #4df24d;">APROBAR</button><button onclick="evaluarPostulante('${docSnap.id}', 'Rechazado', '${d.nombre}')" class="btn-tactical" style="background: rgba(218,41,28,0.1); border-color: var(--danger-red); color: var(--danger-red);">RECHAZAR</button></div>
                 </div>`;
         });
-        requestAnimationFrame(() => {
-            document.getElementById("listaPostulantes").innerHTML = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>" : htmlStr;
-        });
+        const finalHtml = count === 0 ? "<div style='color:#555; font-style:italic; padding: 20px; text-align:center;'>No hay postulaciones pendientes de evaluación.</div>" : htmlStr;
+        updateDOM("listaPostulantes", finalHtml);
     }
 
     window.evaluarPostulante = async (id, estado, nombre) => { window.playClick(); try { await updateDoc(doc(db, "reclutamiento", id), { estado: estado }); registrarLog("RECLUTAMIENTO", `Postulante ${nombre} fue ${estado.toUpperCase()}.`); window.showToast(`POSTULANTE ${estado.toUpperCase()}`, estado === 'Aprobado' ? 'success' : 'error'); cargarReclutamiento(); } catch (e) { window.showToast("ERROR AL EVALUAR POSTULANTE", "error"); } };
@@ -2205,10 +2204,9 @@
                 </div>
             </div>`;
         FLOTA_AEREA.forEach(v => { hAereoHTML += generarCard(v); }); FLOTA_TERRESTRE.forEach(v => { hTerrHTML += generarCard(v); });
-        requestAnimationFrame(() => {
-            document.getElementById("listaHangarAereo").innerHTML = hAereoHTML;
-            document.getElementById("listaHangarTerrestre").innerHTML = hTerrHTML;
-        });
+        
+        updateDOM("listaHangarAereo", hAereoHTML);
+        updateDOM("listaHangarTerrestre", hTerrHTML);
     }
 
     async function cargarDocumentos() {
@@ -2248,9 +2246,7 @@
                 </div>`;
             }
         });
-        requestAnimationFrame(() => {
-            document.getElementById("listaDocumentos").innerHTML = htmlStr;
-        });
+        updateDOM("listaDocumentos", htmlStr);
     }
 
     window.subirDocumento = async () => { window.playClick(); const tipo = document.getElementById("docTipo").value; const titulo = document.getElementById("docTitulo").value; const cont = document.getElementById("docContenido").value; if(!titulo || !cont) return window.showToast("COMPLETE TODOS LOS CAMPOS", "error"); await addDoc(collection(db, "documentos"), { tipo: tipo, titulo: titulo, contenido: cont, autor: window.currentUserName, fecha: new Date().toLocaleString('es-CL'), timestamp: serverTimestamp() }); registrarLog("DOCUMENTO SUBIDO", `Subió un(a) ${tipo} titulado: ${titulo}`); document.getElementById("docTitulo").value = ""; document.getElementById("docContenido").value = ""; cargarDocumentos(); window.showToast("DOCUMENTO ARCHIVADO", "success"); };
@@ -2260,9 +2256,7 @@
         window.cachedLogs.forEach(d => { 
             htmlStr += `<div style="font-size: 13px; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: #bbb; font-family:'Share Tech Mono';"><span style="color: var(--theme-color); margin-right: 10px;">[${d.fechaFormato || '---'}]</span><strong style="color: var(--admin-blue);">${d.autor}:</strong> <span style="color:white;">[${d.accion}]</span> ${d.detalle}</div>`; 
         }); 
-        requestAnimationFrame(() => {
-            document.getElementById("listaLogsContainer").innerHTML = htmlStr;
-        });
+        updateDOM("listaLogsContainer", htmlStr);
     }
 
     window.logout = () => signOut(auth).then(() => location.reload());

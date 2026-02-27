@@ -98,11 +98,48 @@
         .btn-tactical { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s; text-transform: uppercase; border-radius: 8px; letter-spacing: 1px; backdrop-filter: blur(5px); }
         .btn-tactical:hover { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 15px var(--theme-dim); transform: translateY(-2px); }
 
-        #loginScreen { position: fixed; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg/1200px-F-16_Fighting_Falcon_-_Pacific_Air_Forces.jpg') center/cover no-repeat; z-index: 30000; display: flex; justify-content: center; align-items: center; }
-        #loginScreen::before { content: ''; position: absolute; inset: 0; background: rgba(5, 10, 15, 0.85); backdrop-filter: blur(8px); }
-        .login-box { position: relative; width: 480px; padding: 50px; text-align: center; border-radius: 16px; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 4px solid var(--danger-red); }
-        .login-photo-circle { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--theme-color); margin: -100px auto 25px; background: #000 url('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png') center/contain no-repeat; background-color: rgba(0,0,0,0.8); box-shadow: 0 0 30px var(--theme-dim); position: relative; z-index: 2;}
-
+        /* --- NUEVO SISTEMA DE LOGIN / REGISTRO --- */
+        #loginScreen {
+            position: fixed; inset: 0; background: #050a10; /* Fondo oscuro estilo captura */
+            background-image: radial-gradient(circle at 50% 0%, #0d1624 0%, #050a10 100%);
+            z-index: 30000; display: flex; justify-content: center; align-items: center;
+        }
+        
+        .auth-card {
+            background: #0b111a; border: 1px solid #1a2332; border-radius: 12px; width: 480px; padding: 40px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8); color: white; animation: slideUp 0.5s ease-out;
+        }
+        
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 30px; }
+        .auth-tab {
+            flex: 1; padding: 14px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; 
+            font-size: 12px; letter-spacing: 1px; transition: 0.3s; background: #111a26; border: 1px solid #1a2332; color: #888;
+        }
+        .auth-tab.active { background: #0033a0; color: white; border-color: #0044cc; box-shadow: inset 0 0 10px rgba(0,0,0,0.3);}
+        
+        .auth-header { margin-bottom: 25px; }
+        .auth-title { font-size: 32px; font-weight: 800; margin: 0; text-transform: uppercase; line-height: 1.1; font-family: 'Jura', sans-serif;}
+        .auth-title-chile { color: #ffb400; /* Amarillo estilo la foto */ text-shadow: 0 0 15px rgba(255, 180, 0, 0.3); }
+        .auth-subtitle { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #666; margin-top: 8px; letter-spacing: 1px; }
+        
+        .auth-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .auth-form-full { grid-column: 1 / -1; }
+        
+        .auth-field-label { font-size: 11px; color: #888; font-weight: bold; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; text-transform: uppercase;}
+        .auth-input-new {
+            background: #0f1520; border: 1px solid #1a2332; color: white; padding: 14px 15px; border-radius: 6px; width: 100%; box-sizing: border-box; outline: none; transition: 0.3s; font-family: 'Share Tech Mono', monospace; font-size: 14px;
+        }
+        .auth-input-new:focus { border-color: #0033a0; box-shadow: 0 0 15px rgba(0, 51, 160, 0.2); background: #121926;}
+        
+        .btn-auth-primary {
+            background: #0033a0; color: white; border: 1px solid #0044cc; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 1px; font-size: 13px; text-transform: uppercase; font-family: 'Jura', sans-serif;
+        }
+        .btn-auth-primary:hover { background: #0044cc; box-shadow: 0 0 20px rgba(0, 51, 160, 0.6); transform: translateY(-2px);}
+        
+        .auth-footer { margin-top: 30px; text-align: center; border-top: 1px solid #1a2332; padding-top: 25px; position: relative;}
+        .auth-footer span { background: #0b111a; padding: 0 15px; color: #555; font-size: 10px; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); letter-spacing: 1px;}
+        .btn-auth-secondary { background: #0f1520; border: 1px solid #1a2332; color: #888; padding: 14px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 11px; letter-spacing: 1px;}
+        .btn-auth-secondary:hover { color: white; border-color: #555; background: #151d2b;}
         .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 4000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .modal-body { width: 450px; padding: 35px; text-align: center; animation: slideUp 0.3s ease-out; }
 
@@ -390,23 +427,52 @@
             </div>
         </div>
 
-        <div id="loginScreen">
-            <div class="login-box glass-panel">
-                <div class="login-photo-circle"></div>
-                
-                <h2 style="font-family: 'Jura', sans-serif; letter-spacing: 4px; margin-top: 0; color: white; font-size: 30px; text-transform: uppercase; text-shadow: 0 0 20px var(--theme-color);">GUERRA MUNDIAL RP</h2>
-                <h3 style="letter-spacing: 3px; margin-top: 10px; color: #ccc; font-size: 16px;">SISTEMA DE MANDO TÁCTICO</h3>
-                <p style="color: var(--theme-color); font-size: 12px; margin-top: -5px; margin-bottom: 30px; letter-spacing: 1px;">FUERZAS ARMADAS DE CHILE</p>
-                
-                <input type="text" id="regNombre" class="auth-input" placeholder="NOMBRE Y APELLIDO (MILITAR)" style="text-align: center; display:none;">
-                <input type="email" id="userEmail" class="auth-input" placeholder="CORREO ENCRIPTADO" style="text-align: center;">
-                <input type="password" id="userPass" class="auth-input" placeholder="CLAVE DE ACCESO" style="text-align: center;">
-                
-                <button id="btnLoginAction" onclick="login()" class="btn-tactical" style="width: 100%; margin-top: 10px; background: var(--theme-color); color: #000;">INICIAR CONEXIÓN</button>
-                <button id="btnRegisterAction" onclick="register()" class="btn-tactical" style="width: 100%; margin-top: 10px; background: var(--admin-blue); color: #000; display:none; border-color:var(--admin-blue);">CREAR EXPEDIENTE</button>
-                
-                <div style="margin-top: 20px; font-size: 12px; color: #aaa; cursor: pointer; transition: 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#aaa'" onclick="toggleAuthMode()" id="authModeToggle">
-                    ¿No tienes credenciales? Solicita registro aquí.
+       <div id="loginScreen">
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <div class="auth-tab" id="tabIngresar" onclick="setAuthMode('login')">🔒 INGRESAR</div>
+                    <div class="auth-tab active" id="tabEnlistarse" onclick="setAuthMode('register')">🪖 ENLISTARSE</div>
+                </div>
+
+                <div class="auth-header">
+                    <h1 class="auth-title" id="authTitleMain">ENLISTARSE EN</h1>
+                    <h1 class="auth-title auth-title-chile">CHILE</h1>
+                    <div class="auth-subtitle" id="authSubtitle">// REGÍSTRATE PARA DEFENDER LA PATRIA EN EL SERVIDOR MTA</div>
+                </div>
+
+                <div class="auth-form-grid">
+                    <div class="auth-form-full">
+                        <div class="auth-field-label">📧 CORREO</div>
+                        <input type="email" id="userEmail" class="auth-input-new" placeholder="tu@correo.com">
+                    </div>
+                    
+                    <div class="auth-form-full" id="boxNombre">
+                        <div class="auth-field-label">🪖 NOMBRE IC (IN-CHARACTER)</div>
+                        <input type="text" id="regNombre" class="auth-input-new" placeholder="Nombre de tu personaje">
+                    </div>
+
+                    <div id="boxPais">
+                        <div class="auth-field-label">🌎 PAÍS</div>
+                        <input type="text" id="regPais" class="auth-input-new" value="Chile" readonly style="color:#666; background: #0a0e14;">
+                    </div>
+
+                    <div id="boxEdad">
+                        <div class="auth-field-label">📅 EDAD</div>
+                        <input type="number" id="regEdad" class="auth-input-new" placeholder="18">
+                    </div>
+
+                    <div class="auth-form-full">
+                        <div class="auth-field-label">🔒 CONTRASEÑA</div>
+                        <input type="password" id="userPass" class="auth-input-new" placeholder="Mínimo 6 caracteres">
+                    </div>
+                </div>
+
+                <button id="btnRegisterAction" onclick="register()" class="btn-auth-primary">+ INGRESAR AL EJÉRCITO DE CHILE</button>
+                <button id="btnLoginAction" onclick="login()" class="btn-auth-primary" style="display:none;">ACCEDER AL SISTEMA TÁCTICO</button>
+
+                <div class="auth-footer" id="authFooterWrap">
+                    <span>¿No tienes credenciales? Haz tu registro aquí.</span>
+                    <button class="btn-auth-secondary" onclick="setAuthMode('login')">🔒 INGRESAR AL SISTEMA →</button>
                 </div>
             </div>
         </div>
@@ -1024,15 +1090,44 @@
     };
 
     let isLoginMode = true;
-    window.toggleAuthMode = () => {
+   // NUEVA FUNCION DE CAMBIO DE MODOS (LOGIN / REGISTRO)
+    window.setAuthMode = (mode) => {
         window.playClick();
-        isLoginMode = !isLoginMode;
-        document.getElementById("regNombre").style.display = isLoginMode ? "none" : "block";
-        document.getElementById("btnLoginAction").style.display = isLoginMode ? "block" : "none";
-        document.getElementById("btnRegisterAction").style.display = isLoginMode ? "none" : "block";
-        document.getElementById("authModeToggle").innerHTML = isLoginMode ? "¿No tienes credenciales? Solicita registro aquí." : "Ya poseo credenciales. Iniciar conexión.";
-    };
+        const tabIngresar = document.getElementById('tabIngresar');
+        const tabEnlistarse = document.getElementById('tabEnlistarse');
+        const boxNombre = document.getElementById('boxNombre');
+        const boxPais = document.getElementById('boxPais');
+        const boxEdad = document.getElementById('boxEdad');
+        const btnReg = document.getElementById('btnRegisterAction');
+        const btnLog = document.getElementById('btnLoginAction');
+        const titleMain = document.getElementById('authTitleMain');
+        const subtitle = document.getElementById('authSubtitle');
+        const footerWrap = document.getElementById('authFooterWrap');
 
+        if (mode === 'register') {
+            tabEnlistarse.classList.add('active');
+            tabIngresar.classList.remove('active');
+            boxNombre.style.display = 'block';
+            boxPais.style.display = 'block';
+            boxEdad.style.display = 'block';
+            btnReg.style.display = 'block';
+            btnLog.style.display = 'none';
+            titleMain.innerText = 'ENLISTARSE EN';
+            subtitle.innerText = '// REGÍSTRATE PARA DEFENDER LA PATRIA EN EL SERVIDOR MTA';
+            footerWrap.style.display = 'block';
+        } else {
+            tabIngresar.classList.add('active');
+            tabEnlistarse.classList.remove('active');
+            boxNombre.style.display = 'none';
+            boxPais.style.display = 'none';
+            boxEdad.style.display = 'none';
+            btnReg.style.display = 'none';
+            btnLog.style.display = 'block';
+            titleMain.innerText = 'SISTEMA DE MANDO';
+            subtitle.innerText = '// INGRESA TUS CREDENCIALES CLASIFICADAS';
+            footerWrap.style.display = 'none';
+        }
+    };
     window.login = async () => { window.playClick(); const e = document.getElementById("userEmail").value; const p = document.getElementById("userPass").value; try { await signInWithEmailAndPassword(auth, e, p); registrarLog("INGRESO SISTEMA", `El correo ${e} inició conexión táctica.`); } catch { window.showToast("CREDENCIALES INVÁLIDAS", "error"); } };
 
     window.register = async () => {
